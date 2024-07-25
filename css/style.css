@@ -117,7 +117,7 @@ input[type=tel]:focus {
 }
 
 .btn-main, .btn-small, .btn-transparent {
-  background: #655E7A;
+  background: #2897ff;
   color: #fff;
   display: inline-block;
   font-size: 14px;
@@ -1003,7 +1003,7 @@ ul.dropdown-menu li {
   margin-bottom: 20px;
 }
 .feature .btn-view-works {
-  background: #655E7A;
+  background: #2897ff;
   color: #fff;
   padding: 10px 20px;
 }
@@ -2087,7 +2087,7 @@ ul.dropdown-menu li {
 }
 
 .bg-2 {
-  background: url("../images/featue-bg.jpg");
+  background: url("../images/landing-page/bg_2.jpg");
   background-size: cover;
   background-attachment: fixed;
 }
