@@ -412,6 +412,41 @@ input[type=tel]:focus {
   }
 }
 
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+
+.dropdown-submenu > a:after {
+  content: " ";
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 5px 0 5px;
+  border-color: #fff transparent transparent transparent;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+}
+
+.dropdown-submenu:hover > a:after {
+  /* border-top-color: #555; */
+}
+
+
+
+
 .commonSelect {
   margin-left: 10px;
   padding-right: 6px;
@@ -736,6 +771,7 @@ header .navbar-default .navbar-nav li a:hover {
 
 .dropdown-toggle::after {
   display: none;
+  border-top-color: #000;
 }
 
 .dropleft .dropdown-menu,
@@ -788,7 +824,7 @@ header .navbar-default .navbar-nav li a:hover {
 
 .dropdown-submenu.active > .dropdown-toggle {
   text-decoration: underline;
-  color: inherit;
+  color: inherit
 }
 
 ul.dropdown-menu li {
