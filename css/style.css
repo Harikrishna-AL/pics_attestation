@@ -117,7 +117,7 @@ input[type=tel]:focus {
 }
 
 .btn-main, .btn-small, .btn-transparent {
-  background: #2897ff;
+  background: #1d7ad1;
   color: #fff;
   display: inline-block;
   font-size: 14px;
@@ -856,7 +856,7 @@ ul.dropdown-menu li {
   }
 }
 .slider {
-  background: url("../images/welcome.jfif") no-repeat;
+  background: url("../images/bg_building.jpg") no-repeat;
   background-size: cover;
   background-attachment: fixed;
   background-position: 10% 0%;
@@ -880,6 +880,12 @@ ul.dropdown-menu li {
   padding-bottom: 15px;
   text-transform: uppercase;
 }
+
+.slider .block b {
+  font-weight: 700;
+  color: #1d7ad1;
+}
+
 @media (max-width: 992px) {
   .slider .block h1 {
     font-size: 36px;
@@ -930,7 +936,7 @@ ul.dropdown-menu li {
 }
 .service .service-item i {
   font-size: 60px;
-  color: #2897ff;
+  color: #1d7ad1;
 }
 .service .service-item h4 {
   padding-top: 15px;
@@ -1039,7 +1045,7 @@ ul.dropdown-menu li {
   margin-bottom: 20px;
 }
 .feature .btn-view-works {
-  background: #2897ff;
+  background: #1d7ad1;
   color: #fff;
   padding: 10px 20px;
 }
@@ -2636,17 +2642,17 @@ ul.dropdown-menu li {
 }
 
 .footer {
-  background: #F5F5F5;
+  background: #1d7ad1;
   text-align: center;
   padding: 80px 0;
 }
 .footer p {
   font-size: 13px;
   line-height: 25px;
-  color: #919191;
+  color: black;
 }
 .footer a {
-  color: #595959;
+  color: black;
 }
 .footer .footer-manu {
   padding-bottom: 25px;
@@ -2661,7 +2667,7 @@ ul.dropdown-menu li {
 }
 .footer .footer-manu ul li a {
   display: inline-block;
-  color: #494949;
+  color: black;
 }
 .footer .footer-manu ul li a:hover {
   color: #000;
