@@ -473,9 +473,101 @@
         window.location.href = 'https://www.google.com/search?q=UAE+Attestation%2C+Medical+%26+Visa+Stamping+%28PICS%29&sca_esv=59837724de96a25c&sxsrf=ADLYWILDytj9vCFXMwrdDqok-rLXDrwAlQ%3A1737555999093&ei=HwCRZ8WuBfrQ0-kPsOu08QI&ved=0ahUKEwiFuunAxImLAxV66DQHHbA1LS4Q4dUDCBA&uact=5&oq=UAE+Attestation%2C+Medical+%26+Visa+Stamping+%28PICS%29&gs_lp=Egxnd3Mtd2l6LXNlcnAiL1VBRSBBdHRlc3RhdGlvbiwgTWVkaWNhbCAmIFZpc2EgU3RhbXBpbmcgKFBJQ1MpMgQQIxgnMgQQIxgnMgQQIxgnMgoQABiABBgUGIcCMgsQLhiABBjHARivATIGEAAYFhgeMgIQJjICECYyCxAAGIAEGIYDGIoFMgsQABiABBiGAxiKBUjjCFCIBliIBnABeACQAQCYAaUBoAGlAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqACtgHCAgoQIxiwAhiwAxgnwgIOEAAYgAQYsAMYhgMYigXCAgsQABiABBiwAxiiBJgDAOIDBRIBMSBAiAYBkAYJkgcDMS4xoAevEg&sclient=gws-wiz-serp#lrd=0x3b087290940007ef:0x51c5cc0f759e85b,1,,,,'; // Replace with your desired link
     }
 </script>
-
-
   </section>
+
+<section>
+  <div class="chatbot-container">
+    <button class="chatbot-button" onclick="toggleChat()">Chat with us</button>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">Bot</div>
+        <div class="chat-messages" id="chatMessages">
+            <p>👋 Hi! How can I help you today?</p>
+        </div>
+        <div class="chat-faq">
+            <button onclick="addFAQ('What are your working hours?')">Working Hours</button>
+            <button onclick="addFAQ('Where are you located?')">Location</button>
+            <button onclick="addFAQ('What services do you offer?')">Services</button>
+            <button onclick="addFAQ('What is your contact number?')">Contact No</button>
+
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+// Object to store FAQs and their predefined answers
+const predefinedAnswers = {
+    "What are your working hours?": "Our working hours are 9:00 AM to 6:00 PM, Monday to Friday.",
+    "Where are you located?": "We are located at Willow Centre, 2nd Floor Alinchuvadu Vennala, P O, Palarivattom, Kochi, Kerala 682028.",
+    "What services do you offer?": "We offer a variety of services, including certificate attestation for UAE, Kuwait, Oman, Bahrain, Saudi, UK, USA and Medical and Visa stamping for UAE and Kuwait. Commercial attestation for incorp, memorandum, article of association and ticket booking etc.",
+    "What is your contact number?": "8369820334,9869303751.",
+
+};
+
+// Function to toggle the chat window
+function toggleChat() {
+    var chatWindow = document.getElementById('chatWindow');
+    chatWindow.style.display = (chatWindow.style.display === 'none' || chatWindow.style.display === '') ? 'flex' : 'none';
+}
+
+// Function to close the chat window when clicking outside
+function closeChatOnClickOutside(event) {
+    var chatWindow = document.getElementById('chatWindow');
+    var chatbotButton = document.querySelector('.chatbot-button');
+    
+    // Close the chat window if the click is outside the chatbot button and chat window
+    if (!chatWindow.contains(event.target) && !chatbotButton.contains(event.target)) {
+        chatWindow.style.display = 'none';
+    }
+}
+
+// Add event listener to detect clicks outside the chatbot
+document.addEventListener('click', closeChatOnClickOutside);
+
+
+function sendMessage() {
+    const userInput = document.getElementById('userInput');
+    const chatMessages = document.getElementById('chatMessages');
+
+    if (userInput.value.trim() !== "") {
+        // Add user message to chat
+        const userMessage = document.createElement('p');
+        userMessage.textContent = `You: ${userInput.value}`;
+        chatMessages.appendChild(userMessage);
+
+        // Add bot response to chat
+        const botMessage = document.createElement('p');
+        if (predefinedAnswers[userInput.value]) {
+            botMessage.textContent = `Bot: ${predefinedAnswers[userInput.value]}`;
+        } else {
+            botMessage.textContent = "Bot: I'm here to help!";
+        }
+        chatMessages.appendChild(botMessage);
+
+        // Scroll to the bottom of the chat messages
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Clear the input field
+        userInput.value = '';
+    }
+}
+
+function addFAQ(question) {
+    const userInput = document.getElementById('userInput');
+    userInput.value = question; // Fill the input field with the FAQ
+    sendMessage(); // Automatically send the question
+}
+
+
+</script>
+</section>
+
 
   <!-- footer Start -->
   <footer class="footer">
