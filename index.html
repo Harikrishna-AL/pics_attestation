@@ -480,7 +480,10 @@
     <button class="chatbot-button" onclick="toggleChat()">Chat with us</button>
 
     <div class="chat-window" id="chatWindow">
-        <div class="chat-header">Bot</div>
+        <div class="chat-header">
+            Bot
+            <button class="close-button" onclick="toggleChat()">✖</button>
+        </div>
         <div class="chat-messages" id="chatMessages">
             <p>👋 Hi! How can I help you today?</p>
         </div>
@@ -489,7 +492,6 @@
             <button onclick="addFAQ('Where are you located?')">Location</button>
             <button onclick="addFAQ('What services do you offer?')">Services</button>
             <button onclick="addFAQ('What is your contact number?')">Contact No</button>
-
         </div>
         <div class="chat-input">
             <input type="text" id="userInput" placeholder="Type your message...">
@@ -497,6 +499,7 @@
         </div>
     </div>
 </div>
+
 
 
 
