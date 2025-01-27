@@ -220,6 +220,7 @@
                   <img src="https://img.icons8.com/ios/50/gmail.png" alt="Email" style="width: 30px; height: 30px;">
                 </a>
               </li>
+              
               </ul>
             </div>
           </nav>
@@ -470,7 +471,13 @@
 
 <script>
     function redirectToLink() {
-        window.location.href = 'https://www.google.com/search?q=UAE+Attestation%2C+Medical+%26+Visa+Stamping+%28PICS%29&sca_esv=59837724de96a25c&sxsrf=ADLYWILDytj9vCFXMwrdDqok-rLXDrwAlQ%3A1737555999093&ei=HwCRZ8WuBfrQ0-kPsOu08QI&ved=0ahUKEwiFuunAxImLAxV66DQHHbA1LS4Q4dUDCBA&uact=5&oq=UAE+Attestation%2C+Medical+%26+Visa+Stamping+%28PICS%29&gs_lp=Egxnd3Mtd2l6LXNlcnAiL1VBRSBBdHRlc3RhdGlvbiwgTWVkaWNhbCAmIFZpc2EgU3RhbXBpbmcgKFBJQ1MpMgQQIxgnMgQQIxgnMgQQIxgnMgoQABiABBgUGIcCMgsQLhiABBjHARivATIGEAAYFhgeMgIQJjICECYyCxAAGIAEGIYDGIoFMgsQABiABBiGAxiKBUjjCFCIBliIBnABeACQAQCYAaUBoAGlAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqACtgHCAgoQIxiwAhiwAxgnwgIOEAAYgAQYsAMYhgMYigXCAgsQABiABBiwAxiiBJgDAOIDBRIBMSBAiAYBkAYJkgcDMS4xoAevEg&sclient=gws-wiz-serp#lrd=0x3b087290940007ef:0x51c5cc0f759e85b,1,,,,'; // Replace with your desired link
+      const links = [
+            'https://g.co/kgs/uSkvqh1',
+            'https://g.co/kgs/r9hD9e9',
+            'https://g.co/kgs/J6UkjPJ'  
+        ];
+        const randomIndex = Math.floor(Math.random() * links.length); // Random index to choose a link
+        window.location.href = links[randomIndex]; // Redirect to the randomly chosen link
     }
 </script>
   </section>
