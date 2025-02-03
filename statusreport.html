@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Report</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .section {
+      margin-bottom: 20px;
+      border: 1px solid #f2dede;
+      border-radius: 4px;
+      background-color: #fdf7f7;
+      padding: 15px;
+    }
+    .section h3 {
+      margin: 0 0 10px;
+      color: #a94442;
+    }
+    .section .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #f9dcdc;
+    }
+    .section .row:last-child {
+      border-bottom: none;
+    }
+    .row span {
+      display: block;
+      width: 45%;
+      font-size: 14px;
+    }
+    .row span.label {
+      font-weight: bold;
+    }
+    .input-section {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .input-section input {
+      padding: 10px;
+      width: 70%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .input-section button {
+      padding: 10px 15px;
+      background-color: #a94442;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .input-section button:hover {
+      background-color: #922c2c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Input Tracking Number -->
+    <div class="input-section">
+      <input type="text" id="trackingNumber" placeholder="Enter Tracking Number">
+      <button onclick="fetchData()">Fetch Details</button>
+    </div>
+
+    <!-- Document Submitted By -->
+    <div class="section">
+      <h3>Document Submitted By</h3>
+      <div class="row">
+        <span class="label">Submitted by</span>
+        <span id="submittedBy">--</span>
+      </div>
+    </div>
+
+
+    <div class="section">
+      <h3>Date Of Submission</h3>
+      <div class="row">
+        <span class="label">Date Of Submission</span>
+        <span id="dateofsubmission">--</span>
+      </div>
+    </div>
+
+
+    <!-- Document Status -->
+    <div class="section">
+      <h3>Document Status</h3>
+      <div class="row">
+        <span class="label">Current Status</span>
+        <span id="currentStatus">--</span>
+      </div>
+    </div>
+
+    <!-- Document Details -->
+    <div class="section">
+      <h3>Document Details</h3>
+      <div class="row">
+        <span class="label">Type</span>
+        <span id="docType">--</span>
+      </div>
+      <div class="row">
+        <span class="label">Name</span>
+        <span id="docName">--</span>
+      </div>
+      <div class="row">
+        <span class="label">Document Details</span>
+        <span id="docDetails">--</span>
+      </div>
+      <div class="row">
+        <span class="label">General Comments</span>
+        <span id="comments">--</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const excelUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7sVtID723P1LuZeD6PAJuKWFi6g6zc23e1kXv_VXktVVz8mms_ycrsBFcTn2t0g/pub?output=csv"; // Replace with your direct Google Drive link
+
+    async function fetchData() {
+      const trackingNumber = document.getElementById("trackingNumber").value.trim();
+      if (!trackingNumber) {
+        alert("Please enter a tracking number.");
+        return;
+      }
+
+      try {
+        const response = await fetch(excelUrl);
+        console.log("Fetching URL:", excelUrl);
+        const data = await response.arrayBuffer();
+
+        console.log(data);
+
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+
+        // Convert Excel data to JSON
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+        // Find the row matching the tracking number
+        const userData = jsonData.find(row => row["TrackingNumber"] == trackingNumber);
+
+        if (!userData) {
+          alert("No data found for the entered tracking number.");
+          return;
+        }
+
+        // Populate fields
+        console.log(userData)
+        document.getElementById("submittedBy").textContent = userData["Submittedby"] || "--";
+        document.getElementById("currentStatus").textContent = userData["Status"] || "--";
+        document.getElementById("dateofsubmission").textContent = userData["DateofSubmission"] || "--";
+        document.getElementById("docType").textContent = userData["Type"] || "--";
+        document.getElementById("docName").textContent = userData["Customer Name"] || "--";
+        document.getElementById("docDetails").textContent = userData["DocumentDetails"];
+        document.getElementById("comments").textContent = userData["General Comments"] || "--";
+      } catch (error) {
+        console.error("Error fetching or processing the Excel file:", error);
+        alert("Failed to fetch data. Please check the Excel file link.");
+      }
+    }
+  </script>
+</body>
+</html>
