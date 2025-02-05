@@ -20,32 +20,32 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       padding: 20px;
     }
-    .section {
+    .section_status {
       margin-bottom: 20px;
       border: 1px solid #f2dede;
       border-radius: 4px;
-      background-color: #fdf7f7;
+      background-color: #b2ceeb;
       padding: 15px;
     }
-    .section h3 {
+    .section_status h3 {
       margin: 0 0 10px;
-      color: #a94442;
+      color: #1d7ad1;
     }
-    .section .row_status {
+    .section_status .row_status {
       display: flex;
       justify-content: space-between;
       padding: 5px 0;
-      border-bottom: 1px solid #f9dcdc;
+      border-bottom: 1px solid #f9dcdc
     }
-    .section .row_status:last-child {
+    .section_status .row_status:last-child {
       border-bottom: none;
     }
-    .row_status span {
+    .row_status .label {
       display: block;
       width: 45%;
       font-size: 14px;
     }
-    .row_status span.label {
+    .row_status .label {
       font-weight: bold;
     }
     .input-section {
@@ -61,14 +61,14 @@
     }
     .input-section button {
       padding: 10px 15px;
-      background-color: #42a976;
+      background-color: #1d7ad1;
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
     .input-section button:hover {
-      background-color: #922c2c;
+      background-color: #7fa2c4;
     }
   </style>
   <link rel="shortcut icon" type="image/x-icon" href="images/company/pics_logo.jpg" />
@@ -277,16 +277,16 @@
     </div>
 
     <!-- Document Submitted By -->
-    <div class="section">
+    <div class="section_status">
       <h3>Document Submitted By</h3>
       <div class="row_status">
         <span class="label">Submitted by</span>
-        <span id="submittedBy">--</span>
+        <span class="value" id="submittedBy">--</span>
       </div>
     </div>
 
 
-    <div class="section">
+    <div class="section_status">
       <h3>Date Of Submission</h3>
       <div class="row_status">
         <span class="label">Date Of Submission</span>
@@ -296,30 +296,30 @@
 
 
     <!-- Document Status -->
-    <div class="section">
+    <div class="section_status">
       <h3>Document Status</h3>
-      <div class="row">
+      <div class="row_status">
         <span class="label">Current Status</span>
         <span id="currentStatus">--</span>
       </div>
     </div>
 
     <!-- Document Details -->
-    <div class="section">
+    <div class="section_status">
       <h3>Document Details</h3>
-      <div class="row">
+      <div class="row_status">
         <span class="label">Type</span>
         <span id="docType">--</span>
       </div>
-      <div class="row">
+      <div class="row_status">
         <span class="label">Name</span>
         <span id="docName">--</span>
       </div>
-      <div class="row">
+      <div class="row_status">
         <span class="label">Document Details</span>
         <span id="docDetails">--</span>
       </div>
-      <div class="row">
+      <div class="row_status">
         <span class="label">General Comments</span>
         <span id="comments">--</span>
       </div>
@@ -373,5 +373,20 @@
       }
     }
   </script>
+  <script src="plugins/jquery/jquery.min.js"></script>
+  <!-- Bootstrap 3.1 -->
+  <script src="plugins/bootstrap/bootstrap.min.js"></script>
+  <!-- slick Carousel -->
+  <script src="plugins/slick/slick.min.js"></script>
+  <script src="plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+  <!-- filter -->
+  <script src="plugins/shuffle/shuffle.min.js"></script>
+  <script src="plugins/SyoTimer/jquery.syotimer.min.js"></script>
+  <!-- Google Map -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU&libraries=places"></script>
+  <script src="plugins/google-map/map.js"></script>
+
+  <script src="js/script.js"></script>
 </body>
 </html>
