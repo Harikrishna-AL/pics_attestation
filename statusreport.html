@@ -406,6 +406,7 @@
       <p>We received from  <span id="customerName"></span> Passport No: <span id="passno"></span> for the purpose of </p>
       <p>Attestation/Medical/Visa RA/Other purposes of Attestation </p>
       <p><strong>of CERTIFICATES</strong></p>
+      
       <p>Attestation of Document From UAE Consulate</p>
       
       <p>Cost of work UAE = Rs<span id="total"></span></p>
@@ -437,6 +438,7 @@
           }
 
       const excelUrl1 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7sVtID723P1LuZeD6PAJuKWFi6g6zc23e1kXv_VXktVVz8mms_ycrsBFcTn2t0g/pub?output=csv"; // Replace with your direct Google Drive link
+
       const response1 = await fetch(excelUrl1);
         const data1 = await response1.arrayBuffer();
 
@@ -471,17 +473,20 @@
          function capitalizeWords(str) {
             return str.replace(/\b\w/g, char => char.toUpperCase());
         }
-            
-         let words=numberToWords.toWords(parseInt(amountwords));
+        if (amountwords && !isNaN(amountwords) && isFinite(amountwords)) 
+        {
+          let words=numberToWords.toWords(parseInt(amountwords))||"";
          let capitalize=capitalizeWords(words) + " Rupees";
          document.getElementById("amtwords").innerText=capitalize;
 
-          
+        }
+        else
+        {
 
-
-          
-
-
+          document.getElementById("amtwords").innerText="";
+        }
+            
+  
           const dateObj = new Date();
           const day = String(dateObj.getDate()).padStart(2, '0'); // Ensures two-digit day
           const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -516,7 +521,9 @@
             doc.save(fileName);
         };
       };
+      
       }
+      
   </script>
 </body>
 
