@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Status Report</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/number-to-words"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/number-to-words"></script>
 
 
   <style>
@@ -25,6 +26,7 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       padding: 20px;
     }
+
     .section_status {
       margin-bottom: 20px;
       border: 1px solid #f2dede;
@@ -32,31 +34,38 @@
       background-color: #b2ceeb;
       padding: 15px;
     }
+
     .section_status h3 {
       margin: 0 0 10px;
       color: #1d7ad1;
     }
+
     .section_status .row_status {
       display: flex;
       justify-content: space-between;
       padding: 5px 0;
       border-bottom: 1px solid #f9dcdc
     }
+
     .section_status .row_status:last-child {
       border-bottom: none;
     }
+
     .row_status .label {
       display: block;
       width: 45%;
       font-size: 14px;
     }
+
     .row_status .label {
       font-weight: bold;
     }
+
     .input-section {
       margin-bottom: 20px;
       text-align: center;
     }
+
     .input-section input {
       padding: 10px;
       width: 70%;
@@ -64,6 +73,7 @@
       border-radius: 4px;
       margin-right: 10px;
     }
+
     .input-section button {
       padding: 10px 15px;
       background-color: #1d7ad1;
@@ -72,20 +82,24 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
     .input-section button:hover {
       background-color: #7fa2c4;
     }
+
     body {
-            font-family: Arial, sans-serif;
-        }
-        .hidden {
-            display: none;
-        }
-        .button-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-        }
+      font-family: Arial, sans-serif;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .button-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
   </style>
   <link rel="shortcut icon" type="image/x-icon" href="images/company/pics_logo.jpg" />
 
@@ -104,6 +118,7 @@
   <link rel="stylesheet" href="plugins/slick/slick.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <header class="navigation">
     <div class="container">
@@ -277,7 +292,7 @@
                   <img src="https://img.icons8.com/ios/50/gmail.png" alt="Email" style="width: 30px; height: 30px;">
                 </a>
               </li>
-              
+
               </ul>
             </div>
           </nav>
@@ -388,27 +403,28 @@
     }
   </script>
 
-<body>
-  
-  
-  <div class="button-container">
-    <button onclick="downloadPDF()" style="background-color:#1d7ad1; color: white; padding: 10px 15px; border: none; cursor: pointer; font-size: 16px; border-radius: 5px;">
-      Download Receipt
-    </button>
-  </div>
+  <body>
 
-  <div id="receipt" class="hidden">
+
+    <div class="button-container">
+      <button onclick="downloadPDF()"
+        style="background-color:#1d7ad1; color: white; padding: 10px 15px; border: none; cursor: pointer; font-size: 16px; border-radius: 5px;">
+        Download Receipt
+      </button>
+    </div>
+
+    <div id="receipt" class="hidden">
       <hr>
       <p><strong>Bill No:</strong> <span id="billNo"></span></p>
 
       <p><strong>Date:</strong> <span id="currentDate"></span></p>
 
-      <p>We received from  <span id="customerName"></span> Passport No: <span id="passno"></span> for the purpose of </p>
+      <p>We received from <span id="customerName"></span> Passport No: <span id="passno"></span> for the purpose of </p>
       <p>Attestation/Medical/Visa RA/Other purposes of Attestation </p>
       <p><strong>of CERTIFICATES</strong></p>
-      
+
       <p>Attestation of Document From UAE Consulate</p>
-      
+
       <p>Cost of work UAE = Rs<span id="total"></span></p>
       <p>UAE Delivery Charges = Rs<span id="UAECharge"></span></p>
       <p>Advance Paid = Rs<span id="adv"></span></p>
@@ -419,27 +435,27 @@
       <p>1.<span id="subdoc1"></span></p>
       <p>2.<span id="subdoc2"></span></p>
       <p>3.<span id="subdoc3"></span></p>
-     
+
       <p style="text-align: right;">Submitted Successfully **********</p>
-  </div>
-  
-  
-  <script>
+    </div>
+
+
+    <script>
       document.getElementById("currentDate").innerText = new Date().toLocaleDateString();
-      
 
-      
+
+
       async function downloadPDF() {
-          const trackingNumber = document.getElementById("trackingNumber").value;
-          const custname = document.getElementById("submittedBy").textContent;
-          if (!trackingNumber) {
-              alert("Please enter a tracking number.");
-              return;
-          }
+        const trackingNumber = document.getElementById("trackingNumber").value;
+        const custname = document.getElementById("submittedBy").textContent;
+        if (!trackingNumber) {
+          alert("Please enter a tracking number.");
+          return;
+        }
 
-      const excelUrl1 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7sVtID723P1LuZeD6PAJuKWFi6g6zc23e1kXv_VXktVVz8mms_ycrsBFcTn2t0g/pub?output=csv"; // Replace with your direct Google Drive link
+        const excelUrl1 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7sVtID723P1LuZeD6PAJuKWFi6g6zc23e1kXv_VXktVVz8mms_ycrsBFcTn2t0g/pub?output=csv"; // Replace with your direct Google Drive link
 
-      const response1 = await fetch(excelUrl1);
+        const response1 = await fetch(excelUrl1);
         const data1 = await response1.arrayBuffer();
 
 
@@ -451,81 +467,72 @@
         const jsonData1 = XLSX.utils.sheet_to_json(sheet1);
         // Find the row matching the tracking number
         const userData1 = jsonData1.find(row => row["TrackingNumber"] == trackingNumber);
-          document.getElementById("billNo").innerText = trackingNumber;
-          document.getElementById("customerName").innerText = custname;
-          document.getElementById("paymode").innerText = userData1["PaymentMode"];
-          document.getElementById("adv").innerText = userData1["AdvancePaid"];
-          document.getElementById("total").innerText = userData1["TotalAmount"];
-          document.getElementById("UAECharge").innerText = userData1["UaeDeliveryCharges"];
-          document.getElementById("bal").innerText = userData1["Balance"];
-          document.getElementById("passno").innerText = userData1["PassportNumber"];
-          document.getElementById("subdoc1").innerText = userData1["SubmittedDocument1"];
-          document.getElementById("subdoc2").innerText = userData1["SubmittedDocument2"];
-          document.getElementById("subdoc3").innerText = userData1["SubmittedDocument3"];
+        document.getElementById("billNo").innerText = trackingNumber;
+        document.getElementById("customerName").innerText = custname;
+        document.getElementById("paymode").innerText = userData1["PaymentMode"]?.toString() || "--";
+        document.getElementById("adv").innerText = userData1["AdvancePaid"]?.toString() || "--";
+        document.getElementById("total").innerText = userData1["TotalAmount"]?.toString() || "--";
+        document.getElementById("UAECharge").innerText = userData1["UaeDeliveryCharges"]?.toString() || "--";
+        document.getElementById("bal").innerText = userData1["Balance"]?.toString() || "--";
+        document.getElementById("passno").innerText = userData1["PassportNumber"]?.toString() || "--";
+        document.getElementById("subdoc1").innerText = userData1["SubmittedDocument1"]?.toString() || "--";
+        document.getElementById("subdoc2").innerText = userData1["SubmittedDocument2"]?.toString() || "--";
+        document.getElementById("subdoc3").innerText = userData1["SubmittedDocument3"]?.toString() || "--";
 
-
-
-          
-
-          
-
-         let amountwords= document.getElementById("adv").innerText;
-         function capitalizeWords(str) {
-            return str.replace(/\b\w/g, char => char.toUpperCase());
+        let amountwords = document.getElementById("adv").innerText;
+        function capitalizeWords(str) {
+          return str.replace(/\b\w/g, char => char.toUpperCase());
         }
-        if (amountwords && !isNaN(amountwords) && isFinite(amountwords)) 
-        {
-          let words=numberToWords.toWords(parseInt(amountwords))||"";
-         let capitalize=capitalizeWords(words) + " Rupees";
-         document.getElementById("amtwords").innerText=capitalize;
+        if (amountwords && !isNaN(amountwords) && isFinite(amountwords)) {
+          let words = numberToWords.toWords(parseInt(amountwords)) || "";
+          let capitalize = capitalizeWords(words) + " Rupees";
+          document.getElementById("amtwords").innerText = capitalize;
 
         }
-        else
-        {
+        else {
 
-          document.getElementById("amtwords").innerText="";
+          document.getElementById("amtwords").innerText = "";
         }
-            
-  
-          const dateObj = new Date();
-          const day = String(dateObj.getDate()).padStart(2, '0'); // Ensures two-digit day
-          const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-          const month = monthNames[dateObj.getMonth()]; // Get short month name
-          const year = dateObj.getFullYear();
-          const formattedDate = `${day}${month}${year}`; 
 
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF();
-          // Add header image
-          const headerImg = new Image();
-            headerImg.src = 'images/header.jpg'; // Adjust the path accordingly
-            headerImg.onload = function () 
-            {
-                doc.addImage(headerImg, 'jpg', 10, 10, 190, 30);
-                 // Add space after header
-                 let yPosition = 50; // Increased spacing after header
 
-                 const textLines = doc.splitTextToSize(document.getElementById("receipt").innerText, 180);
+        const dateObj = new Date();
+        const day = String(dateObj.getDate()).padStart(2, '0'); // Ensures two-digit day
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const month = monthNames[dateObj.getMonth()]; // Get short month name
+        const year = dateObj.getFullYear();
+        const formattedDate = `${day}${month}${year}`;
 
-                 doc.text(textLines, 10, yPosition);
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        // Add header image
+        const headerImg = new Image();
+        headerImg.src = 'images/header.jpg'; // Adjust the path accordingly
+        headerImg.onload = function () {
+          doc.addImage(headerImg, 'jpg', 10, 10, 190, 30);
+          // Add space after header
+          let yPosition = 50; // Increased spacing after header
 
-            // Add footer image
-            const footerImg = new Image();
-        footerImg.src = 'images/footer.jpg'; // Adjust the path accordingly
-        footerImg.onload = function () {
+          const textLines = doc.splitTextToSize(document.getElementById("receipt").innerText, 180);
+
+          doc.text(textLines, 10, yPosition);
+
+          // Add footer image
+          const footerImg = new Image();
+          footerImg.src = 'images/footer.jpg'; // Adjust the path accordingly
+          footerImg.onload = function () {
             let footerWidth = 190; // Same as header width
             let footerHeight = (footerImg.height / footerImg.width) * footerWidth; // Maintain aspect ratio
             doc.addImage(footerImg, 'jpG', 10, 270 - footerHeight, footerWidth, footerHeight); // Adjust position dynamically
             const fileName = `Receipt_${custname}_${formattedDate}.pdf`;
 
             doc.save(fileName);
+          };
         };
-      };
-      
+
       }
-      
-  </script>
-</body>
+
+    </script>
+  </body>
 
 
   <script src="plugins/jquery/jquery.min.js"></script>
@@ -544,4 +551,5 @@
 
   <script src="js/script.js"></script>
 </body>
+
 </html>
