@@ -367,6 +367,7 @@
         return;
       }
 
+
       try {
         const response = await fetch(excelUrl);
         const data = await response.arrayBuffer();
@@ -386,6 +387,8 @@
           alert("No data found for the entered tracking number.");
           return;
         }
+        
+        
 
         // Populate fields
         console.log(userData)
@@ -415,6 +418,8 @@
 
     <div id="receipt" class="hidden">
       <hr>
+                                                      <p style="text-align: center;"><strong>Receipt</strong></p>
+
       <p><strong>Bill No:</strong> <span id="billNo"></span></p>
 
       <p><strong>Date:</strong> <span id="currentDate"></span></p>
@@ -467,6 +472,21 @@
         const jsonData1 = XLSX.utils.sheet_to_json(sheet1);
         // Find the row matching the tracking number
         const userData1 = jsonData1.find(row => row["TrackingNumber"] == trackingNumber);
+        const enteredPasscode = prompt("Enter the password for this tracking number:");
+    
+    if (enteredPasscode === null) return; // User clicked cancel
+
+    if (enteredPasscode !== userData1["PassCode"]) {
+        alert("Incorrect password!");
+        return;
+    }
+    const submittedBy = document.getElementById("submittedBy").textContent.trim();
+if (submittedBy=="--") {
+    alert("Kindly click 'Fetch Details' before proceeding.");
+    return;
+}
+
+
         document.getElementById("billNo").innerText = trackingNumber;
         document.getElementById("customerName").innerText = custname;
         document.getElementById("paymode").innerText = userData1["PaymentMode"]?.toString() || "--";
@@ -520,12 +540,31 @@
           const footerImg = new Image();
           footerImg.src = 'images/footer.jpg'; // Adjust the path accordingly
           footerImg.onload = function () {
-            let footerWidth = 190; // Same as header width
+            let footerWidth = 180; // Same as header width
             let footerHeight = (footerImg.height / footerImg.width) * footerWidth; // Maintain aspect ratio
-            doc.addImage(footerImg, 'jpG', 10, 270 - footerHeight, footerWidth, footerHeight); // Adjust position dynamically
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const pageWidth = doc.internal.pageSize.getWidth(); // Get total page width
+            const footerX = (pageWidth - footerWidth) / 2;
+            const footerY = pageHeight - footerHeight - 10;
+            doc.addImage(footerImg, 'jpG', 10,footerY, footerWidth, footerHeight); // Adjust position dynamically
+            const stampImg = new Image();
+            stampImg.src = 'images/stamp.jpg';
+            stampImg.onload = function () {
+            // Stamp & Signature Placement (Above Footer)
+            let stampWidth = 60; // Adjust width to scale down
+            let stampHeight = (222 / 251) * stampWidth; // Maintain aspect ratio
+
+
+            const stampX = footerX + (footerWidth - stampWidth) / 2; // Align with footer
+            const stampY = footerY - stampHeight - 20; // 20px above footer
+ 
+
+            // Stamp & Signature Image (Properly Positioned)
+            doc.addImage(stampImg, 'jpg', stampX, stampY, stampWidth, stampHeight);
             const fileName = `Receipt_${custname}_${formattedDate}.pdf`;
 
             doc.save(fileName);
+            };
           };
         };
 
