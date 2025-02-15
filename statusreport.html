@@ -416,7 +416,7 @@
       </button>
     </div>
 
-    <div id="receipt" class="hidden">
+    <div id="receipt" class="hidden" stlye="width: 100%">
       <hr>
                                                       <p style="text-align: center;"><strong>Receipt</strong></p>
 
@@ -441,7 +441,7 @@
       <p>2.<span id="subdoc2"></span></p>
       <p>3.<span id="subdoc3"></span></p>
 
-      <p style="text-align: right;">Submitted Successfully **********</p>
+      <!-- <p style="text-align: right;">Submitted Successfully **********</p> -->
     </div>
 
 
@@ -555,12 +555,14 @@ if (submittedBy=="--") {
             let stampHeight = (222 / 251) * stampWidth; // Maintain aspect ratio
 
 
-            const stampX = footerX + (footerWidth - stampWidth) / 2; // Align with footer
+            const stampX = footerX + 3; // Align with footer
             const stampY = footerY - stampHeight - 20; // 20px above footer
  
 
             // Stamp & Signature Image (Properly Positioned)
             doc.addImage(stampImg, 'jpg', stampX, stampY, stampWidth, stampHeight);
+            // add text below the stamp
+            doc.text("Submitted Successfully **********", stampX + 100, stampY + 7);
             const fileName = `Receipt_${custname}_${formattedDate}.pdf`;
 
             doc.save(fileName);
