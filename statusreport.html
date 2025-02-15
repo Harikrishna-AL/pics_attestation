@@ -476,7 +476,7 @@
     
     if (enteredPasscode === null) return; // User clicked cancel
 
-    if (enteredPasscode !== userData1["PassCode"]) {
+    if (enteredPasscode.toString() !== userData1["PassCode"].toString()) {
         alert("Incorrect password!");
         return;
     }
