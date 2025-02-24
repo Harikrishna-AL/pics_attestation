@@ -406,7 +406,7 @@
         console.log(userData)
         document.getElementById("submittedBy").textContent = userData["Submittedby"] || "--";
         document.getElementById("currentStatus").textContent = userData["Status"] || "--";
-        document.getElementById("dateofsubmission").textContent = formatExcelDate(["DateofSubmission"]) || "--";
+        document.getElementById("dateofsubmission").textContent = userData["DateofSubmission"] || "--";
         document.getElementById("docType").textContent = userData["Type"] || "--";
         document.getElementById("docName").textContent = userData["Customer Name"] || "--";
         document.getElementById("docDetails").textContent = userData["DocumentDetails"];
