@@ -360,6 +360,18 @@
   <script>
     const excelUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7sVtID723P1LuZeD6PAJuKWFi6g6zc23e1kXv_VXktVVz8mms_ycrsBFcTn2t0g/pub?output=csv"; // Replace with your direct Google Drive link
 
+    function formatExcelDate(excelSerial) {
+    if (!excelSerial) return "--"; // Handle empty or undefined values
+
+    // Convert Excel serial date to JavaScript date
+    const date = new Date((excelSerial - 25569) * 86400000); // 25569 is the Excel epoch offset
+
+    // Format date as YYYY-MM-DD
+    return date.toISOString().split("T")[0]; 
+    }
+
+
+
     async function fetchData() {
       const trackingNumber = document.getElementById("trackingNumber").value.trim();
       if (!trackingNumber) {
@@ -394,7 +406,7 @@
         console.log(userData)
         document.getElementById("submittedBy").textContent = userData["Submittedby"] || "--";
         document.getElementById("currentStatus").textContent = userData["Status"] || "--";
-        document.getElementById("dateofsubmission").textContent = userData["DateofSubmission"] || "--";
+        document.getElementById("dateofsubmission").textContent = formatExcelDate(["DateofSubmission"]) || "--";
         document.getElementById("docType").textContent = userData["Type"] || "--";
         document.getElementById("docName").textContent = userData["Customer Name"] || "--";
         document.getElementById("docDetails").textContent = userData["DocumentDetails"];
