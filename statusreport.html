@@ -354,6 +354,10 @@
         <span class="label">General Comments</span>
         <span id="comments">--</span>
       </div>
+      <div class="row_status">
+        <span class="label">Passport Number</span>
+        <span id="passnumber">--</span>
+      </div>
     </div>
   </div>
 
@@ -411,6 +415,7 @@
         document.getElementById("docName").textContent = userData["Customer Name"] || "--";
         document.getElementById("docDetails").textContent = userData["DocumentDetails"];
         document.getElementById("comments").textContent = userData["General Comments"] || "--";
+        document.getElementById("passnumber").textContent = userData["PassportNumber"] || "--";
       } catch (error) {
         console.error("Error fetching or processing the Excel file:", error);
         alert("Failed to fetch data. Please check the Excel file link.");
