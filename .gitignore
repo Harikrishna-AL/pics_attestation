@@ -3,3 +3,4 @@ template.html
 *.txt
 generated_diploma_attestation.html
 generated*
+*.pdf

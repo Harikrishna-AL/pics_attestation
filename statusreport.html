@@ -381,7 +381,7 @@
     const date = new Date((excelSerial - 25569) * 86400000); // 25569 is the Excel epoch offset
 
     // Format date as YYYY-MM-DD
-    return date.toISOString().split("T")[0]; 
+    return date.toISOString().split("T")[0];
     }
 
 
@@ -413,8 +413,8 @@
           alert("No data found for the entered tracking number.");
           return;
         }
-        
-        
+
+
 
         // Populate fields
         console.log(userData)
@@ -478,126 +478,221 @@
 
 
       async function downloadPDF() {
-        const trackingNumber = document.getElementById("trackingNumber").value;
-        const custname = document.getElementById("submittedBy").textContent;
-        if (!trackingNumber) {
-          alert("Please enter a tracking number.");
-          return;
-        }
+  const trackingNumber = document.getElementById("trackingNumber").value;
+  const custname = document.getElementById("submittedBy").textContent;
+  if (!trackingNumber) {
+    alert("Please enter a tracking number.");
+    return;
+  }
 
-        const excelUrl1 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7sVtID723P1LuZeD6PAJuKWFi6g6zc23e1kXv_VXktVVz8mms_ycrsBFcTn2t0g/pub?output=csv"; // Replace with your direct Google Drive link
+  const excelUrl1 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7sVtID723P1LuZeD6PAJuKWFi6g6zc23e1kXv_VXktVVz8mms_ycrsBFcTn2t0g/pub?output=csv";
 
-        const response1 = await fetch(excelUrl1);
-        const data1 = await response1.arrayBuffer();
+  const response1 = await fetch(excelUrl1);
+  const data1 = await response1.arrayBuffer();
 
+  const workbook1 = XLSX.read(data1, { type: "array" });
+  const sheetName1 = workbook1.SheetNames[0];
+  const sheet1 = workbook1.Sheets[sheetName1];
 
-        const workbook1 = XLSX.read(data1, { type: "array" });
-        const sheetName1 = workbook1.SheetNames[0];
-        const sheet1 = workbook1.Sheets[sheetName1];
+  // Convert Excel data to JSON
+  const jsonData1 = XLSX.utils.sheet_to_json(sheet1);
+  // Find the row matching the tracking number
+  const userData1 = jsonData1.find(row => row["TrackingNumber"] == trackingNumber);
 
-        // Convert Excel data to JSON
-        const jsonData1 = XLSX.utils.sheet_to_json(sheet1);
-        // Find the row matching the tracking number
-        const userData1 = jsonData1.find(row => row["TrackingNumber"] == trackingNumber);
-        //const enteredPasscode = prompt("Enter the password for this tracking number:");
-    
-   // if (enteredPasscode === null) return; // User clicked cancel
+  const enteredPasscode = prompt("Enter the password for this tracking number:");
 
-    //if (enteredPasscode.toString() !== userData1["PassCode"].toString()) {
-      //  alert("Incorrect password!");
-       // return;
-    //}
-    const submittedBy = document.getElementById("submittedBy").textContent.trim();
-if (submittedBy=="--") {
+  if (enteredPasscode === null) return; // User clicked cancel
+
+  if (enteredPasscode.toString() !== userData1["PassCode"].toString()) {
+    alert("Incorrect password!");
+    return;
+  }
+
+  const submittedBy = document.getElementById("submittedBy").textContent.trim();
+  if (submittedBy == "--") {
     alert("Kindly click 'Fetch Details' before proceeding.");
     return;
+  }
+
+  // Get data for the receipt
+  const customerName = custname;
+  const passportNumber = userData1["PassportNumber"]?.toString() || "--";
+  const documentType = userData1["Type"]?.toString() || "--";
+  const totalAmount = userData1["TotalAmount"]?.toString() || "0";
+  const uaeCharges = userData1["UaeDeliveryCharges"]?.toString() || "0";
+  const advancePaid = userData1["AdvancePaid"]?.toString() || "0";
+  const balance = userData1["Balance"]?.toString() || "0";
+  const paymentMode = userData1["PaymentMode"]?.toString() || "--";
+  const doc1 = userData1["SubmittedDocument1"]?.toString() || "--";
+  const doc2 = userData1["SubmittedDocument2"]?.toString() || "--";
+  const doc3 = userData1["SubmittedDocument3"]?.toString() || "--";
+
+  let amountInWords = "";
+  const advance = parseFloat(advancePaid);
+  const remaining = parseFloat(balance);
+
+  if (!isNaN(advance) && !isNaN(remaining) && isFinite(advance + remaining)) {
+    const total = advance + remaining;
+    const words = numberToWords.toWords(Math.floor(total)); // Use Math.floor to avoid decimals
+    amountInWords = words.charAt(0).toUpperCase() + words.slice(1) + " Only";
+  }
+
+  // Create a formatted tracking number similar to the sample
+  const formattedTrackingNumber = `${trackingNumber}`;
+
+  // Get current date or use a specific date for testing
+  const dateObj = new Date();
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const year = dateObj.getFullYear();
+  const formattedDate = `${day}/${month}/${year}`;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Set font
+  doc.setFont("helvetica");
+
+  // Create a border for the header section
+  // doc.rect(20, 20, 170, 40);
+
+  // Add placeholder for the PICS logo
+  // doc.rect(22, 22, 36, 36); // Logo placeholder
+
+  // doc.setFontSize(8);
+  // doc.text("PICS Logo", 40, 40);
+  // add the logo
+  const header = new Image();
+  header.src = "images/header.jpg"; // Replace with your logo path
+  const stamp = new Image();
+  stamp.src = "./images/stamp.jpg"; // Replace with your stamp path
+  const footer = new Image();
+  footer.src = "images/footer.jpg"; // Replace with your footer path
+  // logo.onload = function() {
+  //   doc.addImage(logo, "JPEG", 22, 22, 36, 36); // Adjust the size and position as needed
+  // };
+  doc.addImage(header, "JPEG", 20, 20, 170, 40); // Logo placeholder
+
+  // Add header content
+  // doc.setFontSize(11);
+  // doc.setTextColor(0, 0, 255); // Blue text
+  // doc.text("Document Attestation, Medical, Visa Stamping - PICS", 63, 25);
+
+  // doc.setFontSize(10);
+  // doc.setTextColor(0, 0, 0); // Black text
+  // doc.text("Willow Center, 2nd Floor, Alinchuvadu,", 60, 30);
+  // doc.text("Arakkakaduvu Road, Vennala,", 60, 35);
+  // doc.text("Palarivattom, Cochin – 682028", 60, 40);
+  // doc.text("Mob. 8369820334, 9869303751", 60, 45);
+  // doc.text("Email: skpradhas@gmail.com, picscochin@gmail.com", 60, 50);
+  // doc.setTextColor(0, 0, 255); // Blue text
+  // doc.text("Website: https://picsattestation.in", 60, 55);
+
+
+  // Bill Number and Date
+  doc.setTextColor(0, 0, 0); // Black text
+  doc.setFontSize(10);
+  doc.text(`Bill No: ${formattedTrackingNumber} (Tracking Number)`, 20, 70);
+
+  // RECEIPT title
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("RECEIPT", 105, 85, { align: "center" });
+  doc.setFont("helvetica", "normal");
+
+  // Date on right side
+  doc.setFontSize(10);
+  doc.text(`Date: ${formattedDate}`, 170, 85);
+
+  // Receipt content
+  doc.text(`We received from Mr./Mrs.. ${customerName}`, 20, 100);
+  doc.text(`Passport No: ${passportNumber}`, 202, 100, { align: "right" });
+  doc.text("UAE Embassy/Consulate", 20, 110);
+
+  // Cost details with aligned equals signs
+  doc.text(`Cost of work        UAE+MOFA`, 20, 125);
+  doc.text(`= Rs....${totalAmount} .......`, 120, 125, { align: "left" });
+
+  doc.text(`UAE Delivery Charges`, 20, 130);
+  doc.text(`= Rs.....${uaeCharges}.......`, 120, 130, { align: "left" });
+
+  doc.text(`Advance Paid`, 20, 135);
+  doc.text(`= Rs .....${advancePaid}......`, 120, 135, { align: "left" });
+  doc.text(`PAYMENT MODE : ${paymentMode}`, 190, 135, { align: "right" });
+
+  doc.text(`Balance`, 20, 140);
+  doc.text(`= Rs....${balance}......`, 120, 140, { align: "left" });
+
+  // Amount in words
+  doc.text(`Amount in words. Rs.. ${amountInWords}.`, 20, 145);
+
+  // Submitted documents
+  doc.text("Submitted Documents.", 20, 165);
+  doc.text(`1... ${doc1}`, 20, 175);
+  doc.text(`2... ${doc2}`, 20, 185);
+  doc.text(`3... ${doc3}`, 20, 195);
+
+  // Submitted Successfully text
+  doc.text("Submitted Successfully *********", 160, 195, { align: "right" });
+
+  // For PICS, Director
+  doc.addImage(stamp, 20, 215, 40, 40); // Logo placeholder
+
+  doc.text("Payment Method", 105, 215, { align: "center" });
+
+  // Two rectangles for payment info and QR code
+  doc.rect(125, 215, 35, 30); // QR Code placeholder
+  doc.text("QR Code", 142.5, 230, { align: "center" });
+
+  doc.rect(160, 215, 35, 30); // Bank details placeholder
+  doc.setFontSize(6);
+  doc.text("617301010050483", 177.5, 220, { align: "center" });
+  doc.text("Satheesh K", 177.5, 225, { align: "center" });
+  doc.text("IFSC: UBIN0561738", 177.5, 230, { align: "center" });
+  doc.text("Account type: CC", 177.5, 235, { align: "center" });
+  doc.text("Union Bank of India", 177.5, 240, { align: "center" });
+
+  doc.addImage(footer, "JPEG", 20, 260, 160, 35);
+
+  // Footer - Branch information with color formatting
+  // doc.setFontSize(8);
+  // doc.setTextColor(255, 0, 0); // Red for "Branches:"
+  // doc.text("Branches:", 20, 305);
+  // doc.setTextColor(0, 0, 255); // Blue for "Document Attestation..."
+  // doc.text("Document Attestation, Medical, Visa Stamping - PICS", 55, 305);
+
+  // doc.setTextColor(255, 0, 0); // Red
+  // doc.text("Mumbai", 20, 310);
+  // doc.setTextColor(0, 0, 0); // Black
+  // doc.text(": 104 Balaji Darshan, Indralok 3, Bhayandar East, Thane 401105, Mumbai", 55, 310);
+
+  // doc.setTextColor(255, 0, 0); // Red
+  // doc.text("Cochin", 20, 315);
+  // doc.setTextColor(0, 0, 0); // Black
+  // doc.text(": Willow Center, 2 nd Floor, Alinchuvadu,Vennala, Palarivattom,Cochin 682026,Kerala", 55, 315);
+
+  // doc.setTextColor(255, 0, 0); // Red
+  // doc.text("Kottayam", 20, 320);
+  // doc.setTextColor(0, 0, 0); // Black
+  // doc.text(": Mulla Building Office Complex D.No.7, Taj Mosque Lane, TB Road, Kottayam 686001", 55, 320);
+
+  // doc.setTextColor(255, 0, 0); // Red
+  // doc.text("Alappuzha", 20, 325);
+  // doc.setTextColor(0, 0, 0); // Black
+  // doc.text(": St. Thomas Evanchalikkal Church Road, Stadium Ward, Alappuzha 688001, Kerala", 55, 325);
+
+  // doc.setTextColor(255, 0, 0); // Red
+  // doc.text("Contact", 20, 330);
+  // doc.setTextColor(0, 0, 0); // Black
+  // doc.text(": 8369820334, 9869303751, 8591870410, 6238875626", 55, 330);
+
+  // Generate the filename with date in a compact format
+  const fileDate = `${day}${month}${year}`;
+  const fileName = `Receipt_${customerName}_${fileDate}.pdf`;
+
+  // Save the PDF
+  doc.save(fileName);
 }
-
-
-        document.getElementById("billNo").innerText = trackingNumber;
-        document.getElementById("customerName").innerText = custname;
-        document.getElementById("paymode").innerText = userData1["PaymentMode"]?.toString() || "--";
-        document.getElementById("adv").innerText = userData1["AdvancePaid"]?.toString() || "--";
-        document.getElementById("total").innerText = userData1["TotalAmount"]?.toString() || "--";
-        document.getElementById("UAECharge").innerText = userData1["UaeDeliveryCharges"]?.toString() || "--";
-        document.getElementById("bal").innerText = userData1["Balance"]?.toString() || "--";
-        document.getElementById("passno").innerText = userData1["PassportNumber"]?.toString() || "--";
-        document.getElementById("subdoc1").innerText = userData1["SubmittedDocument1"]?.toString() || "--";
-        document.getElementById("subdoc2").innerText = userData1["SubmittedDocument2"]?.toString() || "--";
-        document.getElementById("subdoc3").innerText = userData1["SubmittedDocument3"]?.toString() || "--";
-
-        let amountwords = document.getElementById("adv").innerText;
-        function capitalizeWords(str) {
-          return str.replace(/\b\w/g, char => char.toUpperCase());
-        }
-        if (amountwords && !isNaN(amountwords) && isFinite(amountwords)) {
-          let words = numberToWords.toWords(parseInt(amountwords)) || "";
-          let capitalize = capitalizeWords(words) + " Rupees";
-          document.getElementById("amtwords").innerText = capitalize;
-
-        }
-        else {
-
-          document.getElementById("amtwords").innerText = "";
-        }
-
-
-        const dateObj = new Date();
-        const day = String(dateObj.getDate()).padStart(2, '0'); // Ensures two-digit day
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const month = monthNames[dateObj.getMonth()]; // Get short month name
-        const year = dateObj.getFullYear();
-        const formattedDate = `${day}${month}${year}`;
-
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        // Add header image
-        const headerImg = new Image();
-        headerImg.src = 'images/header.jpg'; // Adjust the path accordingly
-        headerImg.onload = function () {
-          doc.addImage(headerImg, 'jpg', 10, 10, 190, 30);
-          // Add space after header
-          let yPosition = 50; // Increased spacing after header
-
-          const textLines = doc.splitTextToSize(document.getElementById("receipt").innerText, 180);
-
-          doc.text(textLines, 10, yPosition);
-
-          // Add footer image
-          const footerImg = new Image();
-          footerImg.src = 'images/footer.jpg'; // Adjust the path accordingly
-          footerImg.onload = function () {
-            let footerWidth = 180; // Same as header width
-            let footerHeight = (footerImg.height / footerImg.width) * footerWidth; // Maintain aspect ratio
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const pageWidth = doc.internal.pageSize.getWidth(); // Get total page width
-            const footerX = (pageWidth - footerWidth) / 2;
-            const footerY = pageHeight - footerHeight - 10;
-            doc.addImage(footerImg, 'jpG', 10,footerY, footerWidth, footerHeight); // Adjust position dynamically
-            const stampImg = new Image();
-            stampImg.src = 'images/stamp.jpg';
-            stampImg.onload = function () {
-            // Stamp & Signature Placement (Above Footer)
-            let stampWidth = 60; // Adjust width to scale down
-            let stampHeight = (222 / 251) * stampWidth; // Maintain aspect ratio
-
-
-            const stampX = footerX + 3; // Align with footer
-            const stampY = footerY - stampHeight - 20; // 20px above footer
- 
-
-            // Stamp & Signature Image (Properly Positioned)
-            doc.addImage(stampImg, 'jpg', stampX, stampY, stampWidth, stampHeight);
-            // add text below the stamp
-            doc.text("Submitted Successfully **********", stampX + 100, stampY + 7);
-            const fileName = `Receipt_${custname}_${formattedDate}.pdf`;
-
-            doc.save(fileName);
-            };
-          };
-        };
-
-      }
 
     </script>
   </body>
