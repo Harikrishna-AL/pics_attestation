@@ -571,6 +571,8 @@
   // logo.onload = function() {
   //   doc.addImage(logo, "JPEG", 22, 22, 36, 36); // Adjust the size and position as needed
   // };
+  const qr = new Image();
+  qr.src = "images/qr.jpg"; // Replace with your QR code path
   doc.addImage(header, "JPEG", 20, 20, 170, 40); // Logo placeholder
 
   // Add header content
@@ -642,7 +644,8 @@
 
   // Two rectangles for payment info and QR code
   doc.rect(125, 215, 35, 30); // QR Code placeholder
-  doc.text("QR Code", 142.5, 230, { align: "center" });
+  // doc.text("QR Code", 142.5, 230, { align: "center" });
+  doc.addImage(qr, "JPEG", 126, 216, 27, 27); // Adjust the size and position as needed
 
   doc.rect(160, 215, 35, 30); // Bank details placeholder
   doc.setFontSize(6);
@@ -651,6 +654,13 @@
   doc.text("IFSC: UBIN0561738", 177.5, 230, { align: "center" });
   doc.text("Account type: CC", 177.5, 235, { align: "center" });
   doc.text("Union Bank of India", 177.5, 240, { align: "center" });
+
+  doc.setFontSize(8),
+// make font bold and red
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(255, 0, 0); // Red text
+  doc.text("Note: Any changes in the amount will be paid by the candidate later", 150, 250, { align: "center" });
+  
 
   doc.addImage(footer, "JPEG", 20, 260, 160, 35);
 
