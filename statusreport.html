@@ -499,14 +499,14 @@
   // Find the row matching the tracking number
   const userData1 = jsonData1.find(row => row["TrackingNumber"] == trackingNumber);
 
-  const enteredPasscode = prompt("Enter the password for this tracking number:");
+  // const enteredPasscode = prompt("Enter the password for this tracking number:");
 
-  if (enteredPasscode === null) return; // User clicked cancel
+  // if (enteredPasscode === null) return; // User clicked cancel
 
-  if (enteredPasscode.toString() !== userData1["PassCode"].toString()) {
-    alert("Incorrect password!");
-    return;
-  }
+  // if (enteredPasscode.toString() !== userData1["PassCode"].toString()) {
+  //   alert("Incorrect password!");
+  //   return;
+  // }
 
   const submittedBy = document.getElementById("submittedBy").textContent.trim();
   if (submittedBy == "--") {
