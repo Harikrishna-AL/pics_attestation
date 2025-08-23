@@ -2747,7 +2747,7 @@ ul.dropdown-menu li {
 }
 #offices {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* first row: 3 per row */
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
