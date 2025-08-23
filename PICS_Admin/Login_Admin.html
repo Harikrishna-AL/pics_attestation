@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-container {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      width: 340px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .logo {
+      width: 80px;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      margin: 10px 0 25px;
+      color: #333;
+      font-size: 24px;
+    }
+
+    input {
+      width: 92%;
+      padding: 14px;
+      margin: 10px auto;
+      display: block;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #0072ff;
+      box-shadow: 0 0 6px rgba(0,114,255,0.4);
+    }
+
+    button {
+      width: 92%;
+      padding: 14px;
+      background: #0072ff;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #0056c7;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <!-- Replace with your logo -->
+    <img src="images/pics_logo.jpg" alt="Company Logo" class="logo">
+
+    <h2>Login</h2>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+      <p id="error-message" class="error"></p>
+    </form>
+  </div>
+
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+   <script src="supabaseConfig.js"></script>
+
+  <script>
+
+    const form = document.getElementById("login-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const errorMessage = document.getElementById("error-message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMessage.textContent = "";
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        errorMessage.textContent = error.message;
+      } else {
+        // Successful login
+        window.location.href = "Dashboard_Admin.html"; // redirect to admin dashboard
+      }
+    });
+  </script>
+</body>
+</html>

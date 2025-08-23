@@ -86,6 +86,7 @@ blockquote {
   background: #655E7A;
 }
 
+
 input[type=email],
 input[type=password],
 input[type=text],
@@ -2743,6 +2744,19 @@ ul.dropdown-menu li {
 .office p {
   margin: 0;
   line-height: 1.5;
+}
+#offices {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* first row: 3 per row */
+  gap: 20px;
+}
+
+
+.office {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f9f9f9;
 }
 
 .chatbot-container {

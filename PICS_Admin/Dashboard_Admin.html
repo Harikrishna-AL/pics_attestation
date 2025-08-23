@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+    }
+
+    .header {
+      background: #0072ff;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .logout-btn {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #ff4d4f;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .content {
+      padding: 30px;
+      text-align: center;
+      color: #333;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    Dashboard
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="content">
+    <p>Welcome to your dashboard!</p>
+  </div>
+
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Your global config -->
+  <script src="supabaseConfig.js"></script>
+  <script>
+    // Protect dashboard page
+    supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+            window.location.href = "Login_Admin.html";
+        }
+    });
+
+    // Logout functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.addEventListener('click', async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            alert('Error logging out: ' + error.message);
+        } else {
+            window.location.href = "Login_Admin.html";
+        }
+    });
+  </script>
+
+</body>
+</html>
