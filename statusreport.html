@@ -463,6 +463,8 @@
       <p>Balance = Rs<span id="bal"></span></p>
       <p>PAYMENT MODE = <span id="paymode"></span> </p>
       <p><strong>Amount in words:</strong> <span id="amtwords"></span></p>
+      <p>UAE Number = <span id="uaenum"></span></p>
+      <p>Processed Date = <span id="processdate"></span></p>
       <p>Submitted Documents:</p>
       <p>1.<span id="subdoc1"></span></p>
       <p>2.<span id="subdoc2"></span></p>
@@ -526,6 +528,8 @@
   const doc1 = userData1["SubmittedDocument1"]?.toString() || "--";
   const doc2 = userData1["SubmittedDocument2"]?.toString() || "--";
   const doc3 = userData1["SubmittedDocument3"]?.toString() || "--";
+  const uae_num = userData1["PassCode"]?.toString() || "--";
+  const processed_date = userData1["UAE NUMBER RELEASING DATE"]?.toString() || "--";
 
   let amountInWords = "";
   const advance = parseFloat(advancePaid);
@@ -627,6 +631,11 @@
 
   // Amount in words
   doc.text(`Amount in words. Rs.. ${amountInWords}.`, 20, 145);
+
+  doc.text(`UAE Number:`, 20, 150);
+  doc.text(`= ${uae_num}`, 120, 150)
+  doc.text(`Processed Date:`, 20, 155);
+  doc.text(`= ${processed_date}`, 120, 155)
 
   // Submitted documents
   doc.text("Submitted Documents.", 20, 165);
