@@ -519,7 +519,7 @@
   // Get data for the receipt
   const customerName = custname;
   const passportNumber = userData1["PassportNumber"]?.toString() || "--";
-  const documentType = userData1["Type"]?.toString() || "--";
+  const documentType = userData1["TYPE"]?.toString() || "--";
   const totalAmount = userData1["TotalAmount"]?.toString() || "0";
   const uaeCharges = userData1["UaeDeliveryCharges"]?.toString() || "0";
   const advancePaid = userData1["AdvancePaid"]?.toString() || "0";
@@ -530,6 +530,7 @@
   const doc3 = userData1["SubmittedDocument3"]?.toString() || "--";
   const uae_num = userData1["PassCode"]?.toString() || "--";
   const processed_date = userData1["UAE NUMBER RELEASING DATE"]?.toString() || "--";
+  const country = userData1["COUNTRY"]?.toString() || "--";
 
   let amountInWords = "";
   const advance = parseFloat(advancePaid);
@@ -613,10 +614,10 @@
   // Receipt content
   doc.text(`We received from Mr./Mrs.. ${customerName}`, 20, 100);
   doc.text(`Passport No: ${passportNumber}`, 202, 100, { align: "right" });
-  doc.text("UAE Embassy/Consulate", 20, 110);
+  doc.text(`${country} Embassy/Consulate`, 20, 110);
 
   // Cost details with aligned equals signs
-  doc.text(`Cost of work        UAE+MOFA`, 20, 125);
+  doc.text(`Cost of work        ${documentType}`, 20, 125);
   doc.text(`= Rs....${totalAmount} .......`, 120, 125, { align: "left" });
 
   doc.text(`UAE Delivery Charges`, 20, 130);
