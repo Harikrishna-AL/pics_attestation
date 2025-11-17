@@ -248,24 +248,38 @@
     </div>
 
     <!-- Filters -->
-    <div class="row filter-row">
-      <div class="col-md-3 col-6">
-        <label for="fromDate">From date</label>
-        <input type="date" id="fromDate" class="form-control form-control-sm" />
-      </div>
-      <div class="col-md-3 col-6">
-        <label for="toDate">To date</label>
-        <input type="date" id="toDate" class="form-control form-control-sm" />
-      </div>
-      <div class="col-md-3 col-6">
-        <label for="statusFilter">Status</label>
-        <select id="statusFilter" class="form-select form-select-sm">
-          <option value="">All</option>
-        </select>
-      </div>
+   <!-- FILTER ROW 1: 4 columns in a line -->
+<div class="row filter-row g-3 mb-3">
+
+  <div class="col-lg-3 col-md-6 col-12">
+    <label for="fromDate">From date</label>
+    <input type="date" id="fromDate" class="form-control form-control-sm" />
+  </div>
+
+  <div class="col-lg-3 col-md-6 col-12">
+    <label for="toDate">To date</label>
+    <input type="date" id="toDate" class="form-control form-control-sm" />
+  </div>
+
+  <div class="col-lg-3 col-md-6 col-12">
+    <label for="statusFilter">Status</label>
+    <select id="statusFilter" class="form-select form-select-sm">
+      <option value="">All</option>
+    </select>
+  </div>
+
+  <div class="col-lg-3 col-md-6 col-12">
+    <label class="form-label">Year</label>
+    <select id="yearFilter" class="form-select form-select-sm">
+      <option value="">All</option>
+    </select>
+  </div>
+
+</div>
+
+
       
-    </div>
-    <div class="row filter-row mt-2">
+   
 
  <div class="row g-3 align-items-end mb-3">
 
@@ -516,6 +530,10 @@
   const words = text.split(" ");
   return words.slice(0, 2).join(" ");
 }
+function trimValue(v) {
+  if (v === null || v === undefined) return "";
+  return v.toString().trim();
+}
 
 
     function groupCount(data, field) {
@@ -554,6 +572,8 @@
   const typeVal = document.getElementById("typeFilter").value;
 const customerVal = document.getElementById("customerFilter").value;
 const paymentVal = document.getElementById("paymentFilter").value;
+const yearVal = document.getElementById("yearFilter").value;
+
 
 
   const fromDate = fromDateVal ? new Date(fromDateVal) : null;
@@ -576,6 +596,8 @@ const paymentVal = document.getElementById("paymentFilter").value;
     if (typeVal && row["Type"] !== typeVal) pass = false;
 if (customerVal && row["Customer Name"] !== customerVal) pass = false;
 if (paymentVal && row["PaymentMode"] !== paymentVal) pass = false;
+if (yearVal && d && d.getFullYear().toString() !== yearVal) pass = false;
+
 
 
     return pass;
@@ -614,104 +636,123 @@ if (paymentVal && row["PaymentMode"] !== paymentVal) pass = false;
     }
 
     function renderCharts(filtered) {
-      // Status chart
-      const statusMap = groupCount(filtered, "Status");
-      const statusLabels = Object.keys(statusMap);
-      const statusValues = Object.values(statusMap);
-      if (!statusChart) {
-        statusChart = new Chart(document.getElementById("statusChart"), {
-          type: "doughnut",
-          data: { labels: statusLabels, datasets: [{ data: statusValues }] },
-          options: { plugins: { legend: { position: "bottom" } } }
-        });
-      } else {
-        statusChart.data.labels = statusLabels;
-        statusChart.data.datasets[0].data = statusValues;
-        statusChart.update();
-      }
 
-      // Country chart
-      const countryMap = groupCount(filtered, "COUNTRY");
-      const countryLabels = Object.keys(countryMap);
-      const countryValues = Object.values(countryMap);
-      if (!countryChart) {
-        countryChart = new Chart(document.getElementById("countryChart"), {
-          type: "bar",
-          data: { labels: countryLabels, datasets: [{ data: countryValues }] },
-          options: {
-            plugins: { legend: { display: false } },
-            scales: { x: { ticks: { autoSkip: false } } }
-          }
-        });
-      } else {
-        countryChart.data.labels = countryLabels;
-        countryChart.data.datasets[0].data = countryValues;
-        countryChart.update();
-      }
+  // ---------------- STATUS CHART ----------------
+  const statusMap = groupCount(filtered, "Status");
+  const statusLabels = Object.keys(statusMap);
+  const statusValues = Object.values(statusMap);
 
-      // Payment chart
-      const payMap = groupCount(filtered, "PaymentMode");
-      const payLabels = Object.keys(payMap);
-      const payValues = Object.values(payMap);
-      if (!paymentChart) {
-        paymentChart = new Chart(document.getElementById("paymentChart"), {
-          type: "pie",
-          data: { labels: payLabels, datasets: [{ data: payValues }] },
-          options: { plugins: { legend: { position: "bottom" } } }
-        });
-      } else {
-        paymentChart.data.labels = payLabels;
-        paymentChart.data.datasets[0].data = payValues;
-        paymentChart.update();
-      }
+  if (!statusChart) {
+    statusChart = new Chart(document.getElementById("statusChart"), {
+      type: "doughnut",
+      data: { labels: statusLabels, datasets: [{ data: statusValues }] },
+      options: { plugins: { legend: { position: "bottom" } } }
+    });
+  } else {
+    statusChart.data.labels = statusLabels;
+    statusChart.data.datasets[0].data = statusValues;
+    statusChart.update();
+  }
 
-      // Monthly submissions (by DateofSubmission)
-      const monthMap = {};
-      filtered.forEach((row) => {
-        const d = ddmmyyyyToISO(row["DateofSubmission"]);
-        if (!d) return;
-        const label =
-          d.getFullYear() +
-          "-" +
-          String(d.getMonth() + 1).padStart(2, "0"); // YYYY-MM
-        monthMap[label] = (monthMap[label] || 0) + 1;
-      });
-      const monthLabels = Object.keys(monthMap).sort();
-      const monthValues = monthLabels.map((m) => monthMap[m]);
-      if (!monthlyChart) {
-        monthlyChart = new Chart(document.getElementById("monthlyChart"), {
-          type: "line",
-          data: { labels: monthLabels, datasets: [{ data: monthValues }] },
-          options: {
-            plugins: { legend: { display: false } },
-            tension: 0.3
-          }
-        });
-      } else {
-        monthlyChart.data.labels = monthLabels;
-        monthlyChart.data.datasets[0].data = monthValues;
-        monthlyChart.update();
-      }
+  // ---------------- COUNTRY CHART ----------------
+  const countryMap = groupCount(filtered, "COUNTRY");
+  const countryLabels = Object.keys(countryMap);
+  const countryValues = Object.values(countryMap);
 
-      // Amount by TYPE
-      const typeMap = groupSum(filtered, "TYPE", "TotalAmount");
-      const typeLabels = Object.keys(typeMap);
-      const typeValues = Object.values(typeMap);
-      if (!typeAmountChart) {
-        typeAmountChart = new Chart(document.getElementById("typeAmountChart"), {
-          type: "bar",
-          data: { labels: typeLabels, datasets: [{ data: typeValues }] },
-          options: {
-            plugins: { legend: { display: false } },
-            scales: { y: { ticks: { callback: (v) => v / 1000 + "k" } } }
-          }
-        });
-      } else {
-        typeAmountChart.data.labels = typeLabels;
-        typeAmountChart.data.datasets[0].data = typeValues;
-        typeAmountChart.update();
+  if (!countryChart) {
+    countryChart = new Chart(document.getElementById("countryChart"), {
+      type: "bar",
+      data: { labels: countryLabels, datasets: [{ data: countryValues }] },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { autoSkip: false } } }
       }
-    }
+    });
+  } else {
+    countryChart.data.labels = countryLabels;
+    countryChart.data.datasets[0].data = countryValues;
+    countryChart.update();
+  }
+
+  // ---------------- PAYMENT MODE CHART ----------------
+  const payMap = groupCount(filtered, "PaymentMode");
+  const payLabels = Object.keys(payMap);
+  const payValues = Object.values(payMap);
+
+  if (!paymentChart) {
+    paymentChart = new Chart(document.getElementById("paymentChart"), {
+      type: "pie",
+      data: { labels: payLabels, datasets: [{ data: payValues }] },
+      options: { plugins: { legend: { position: "bottom" } } }
+    });
+  } else {
+    paymentChart.data.labels = payLabels;
+    paymentChart.data.datasets[0].data = payValues;
+    paymentChart.update();
+  }
+
+  // ---------------- MONTHLY SUBMISSIONS (UPDATED) ----------------
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  // Create an array of 12 months
+  let monthCounts = Array(12).fill(0);
+
+  // Selected year from dropdown
+  const selectedYear = document.getElementById("yearFilter")
+    ? document.getElementById("yearFilter").value
+    : "";
+
+  filtered.forEach(row => {
+    const d = toDate(row["DateofSubmission"]);
+    if (!d) return;
+
+    // If year filter selected → only count that year
+    if (selectedYear && d.getFullYear().toString() !== selectedYear) return;
+
+    const monthIndex = d.getMonth(); // 0-11
+    monthCounts[monthIndex]++;
+  });
+
+  const monthLabels = monthNames;
+  const monthValues = monthCounts;
+
+  if (!monthlyChart) {
+    monthlyChart = new Chart(document.getElementById("monthlyChart"), {
+      type: "line",
+      data: { labels: monthLabels, datasets: [{ data: monthValues }] },
+      options: {
+        plugins: { legend: { display: false } },
+        tension: 0.3
+      }
+    });
+  } else {
+    monthlyChart.data.labels = monthLabels;
+    monthlyChart.data.datasets[0].data = monthValues;
+    monthlyChart.update();
+  }
+
+  // ---------------- AMOUNT BY TYPE ----------------
+  const typeMap = groupSum(filtered, "TYPE", "TotalAmount");
+  const typeLabels = Object.keys(typeMap);
+  const typeValues = Object.values(typeMap);
+
+  if (!typeAmountChart) {
+    typeAmountChart = new Chart(document.getElementById("typeAmountChart"), {
+      type: "bar",
+      data: { labels: typeLabels, datasets: [{ data: typeValues }] },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { ticks: { callback: (v) => v / 1000 + "k" } } }
+      }
+    });
+  } else {
+    typeAmountChart.data.labels = typeLabels;
+    typeAmountChart.data.datasets[0].data = typeValues;
+    typeAmountChart.update();
+  }
+}
+
 
     function renderRecentTable(filtered) {
       const tbody = document.getElementById("recentTableBody");
@@ -783,6 +824,49 @@ if (paymentVal && row["PaymentMode"] !== paymentVal) pass = false;
   });
 }
 
+function toDate(value) {
+  if (!value) return null;
+
+  // Remove extra spaces
+  value = value.toString().trim();
+
+  // Accept DD-MM-YYYY or DD/MM/YYYY
+  const parts = value.split(/[-\/]/);
+
+  if (parts.length !== 3) return null;
+
+  let [dd, mm, yyyy] = parts.map(x => parseInt(x, 10));
+
+  // Validate numbers
+  if (!dd || !mm || !yyyy) return null;
+
+  // Convert to proper JS date
+  const dateObj = new Date(yyyy, mm - 1, dd);
+
+  // Handle invalid date (e.g., 32-13-2025)
+  if (isNaN(dateObj.getTime())) return null;
+
+  return dateObj;
+}
+
+
+function populateYearFilter() {
+  const yearSel = document.getElementById("yearFilter");
+  const years = new Set();
+
+  allData.forEach(row => {
+    const d = toDate(row["DateofSubmission"]);
+    if (d) years.add(d.getFullYear());
+  });
+
+  Array.from(years).sort().forEach(y => {
+    const opt = document.createElement("option");
+    opt.value = y;
+    opt.textContent = y;
+    yearSel.appendChild(opt);
+  });
+}
+
 
     function refreshDashboard() {
       const filtered = applyFilters();
@@ -802,6 +886,7 @@ if (paymentVal && row["PaymentMode"] !== paymentVal) pass = false;
         allData = parsed.data;
         populateFilters();
         populateExtraFilters();
+        populateYearFilter();
         refreshDashboard();
       })
       .catch((err) => console.error("Error loading CSV:", err));
@@ -813,6 +898,8 @@ if (paymentVal && row["PaymentMode"] !== paymentVal) pass = false;
     document.getElementById("typeFilter").addEventListener("change", refreshDashboard);
 document.getElementById("customerFilter").addEventListener("change", refreshDashboard);
 document.getElementById("paymentFilter").addEventListener("change", refreshDashboard);
+document.getElementById("yearFilter").addEventListener("change", refreshDashboard);
+
 
   </script>
 </body>
