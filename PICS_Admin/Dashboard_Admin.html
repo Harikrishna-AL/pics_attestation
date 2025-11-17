@@ -263,13 +263,50 @@
           <option value="">All</option>
         </select>
       </div>
-      <div class="col-md-3 col-6">
-        <label for="countryFilter">Country</label>
-        <select id="countryFilter" class="form-select form-select-sm">
-          <option value="">All</option>
-        </select>
-      </div>
+      
     </div>
+    <div class="row filter-row mt-2">
+
+ <div class="row g-3 align-items-end mb-3">
+
+  <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+    <label class="form-label">Country</label>
+    <select id="countryFilter" class="form-select form-select-sm">
+      <option value="">All</option>
+    </select>
+  </div>
+
+  <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+    <label class="form-label">Status</label>
+    <select id="statusFilter" class="form-select form-select-sm">
+      <option value="">All</option>
+    </select>
+  </div>
+
+  <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+    <label class="form-label">Type</label>
+    <select id="typeFilter" class="form-select form-select-sm">
+      <option value="">All</option>
+    </select>
+  </div>
+
+  <div class="col-xl-3 col-lg-3 col-md-4 col-6">
+    <label class="form-label">Customer</label>
+    <select id="customerFilter" class="form-select form-select-sm">
+      <option value="">All</option>
+    </select>
+  </div>
+
+  <div class="col-xl-3 col-lg-3 col-md-4 col-6">
+    <label class="form-label">Payment</label>
+    <select id="paymentFilter" class="form-select form-select-sm">
+      <option value="">All</option>
+    </select>
+  </div>
+
+</div>
+
+
 
     <!-- KPI cards -->
     <div class="row g-3 mb-3">
@@ -514,6 +551,10 @@
   const toDateVal = document.getElementById("toDate").value;
   const statusVal = document.getElementById("statusFilter").value;
   const countryVal = document.getElementById("countryFilter").value;
+  const typeVal = document.getElementById("typeFilter").value;
+const customerVal = document.getElementById("customerFilter").value;
+const paymentVal = document.getElementById("paymentFilter").value;
+
 
   const fromDate = fromDateVal ? new Date(fromDateVal) : null;
   const toDate = toDateVal ? new Date(toDateVal) : null;
@@ -531,6 +572,11 @@
 
     // country filter (raw)
     if (countryVal && row["COUNTRY"] !== countryVal) pass = false;
+
+    if (typeVal && row["Type"] !== typeVal) pass = false;
+if (customerVal && row["Customer Name"] !== customerVal) pass = false;
+if (paymentVal && row["PaymentMode"] !== paymentVal) pass = false;
+
 
     return pass;
   });
@@ -705,6 +751,39 @@
       });
     }
 
+    function populateExtraFilters() {
+  const typeSel = document.getElementById("typeFilter");
+  const custSel = document.getElementById("customerFilter");
+  const paySel = document.getElementById("paymentFilter");
+
+  // Unique values
+  const types = uniqueValues(allData, "Type");
+  const customers = uniqueValues(allData, "Customer Name");
+  const payments = uniqueValues(allData, "PaymentMode");
+
+  types.forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = v;
+    opt.textContent = v;
+    typeSel.appendChild(opt);
+  });
+
+  customers.forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = v;
+    opt.textContent = v;
+    custSel.appendChild(opt);
+  });
+
+  payments.forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = v;
+    opt.textContent = v;
+    paySel.appendChild(opt);
+  });
+}
+
+
     function refreshDashboard() {
       const filtered = applyFilters();
       updateKpis(filtered);
@@ -722,6 +801,7 @@
         });
         allData = parsed.data;
         populateFilters();
+        populateExtraFilters();
         refreshDashboard();
       })
       .catch((err) => console.error("Error loading CSV:", err));
@@ -730,6 +810,10 @@
     document.getElementById("toDate").addEventListener("change", refreshDashboard);
     document.getElementById("statusFilter").addEventListener("change", refreshDashboard);
     document.getElementById("countryFilter").addEventListener("change", refreshDashboard);
+    document.getElementById("typeFilter").addEventListener("change", refreshDashboard);
+document.getElementById("customerFilter").addEventListener("change", refreshDashboard);
+document.getElementById("paymentFilter").addEventListener("change", refreshDashboard);
+
   </script>
 </body>
 </html>
