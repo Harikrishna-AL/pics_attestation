@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Insert Attestation Data</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body { background:#eef1f6; font-family:system-ui; }
+.sidebar { width:240px; background:#e8f0fe; height:100vh; padding:20px; position:fixed; left:0; top:0; box-shadow:4px 0 10px rgba(0,0,0,0.08);} 
+.content-area { margin-left:260px; padding:40px 50px; }
+.card-box { background:#fff; border-radius:14px; padding:25px 30px; box-shadow:0 6px 20px rgba(0,0,0,0.08);} 
+.submit-btn { background:#2563eb; color:#fff; padding:10px; width:160px; border-radius:8px; border:none; font-weight:600; }
+ .logo {
+      width: 80px;
+      margin-bottom: 15px;
+    }
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <h5 class="fw-bold mb-4">NAVIGATION</h5>
+  <div class="mb-3 fw-bold text-primary">Insert Data</div>
+      <img src="images/pics_logo.jpg" alt="Company Logo" class="logo">
+
+</div>
+
+<div class="content-area">
+  <a href="Dashboard_Admin.html" class="text-primary mb-3 d-block">← Back</a>
+  <h3 class="fw-bold mb-4">Insert New Attestation Record</h3>
+
+  <div class="card-box">
+    <div class="row g-3">
+
+      <div class="col-md-4">
+        <label>Tracking Number</label>
+        <input id="TrackingNumber" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Submitted By</label>
+        <input id="Submittedby" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Date of Submission</label>
+        <input type="date" id="DateofSubmission" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Status</label>
+        <input id="Status" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Type</label>
+        <input id="Type" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Customer Name</label>
+        <input id="CustomerName" class="form-control" />
+      </div>
+
+      <div class="col-md-6">
+        <label>Document Details</label>
+        <input id="DocumentDetails" class="form-control" />
+      </div>
+
+      <div class="col-md-6">
+        <label>General Comments</label>
+        <input id="GeneralComments" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Phone No</label>
+        <input id="phoneno" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Payment Mode</label>
+        <input id="PaymentMode" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Total Amount</label>
+        <input id="TotalAmount" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>UAE Delivery Charges</label>
+        <input id="UaeDeliveryCharges" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Advance Paid</label>
+        <input id="AdvancePaid" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Balance</label>
+        <input id="Balance" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Passport Number</label>
+        <input id="PassportNumber" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Submitted Document 1</label>
+        <input id="SubmittedDocument1" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Submitted Document 2</label>
+        <input id="SubmittedDocument2" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Submitted Document 3</label>
+        <input id="SubmittedDocument3" class="form-control" />
+      </div>
+
+      <div class="col-md-6">
+        <label>Other Docs</label>
+        <input id="OtherDocs" class="form-control" />
+      </div>
+
+      <div class="col-md-6">
+        <label>UAE Number Releasing Date</label>
+        <input id="UaeNumberReleasingDate" class="form-control" />
+      </div>
+
+      
+
+      <div class="col-md-4">
+        <label>Date Process</label>
+        <input id="DateProcess" class="form-control" type="date" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Delivered</label>
+        <input id="Delivered" class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label>Submitted</label>
+        <input id="Submitted" class="form-control" />
+      </div>
+
+      
+      <div class="col-md-4">
+        <label>COUNTRY</label>
+        <input id="COUNTRY" class="form-control" />
+      </div>
+
+      <div class="col-12 mt-4">
+        <button class="submit-btn" onclick="submitData()">Submit</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function submitData() {
+  
+  const apiUrl = "";  // paste your URL here
+
+  const data = {
+    TrackingNumber: document.getElementById("TrackingNumber").value,
+    Submittedby: document.getElementById("Submittedby").value,
+    DateofSubmission: document.getElementById("DateofSubmission").value,
+    Status: document.getElementById("Status").value,
+    Type: document.getElementById("Type").value,
+    CustomerName: document.getElementById("CustomerName").value,
+    DocumentDetails: document.getElementById("DocumentDetails").value,
+    GeneralComments: document.getElementById("GeneralComments").value,
+    phoneno: document.getElementById("phoneno").value,
+    PaymentMode: document.getElementById("PaymentMode").value,
+    TotalAmount: document.getElementById("TotalAmount").value,
+    UaeDeliveryCharges: document.getElementById("UaeDeliveryCharges").value,
+    AdvancePaid: document.getElementById("AdvancePaid").value,
+    Balance: document.getElementById("Balance").value,
+    PassportNumber: document.getElementById("PassportNumber").value,
+    SubmittedDocument1: document.getElementById("SubmittedDocument1").value,
+    SubmittedDocument2: document.getElementById("SubmittedDocument2").value,
+    SubmittedDocument3: document.getElementById("SubmittedDocument3").value,
+    OtherDocs: document.getElementById("OtherDocs").value,
+    UaeNumberReleasingDate: document.getElementById("UaeNumberReleasingDate").value,
+    DateProcess: document.getElementById("DateProcess").value,
+    Delivered: document.getElementById("Delivered").value,
+    COUNTRY: document.getElementById("COUNTRY").value
+  };
+
+  fetch(apiUrl, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(response => response.json())
+  .then(res => {
+    if (res.status === "success") {
+      alert("Data submitted successfully!");
+      window.location.href = "index.html"; // redirect back to dashboard
+    } else {
+      alert("Error: " + res.message);
+    }
+  })
+  .catch(err => {
+    alert("Request failed: " + err);
+  });
+
+}
+</script>
+
+</body>
+</html>

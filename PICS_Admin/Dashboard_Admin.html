@@ -10,6 +10,35 @@
       margin: 0;
       background: #f4f6f8;
     }
+.side-pill-btn {
+  position: fixed;
+  left: -5px;                 /* pull slightly left for a nice edge */
+  top: 40%;                   /* moved upward */
+  transform: translateY(-50%) rotate(180deg);
+  
+  background: #ffffff;
+  color: #2563eb;
+  font-weight: 600;
+  padding: 10px 14px;         /* smaller padding */
+  
+  border-radius: 50px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+
+  font-size: 14px;            /* slightly smaller */
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+  z-index: 9999;
+  transition: 0.25s ease;
+}
+
+.side-pill-btn:hover {
+  background: #f3f4f6;
+  transform: translateY(-50%) rotate(180deg) scale(1.07);
+}
 
     .header {
       background: #0072ff;
@@ -50,6 +79,19 @@
     PICS Dashboard
     <button class="logout-btn" id="logoutBtn">Logout</button>
   </div>
+  
+  <div id="insertVerticalBtn" class="side-pill-btn">
+  <span>Insert Data</span>
+</div>
+<script>
+document.getElementById("insertVerticalBtn").addEventListener("click", () => {
+    window.location.href = "Insert_Admin.html";  // new page
+});
+
+
+</script>
+
+
 
   <div class="content">
    <!DOCTYPE html>
