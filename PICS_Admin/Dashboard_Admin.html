@@ -332,12 +332,7 @@ document.getElementById("insertVerticalBtn").addEventListener("click", () => {
     </select>
   </div>
 
-  <div class="col-xl-2 col-lg-3 col-md-4 col-6">
-    <label class="form-label">Status</label>
-    <select id="statusFilter" class="form-select form-select-sm">
-      <option value="">All</option>
-    </select>
-  </div>
+ 
 
   <div class="col-xl-2 col-lg-3 col-md-4 col-6">
     <label class="form-label">Type</label>
@@ -368,7 +363,7 @@ document.getElementById("insertVerticalBtn").addEventListener("click", () => {
     <div class="row g-3 mb-3">
       <div class="col-md-3">
         <div class="kpi-card" style="background: linear-gradient(135deg,#8b5cf6,#6366f1);">
-          <div class="kpi-title">Total Cases</div>
+          <div class="kpi-title">Total Documents</div>
           <div id="kpi-total-cases" class="kpi-value">0</div>
           <div class="kpi-sub">All tracking numbers</div>
         </div>
@@ -413,7 +408,7 @@ document.getElementById("insertVerticalBtn").addEventListener("click", () => {
         <div class="panel-card">
           <div class="panel-header">
             <div>
-              <div class="panel-title">Cases by Country</div>
+              <div class="panel-title">Documents by Country</div>
               <div class="panel-subtitle">Top countries</div>
             </div>
           </div>
@@ -549,14 +544,39 @@ document.getElementById("insertVerticalBtn").addEventListener("click", () => {
       return "₹" + val.toLocaleString("en-IN", { maximumFractionDigits: 0 });
     }
 
-    function ddmmyyyyToISO(dateStr) {
-      if (!dateStr) return null;
-      const parts = String(dateStr).split(/[-\/]/);
-      if (parts.length !== 3) return null;
-      const [dd, mm, yyyy] = parts.map((p) => parseInt(p, 10));
-      if (!yyyy || !mm || !dd) return null;
-      return new Date(yyyy, mm - 1, dd);
-    }
+   
+    function parseDateSmart(v) {
+  if (!v) return null;
+
+  let s = v.toString().trim();
+
+  // replace bad characters
+  s = s.replace(/[^0-9.\-\/]/g, "");
+
+  // convert all separators to "."
+  s = s.replace(/[-\/]/g, ".");
+
+  const parts = s.split(".");
+  if (parts.length < 3) return null;
+
+  let [dd, mm, yyyy] = parts;
+
+  dd = parseInt(dd);
+  mm = parseInt(mm);
+
+  // fix 2-digit year (25 → 2025)
+  if (yyyy.length === 2) yyyy = "20" + yyyy;
+
+  yyyy = parseInt(yyyy);
+
+  if (!dd || !mm || !yyyy) return null;
+
+  return new Date(yyyy, mm - 1, dd);
+}
+
+
+
+
     function cleanCountry(raw) {
   if (!raw) return "Unknown";
 
@@ -606,17 +626,16 @@ function trimValue(v) {
       return Array.from(set).sort();
     }
 
-    function applyFilters() {
+   function applyFilters() {
   const fromDateVal = document.getElementById("fromDate").value;
   const toDateVal = document.getElementById("toDate").value;
+
   const statusVal = document.getElementById("statusFilter").value;
   const countryVal = document.getElementById("countryFilter").value;
   const typeVal = document.getElementById("typeFilter").value;
-const customerVal = document.getElementById("customerFilter").value;
-const paymentVal = document.getElementById("paymentFilter").value;
-const yearVal = document.getElementById("yearFilter").value;
-
-
+  const customerVal = document.getElementById("customerFilter").value;
+  const paymentVal = document.getElementById("paymentFilter").value;
+  const yearVal = document.getElementById("yearFilter").value;
 
   const fromDate = fromDateVal ? new Date(fromDateVal) : null;
   const toDate = toDateVal ? new Date(toDateVal) : null;
@@ -624,34 +643,36 @@ const yearVal = document.getElementById("yearFilter").value;
   const filtered = allData.filter((row) => {
     let pass = true;
 
-    // date filter
-    const d = ddmmyyyyToISO(row["DateofSubmission"]);
-    if (fromDate && d && d < fromDate) pass = false;
-    if (toDate && d && d > toDate) pass = false;
+    const d = parseDateSmart(row["DateofSubmission"]);
 
-    // status filter
+    // skip invalid dates
+    if (!d) return false;
+
+    // date range compare
+    if (fromDate && d < fromDate) pass = false;
+    if (toDate && d > toDate) pass = false;
+
+    // year filter
+    if (yearVal && d.getFullYear().toString() !== yearVal) pass = false;
+
+    // other filters
     if (statusVal && row["Status"] !== statusVal) pass = false;
-
-    // country filter (raw)
     if (countryVal && row["COUNTRY"] !== countryVal) pass = false;
-
     if (typeVal && row["Type"] !== typeVal) pass = false;
-if (customerVal && row["Customer Name"] !== customerVal) pass = false;
-if (paymentVal && row["PaymentMode"] !== paymentVal) pass = false;
-if (yearVal && d && d.getFullYear().toString() !== yearVal) pass = false;
-
-
+    if (customerVal && row["Customer Name"] !== customerVal) pass = false;
+    if (paymentVal && row["PaymentMode"] !== paymentVal) pass = false;
 
     return pass;
   });
 
-  // ⭐ Clean Country Values Here
+  // finally clean country
   filtered.forEach(r => {
     r.COUNTRY = cleanCountry(r.COUNTRY);
   });
 
   return filtered;
 }
+
 
 
     function updateKpis(filtered) {
