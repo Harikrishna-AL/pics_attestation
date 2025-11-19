@@ -286,8 +286,8 @@ document.getElementById("insertVerticalBtn").addEventListener("click", () => {
     <div class="brand">
       <div class="avatar-circle">AT</div>
       <div>
-        <div>Attestation Web Analytics</div>
-        <small>Operations &amp; Customer Overview</small>
+        <div>PICS Attestation Web Analytics</div>
+         <!-- <small>Operations &amp; Customer Overview</small>-->
       </div>
     </div>
    
@@ -300,8 +300,9 @@ document.getElementById("insertVerticalBtn").addEventListener("click", () => {
         <h2>Track submissions, revenue and customer cases in real time</h2>
       </div>
       <div class="pill-tabs">
+        
         <button class="active">Overview</button>
-        <button>Submissions</button>
+        <button onclick="openkpi()">KPI</button>
         <button>Revenue</button>
         <button>Countries</button>
       </div>
@@ -1088,6 +1089,39 @@ startSessionTimer();
     });
 
   </script>
+
+<script>
+  //tab button
+const tabs = document.querySelectorAll(".pill-tabs button");
+const sections = document.querySelectorAll(".tab-section");
+
+tabs.forEach(btn => {
+  btn.addEventListener("click", () => {
+
+    // remove active class
+    tabs.forEach(b => b.classList.remove("active"));
+
+    // set active
+    btn.classList.add("active");
+
+    // hide all sections
+    sections.forEach(sec => sec.style.display = "none");
+
+    // show selected section
+    const id = "tab-" + btn.textContent.trim().toLowerCase();
+    document.getElementById(id).style.display = "block";
+  });
+});
+</script>
+<script>
+//kpi section
+
+function openkpi() {
+    window.location.href = "Dashboard_KPI.html";   // new page
+}
+</script>
+
+
 
 </body>
 </html>

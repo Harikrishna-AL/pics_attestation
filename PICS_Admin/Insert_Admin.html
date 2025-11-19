@@ -18,7 +18,7 @@ body { background:#eef1f6; font-family:system-ui; }
 </head>
 <body>
 <div class="sidebar">
-  <h5 class="fw-bold mb-4">NAVIGATION</h5>
+  <h5 class="fw-bold mb-4">Navigate</h5>
   <div class="mb-3 fw-bold text-primary">Insert Data</div>
       <img src="images/pics_logo.jpg" alt="Company Logo" class="logo">
 
@@ -204,7 +204,7 @@ function submitData() {
   .then(res => {
     if (res.status === "success") {
       alert("Data submitted successfully!");
-      window.location.href = "index.html"; // redirect back to dashboard
+      window.location.href = "Dashboard_Admin.html"; // redirect back to dashboard
     } else {
       alert("Error: " + res.message);
     }
