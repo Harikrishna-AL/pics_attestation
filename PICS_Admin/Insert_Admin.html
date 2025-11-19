@@ -165,8 +165,58 @@ body { background:#eef1f6; font-family:system-ui; }
 <script>
 function submitData() {
   
-  const apiUrl = "";  // paste your URL here
+  const requiredFields = [
+    "TrackingNumber",
+    "Submittedby",
+    "DateofSubmission",
+    "Status",
+    "Type",
+    "CustomerName",
+    "DocumentDetails",
+    "GeneralComments",
+    "phoneno",
+    "PaymentMode",
+    "TotalAmount",
+    "UaeDeliveryCharges",
+    "AdvancePaid",
+    "Balance",
+    "PassportNumber",
+    "SubmittedDocument1",
+    "SubmittedDocument2",
+    "SubmittedDocument3",
+    "OtherDocs",
+    "UaeNumberReleasingDate",
+    "DateProcess",
+    "Delivered",
+    "COUNTRY"
+  ];
 
+  let isValid = true;
+  let firstInvalid = null;
+
+  //  Reset borders first
+  requiredFields.forEach(id => {
+    document.getElementById(id).style.border = "1px solid #ccc";
+  });
+
+  //  Check empty fields
+  requiredFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      isValid = false;
+      el.style.border = "2px solid red";
+      if (!firstInvalid) firstInvalid = el;
+    }
+  });
+
+  if (!isValid) {
+    alert("Please fill all required fields.");
+    firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+    firstInvalid.focus();
+    return;
+  }
+
+  const apiUrl ="";
   const data = {
     TrackingNumber: document.getElementById("TrackingNumber").value,
     Submittedby: document.getElementById("Submittedby").value,
