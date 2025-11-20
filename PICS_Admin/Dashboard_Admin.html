@@ -142,6 +142,9 @@ document.getElementById("insertVerticalBtn").addEventListener("click", () => {
       background: #f4f7fb;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
+    .form-label {
+  font-weight: 500 !important;
+}
     .top-bar {
       background: #007bff;
       color: #fff;
@@ -278,6 +281,10 @@ document.getElementById("insertVerticalBtn").addEventListener("click", () => {
     canvas {
       max-height: 250px;
     }
+    .form-label {
+  color: #212529 !important; /* bootstrap default */
+}
+
   </style>
 </head>
 <body>
@@ -330,7 +337,7 @@ document.getElementById("insertVerticalBtn").addEventListener("click", () => {
   </div>
 
   <div class="col-lg-3 col-md-6 col-12">
-    <label class="form-label">Year</label>
+    <label class="form-label fw-semibold">Year</label>
     <select id="yearFilter" class="form-select form-select-sm">
       <option value="">All</option>
     </select>
@@ -658,6 +665,8 @@ function trimValue(v) {
 
   const fromDate = fromDateVal ? new Date(fromDateVal) : null;
   const toDate = toDateVal ? new Date(toDateVal) : null;
+  if (fromDate) fromDate.setHours(0, 0, 0, 0);
+if (toDate)   toDate.setHours(23, 59, 59, 999);
 
   const filtered = allData.filter((row) => {
     let pass = true;
