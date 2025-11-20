@@ -24,17 +24,15 @@
   margin-left: 40px;  
 }
 
-
 .side-pill-btn {
   position: fixed;
-  left: -5px;                 /* pull slightly left for a nice edge */
-  top: 40%;                   /* moved upward */
+  left: -5px;
   transform: translateY(-50%) rotate(180deg);
   
   background: #ffffff;
   color: #2563eb;
   font-weight: 600;
-  padding: 10px 14px;         /* smaller padding */
+  padding: 10px 14px;
   
   border-radius: 50px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.18);
@@ -42,13 +40,23 @@
   writing-mode: vertical-rl;
   text-orientation: mixed;
 
-  font-size: 14px;            /* slightly smaller */
+  font-size: 14px;
   letter-spacing: 0.5px;
 
   cursor: pointer;
   z-index: 9999;
   transition: 0.25s ease;
 }
+
+/* individual spacing */
+#insertVerticalBtn {
+  top: 40%;
+}
+
+#ViewDataVerticalBtn {
+  top: 55%;
+}
+
 
 .side-pill-btn:hover {
   background: #f3f4f6;
@@ -101,10 +109,17 @@
   <div id="insertVerticalBtn" class="side-pill-btn">
   <span>Insert Data</span>
 </div>
+ <div id="ViewDataVerticalBtn" class="side-pill-btn">
+  <span>View Data</span>
+</div>
 <script>
 document.getElementById("insertVerticalBtn").addEventListener("click", () => {
   
     window.location.href = "Insert_Admin.html";  // new page
+});
+document.getElementById("ViewDataVerticalBtn").addEventListener("click", () => {
+  
+    window.location.href = "ViewData_Admin.html";  // new page
 });
 
 
