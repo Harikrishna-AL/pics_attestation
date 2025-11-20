@@ -216,7 +216,7 @@ function submitData() {
     return;
   }
 
-  const apiUrl ="https://script.google.com/macros/s/AKfycbxtHbXIiOcdvZhsWnzXEdHEeJTjsr1rsVnW8iTWeescnehQFf3o-qEsU8H9D3cABxfoNA/exec";
+  const apiUrl ="https://script.google.com/macros/s/AKfycbwUweYpCgNAz1MUiiBPG45qoFnNnXH3MUMq2qRW35l2cFOcnH6DjwwKf7v5x0cNq8o-/exec";
   const data = {
     TrackingNumber: document.getElementById("TrackingNumber").value,
     Submittedby: document.getElementById("Submittedby").value,
@@ -240,30 +240,56 @@ function submitData() {
     UaeNumberReleasingDate: document.getElementById("UaeNumberReleasingDate").value,
     DateProcess: document.getElementById("DateProcess").value,
     Delivered: document.getElementById("Delivered").value,
-    COUNTRY: document.getElementById("COUNTRY").value
+    Submitted: document.getElementById("Submitted").value,
+    COUNTRY: document.getElementById("COUNTRY").value,
+    PassCode: "none",
+    TYPE:"none"
   };
 
   fetch(apiUrl, {
     method: "POST",
+    mode: "no-cors",
     body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json"
     }
   })
-  .then(response => response.json())
-  .then(res => {
-    if (res.status === "success") {
-      alert("Data submitted successfully!");
-      window.location.href = "Dashboard_Admin.html"; // redirect back to dashboard
-    } else {
-      alert("Error: " + res.message);
-    }
-  })
-  .catch(err => {
-    alert("Request failed: " + err);
-  });
-
+  .then(() => {
+  alert("Data submitted successfully!");
+  clearForm();
+})
+.catch(err => {
+  alert("Request failed: " + err);
+});
 }
+
+function clearForm() {
+  document.getElementById("TrackingNumber").value = "";
+  document.getElementById("Submittedby").value = "";
+  document.getElementById("DateofSubmission").value = "";
+  document.getElementById("Status").value = "";
+  document.getElementById("Type").value = "";
+  document.getElementById("CustomerName").value = "";
+  document.getElementById("DocumentDetails").value = "";
+  document.getElementById("GeneralComments").value = "";
+  document.getElementById("phoneno").value = "";
+  document.getElementById("PaymentMode").value = "";
+  document.getElementById("TotalAmount").value = "";
+  document.getElementById("UaeDeliveryCharges").value = "";
+  document.getElementById("AdvancePaid").value = "";
+  document.getElementById("Balance").value = "";
+  document.getElementById("PassportNumber").value = "";
+  document.getElementById("SubmittedDocument1").value = "";
+  document.getElementById("SubmittedDocument2").value = "";
+  document.getElementById("SubmittedDocument3").value = "";
+  document.getElementById("OtherDocs").value = "";
+  document.getElementById("UaeNumberReleasingDate").value = "";
+  document.getElementById("DateProcess").value = "";
+  document.getElementById("Delivered").value = "";
+ document.getElementById("Submitted").value = ""; 
+  document.getElementById("COUNTRY").value = "";
+}
+
 </script>
 
 </body>
