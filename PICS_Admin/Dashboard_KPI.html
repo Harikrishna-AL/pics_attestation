@@ -40,6 +40,18 @@
     </div>
 
 </div>
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Your global config -->
+  <script src="supabaseConfig.js"></script>
+  <script>
+
+   supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+            window.location.href = "Login_Admin.html";
+        }
+    });
+    </script>
 <script>
 function goBack() {
     window.location.href = "Dashboard_Admin.html";
