@@ -502,11 +502,9 @@ document.getElementById("ViewDataVerticalBtn").addEventListener("click", () => {
             <span class="badge bg-light text-secondary quick-badge">SubmittedDocument3</span>
             <span class="badge bg-light text-secondary quick-badge">Other Docs</span>
             <span class="badge bg-light text-secondary quick-badge">UAE NUMBER RELEASING DATE</span>
-            <span class="badge bg-light text-secondary quick-badge">PassCode</span>
             <span class="badge bg-light text-secondary quick-badge">DateProcess</span>
             <span class="badge bg-light text-secondary quick-badge">Delivered</span>
             <span class="badge bg-light text-secondary quick-badge">Submitted</span>
-            <span class="badge bg-light text-secondary quick-badge">TYPE</span>
             <span class="badge bg-light text-secondary quick-badge">COUNTRY</span>
           </div>
         </div>
@@ -871,7 +869,7 @@ if (toDate)   toDate.setHours(23, 59, 59, 999);
           <td>${row["TrackingNumber"] || "-"}</td>
           <td>${row["DateofSubmission"] || "-"}</td>
           <td>${row["Status"] || "-"}</td>
-          <td>${row["Customer Name"] || "-"}</td>
+          <td>${row["CustomerName"] || "-"}</td>
           <td>${row["COUNTRY"] || "-"}</td>
           <td>${formatCurrency(parseNumber(row["TotalAmount"]))}</td>
           <td>${row["PaymentMode"] || "-"}</td>
