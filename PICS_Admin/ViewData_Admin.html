@@ -116,7 +116,78 @@
 
 .back-circle:active {
     transform: scale(0.92);
+}.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
 }
+
+.reset-filter-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Toggle label */
+.toggle-label {
+    font-size: 15px;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 22px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #d1d5db;
+    transition: .3s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+    background-color: #3b82f6;
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(22px);
+}
+.grid-reset-flash {
+    animation: flash 0.5s ease;
+}
+
+@keyframes flash {
+    from { background-color: #e0f2ff; }
+    to { background-color: transparent; }
+}
+
+
 
 
 </style>
@@ -126,7 +197,18 @@
 <div class="page-wrap">
 <button class="back-circle" onclick="goBack()">←</button>
 
+    <div class="top-bar">
     <div class="top-title">View Data</div>
+
+    <div class="reset-filter-box">
+        <label class="toggle-label">Reset All Filters</label>
+        <label class="switch">
+            <input type="checkbox" id="resetFiltersToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+</div>
+
 
     <div class="grid-wrapper loader-wrap">
         <div id="loader" class="loader" style="display:none;">
@@ -386,6 +468,39 @@ document.getElementById('prevPage').addEventListener('click', ()=>{ if (currentP
 document.getElementById('nextPage').addEventListener('click', ()=>{ const total = filteredData.length; const pages = Math.max(1, Math.ceil(total/pageSize)); if (currentPage<pages){ currentPage++; renderTable(); } });
 document.getElementById('pageSize').addEventListener('change', ()=>{ currentPage=1; renderTable(); });
 
+document.getElementById("resetFiltersToggle").addEventListener("change", function () {
+    if (this.checked) {
+
+        // CLEAR FILTERS
+        filters = {};
+
+        // RESET SORTING
+        sortField = null;
+        sortDir = 1;
+
+        // RESET PAGE
+        currentPage = 1;
+
+        // REFRESH TABLE
+        applyAll();
+
+        // FLASH EFFECT
+        const grid = document.querySelector(".grid-wrapper");
+        grid.classList.add("grid-reset-flash");
+
+        setTimeout(() => {
+            grid.classList.remove("grid-reset-flash");
+        }, 500);
+
+        // delay before turning OFF toggle (so user sees switch ON)
+        setTimeout(() => {
+            this.checked = false;
+        }, 400);
+    }
+});
+
+
+
 function renderPageNumbers(totalPages) {
     const container = document.getElementById("pageNumbers");
     container.innerHTML = "";
@@ -428,6 +543,8 @@ function renderPageNumbers(totalPages) {
         }
     }
 }
+
+
 
 function makeEllipsis() {
     const span = document.createElement("span");
