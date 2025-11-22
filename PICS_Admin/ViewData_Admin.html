@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <title>View Data</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<!-- PDF Download Button -->
+
 <style>
 :root{--accent:#6366f1;--accent-2:#eef2ff;--muted:#6b7280}
 .page-wrap { padding: 20px 30px; }
@@ -187,6 +189,46 @@
     to { background-color: transparent; }
 }
 
+.pdf-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 9999;
+}
+.pdf-btn:hover { background:#4f46e5; }
+
+.pdf-download-btn {
+    position: absolute;
+    right: 20px;
+    margin-top: 30px;
+    z-index: 10;
+}
+.pdf-btn-fixed {
+    display: inline-block;
+    background: #6366f1;
+    color: white;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+
+    position: relative;
+    float: right;
+    margin-top: 20px;     /* gap from pagination */
+    margin-right: 10px;   /* right spacing */
+    margin-bottom: 25px;  /* NEW: gap from bottom */
+}
+
 
 
 
@@ -208,6 +250,8 @@
         </label>
     </div>
 </div>
+
+
 
 
     <div class="grid-wrapper loader-wrap">
@@ -255,6 +299,7 @@
     <span id="pageInfo" class="range-text"></span>
 </div>
 
+<button id="btnDownloadPDF" class="pdf-btn-fixed">Download PDF</button>
 
 </div>
  <!-- Supabase client -->
@@ -270,6 +315,8 @@
     });
     </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
 const COLUMNS = [
   'TrackingNumber','Submittedby','DateofSubmission','Status','Type','CustomerName','DocumentDetails','GeneralComments','phoneno','PaymentMode','TotalAmount','UaeDeliveryCharges','AdvancePaid','Balance','PassportNumber','SubmittedDocument1','SubmittedDocument2','SubmittedDocument3','OtherDocs','UaeNumberReleasingDate','PassCode','DateProcess','Delivered','Submitted','TYPE','COUNTRY'
@@ -556,7 +603,141 @@ function makeEllipsis() {
 function goBack(){ window.location.href = 'Dashboard_Admin.html'; }
 
 // init
+
+// PDF DOWNLOAD HANDLER (jsPDF version)
+async function downloadGridPDF() {
+
+    if (!rawData || rawData.length === 0) {
+        alert("Grid not loaded yet. Please wait.");
+        return;
+    }
+
+    // pick only needed fields
+    const filtered = rawData.map(r => ({
+        DateofSubmission: r.DateofSubmission || "",
+        CustomerName: r.CustomerName || "",
+        Delivered: r.Delivered || ""
+    }));
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF("p", "mm", "a4");
+
+    // ===============================
+    // 1. FULL LETTERHEAD IMAGE (same as screenshot)
+    // ===============================
+    const headerImg = new Image();
+    headerImg.src = "images/header.jpg"; // your screenshot header
+    doc.addImage(headerImg, "PNG", 10, 10, 190, 35);
+
+    // ===============================
+    // 2. TITLE
+    // ===============================
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Pending Document PICS", 105, 55, { align: "center" });
+
+    // ===============================
+    // 3. TABLE HEADER - MATCH GRID
+    // ===============================
+   let y = 70;
+
+// grid header background
+doc.setFillColor(238, 242, 255); // #eef2ff
+doc.setDrawColor(180, 180, 180);  // light gray lines
+doc.setLineWidth(0.3);            // thin lines
+
+
+// full header row
+doc.rect(10, y, 190, 12, "F");
+
+// vertical column borders
+doc.line(80, y, 80, y + 12);
+doc.line(150, y, 150, y + 12);
+
+// header text style
+doc.setFont("helvetica", "normal");
+doc.setFontSize(12);
+doc.setTextColor(99, 102, 241); // #6366f1
+
+doc.text("Date of Submission", 15, y + 8);
+doc.text("Customer Name", 90, y + 8);
+
+// SHIFT Delivered slightly LEFT (165 → 158)
+doc.text("Delivered", 158, y + 8);
+
+// reset text color
+doc.setTextColor(0, 0, 0);
+y += 16;
+
+
+    // ===============================
+    // 4. TABLE ROWS (full borders + auto-wrap)
+    // ===============================
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setLineWidth(0.4);
+    doc.setDrawColor(60, 60, 60);
+
+    filtered.forEach(row => {
+
+        // ---- DATE FIX ----
+        let d = row.DateofSubmission.toString();
+        if (d.includes("T")) {
+            const dt = new Date(d);
+            const dd = String(dt.getDate()).padStart(2, "0");
+            const mm = String(dt.getMonth() + 1).padStart(2, "0");
+            const yyyy = dt.getFullYear();
+            d = `${dd}/${mm}/${yyyy}`;
+        }
+
+        const nameLines = doc.splitTextToSize(row.CustomerName.toString(), 60);
+        const rowHeight = Math.max(10, nameLines.length * 6);
+
+        // outer box
+        doc.rect(10, y, 190, rowHeight);
+
+        // column borders
+        doc.line(80, y, 80, y + rowHeight);
+        doc.line(150, y, 150, y + rowHeight);
+
+        // text
+        doc.text(d, 15, y + 7);
+        doc.text(nameLines, 90, y + 7);
+        doc.text(row.Delivered.toString(), 165, y + 7, { align: "right" });
+
+        y += rowHeight + 2;
+
+        // Page break ONLY if next row won't fit
+if (y + rowHeight + 20 > 297) {   // 297mm = A4 height
+    doc.addPage();
+    y = 20; // Reset y only AFTER new page is added
+}
+
+    });
+
+    // ===============================
+    // 5. FILENAME (today's date)
+    // ===============================
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2);
+    const mm = String(now.getMonth() + 1).padStart(2);
+    const yyyy = now.getFullYear();
+    const today = `${dd}-${mm}-${yyyy}`;
+
+    doc.save(`PendingDocumentPICS_${today}.pdf`);
+}
+
+document.getElementById("btnDownloadPDF")
+        .addEventListener("click", downloadGridPDF);
+
+
+
+
 buildHeader(); loadGridData();
+
+
 </script>
+
+
 </body>
 </html>
