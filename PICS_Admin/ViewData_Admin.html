@@ -634,7 +634,7 @@ async function downloadGridPDF() {
     // ===============================
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
-    doc.text("Pending Document PICS", 105, 55, { align: "center" });
+    doc.text("Document Status PICS", 105, 55, { align: "center" });
 
     // ===============================
     // 3. TABLE HEADER - MATCH GRID
@@ -724,7 +724,7 @@ if (y + rowHeight + 20 > 297) {   // 297mm = A4 height
     const yyyy = now.getFullYear();
     const today = `${dd}-${mm}-${yyyy}`;
 
-    doc.save(`PendingDocumentPICS_${today}.pdf`);
+    doc.save(`DocumentStatusPICS_${today}.pdf`);
 }
 
 document.getElementById("btnDownloadPDF")
