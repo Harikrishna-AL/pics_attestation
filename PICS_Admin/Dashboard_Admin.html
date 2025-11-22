@@ -1016,6 +1016,8 @@ document.getElementById("yearFilter").addEventListener("change", refreshDashboar
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Your global config -->
   <script src="supabaseConfig.js"></script>
+  <script src="Logout.js"></script>
+
   <script>
     // Protect dashboard page
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -1024,16 +1026,8 @@ document.getElementById("yearFilter").addEventListener("change", refreshDashboar
         }
     });
 
-    // Logout functionality
-    const logoutBtn = document.getElementById('logoutBtn');
-    logoutBtn.addEventListener('click', async () => {
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-            alert('Error logging out: ' + error.message);
-        } else {
-            window.location.href = "Login_Admin.html";
-        }
-    });
+    document.getElementById("logoutBtn").addEventListener("click", logoutUser);
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -1091,10 +1085,10 @@ function resetTimer() {
 }
 
 // Listen to user activity
-window.addEventListener("mousemove", resetTimer);
-window.addEventListener("keydown", resetTimer);
+//window.addEventListener("mousemove", resetTimer);
+//window.addEventListener("keydown", resetTimer);
 window.addEventListener("click", resetTimer);
-window.addEventListener("scroll", resetTimer);
+//window.addEventListener("scroll", resetTimer);
 
 // =========================
 // HANDLE SESSION TIMEOUT

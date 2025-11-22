@@ -117,10 +117,25 @@
 
       if (error) {
         errorMessage.textContent = error.message;
-      } else {
-        // Successful login
-        window.location.href = "Dashboard_Admin.html"; // redirect to admin dashboard
-      }
+      } 
+       else {
+    const user = data.user;
+
+    // Get user role from metadata
+    const role = user.user_metadata?.role;
+
+    if (role === "staff") {
+        window.location.href = "Insert_Admin.html";
+    } 
+    else if (role === "admin") {
+        window.location.href = "Dashboard_Admin.html";
+    }
+    else {
+        // Default fallback (optional)
+        alert("No role found for this user.");
+    }
+      
+  }
     });
   </script>
 </body>

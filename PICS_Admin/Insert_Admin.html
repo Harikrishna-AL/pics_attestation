@@ -38,6 +38,20 @@ body { background:#eef1f6; font-family:system-ui; }
 .back-circle:active {
     transform: scale(0.92);
 }
+.logout-btn {
+    position: absolute;
+    top: 15px;        /* place near top */
+    right: 20px;      /* place at right */
+    background: #ff4d4f;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 9999;    /* ensure stays above content */
+}
+
 </style>
 </head>
 <body>
@@ -49,7 +63,9 @@ body { background:#eef1f6; font-family:system-ui; }
 </div>
 
 <div class="content-area">
-  <button class="back-circle" onclick="goBack()">←</button>
+  <button id="backBtn" class="back-circle" onclick="goBack()">←</button>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+
   <h3 class="fw-bold mb-4">Insert New Attestation Record</h3>
 
   <div class="card-box">
@@ -189,13 +205,32 @@ body { background:#eef1f6; font-family:system-ui; }
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Your global config -->
   <script src="supabaseConfig.js"></script>
+    <script src="Logout.js"></script>
+
   <script>
 
-   supabase.auth.getSession().then(({ data: { session } }) => {
-        if (!session) {
-            window.location.href = "Login_Admin.html";
-        }
-    });
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!session) {
+        window.location.href = "Login_Admin.html";
+        return;
+    }
+
+    // ROLE-BASED BACK BUTTON CONTROL
+    const role = session.user.user_metadata?.role;
+
+    if (role === "staff") {
+        // hide back button for staff
+        const backBtn = document.getElementById("backBtn");
+        if (backBtn) backBtn.style.display = "none";
+    } 
+    else {
+        // show back button for admin
+        const backBtn = document.getElementById("backBtn");
+        if (backBtn) backBtn.style.display = "inline-block";
+    }
+});
+    document.getElementById("logoutBtn").addEventListener("click", logoutUser);
+
     </script>
 
 <script>

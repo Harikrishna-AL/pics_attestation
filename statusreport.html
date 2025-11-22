@@ -422,9 +422,9 @@
         document.getElementById("currentStatus").textContent = userData["Status"] || "--";
         document.getElementById("dateofsubmission").textContent = userData["DateofSubmission"] || "--";
         document.getElementById("docType").textContent = userData["Type"] || "--";
-        document.getElementById("docName").textContent = userData["Customer Name"] || "--";
+        document.getElementById("docName").textContent = userData["CustomerName"] || "--";
         document.getElementById("docDetails").textContent = userData["DocumentDetails"];
-        document.getElementById("comments").textContent = userData["General Comments"] || "--";
+        document.getElementById("comments").textContent = userData["GeneralComments"] || "--";
         document.getElementById("passnumber").textContent = userData["PassportNumber"] || "--";
       } catch (error) {
         console.error("Error fetching or processing the Excel file:", error);
@@ -529,7 +529,7 @@
   const doc2 = userData1["SubmittedDocument2"]?.toString() || "--";
   const doc3 = userData1["SubmittedDocument3"]?.toString() || "--";
   const uae_num = userData1["PassCode"]?.toString() || "--";
-  const processed_date = userData1["UAE NUMBER RELEASING DATE"]?.toString() || "--";
+  const processed_date = userData1["UAENUMBERRELEASINGDATE"]?.toString() || "--";
   const country = userData1["COUNTRY"]?.toString() || "--";
 
   let amountInWords = "";
