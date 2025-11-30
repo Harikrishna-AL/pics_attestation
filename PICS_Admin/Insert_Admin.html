@@ -51,12 +51,39 @@ body { background:#eef1f6; font-family:system-ui; }
     border-radius: 5px;
     z-index: 9999;    /* ensure stays above content */
 }
+.title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.insert-link {
+    font-size: 15px;
+    font-weight: 600;
+    color: #6366f1;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    transition: 0.2s ease-in-out;
+}
+
+.insert-link:hover {
+    background: #dbe4ff;
+    color: #4338ca;
+    border-color: #818cf8;
+    transform: translateY(-1px);
+}
+
+
 
 </style>
 </head>
 <body>
 <div class="sidebar">
-  <h5 class="fw-bold mb-4">Navigate</h5>
+  <h5 class="fw-bold mb-4"></h5>
   <div class="mb-3 fw-bold text-primary">Insert Data</div>
       <img src="images/pics_logo.jpg" alt="Company Logo" class="logo">
 
@@ -67,6 +94,10 @@ body { background:#eef1f6; font-family:system-ui; }
     <button class="logout-btn" id="logoutBtn">Logout</button>
 
   <h3 class="fw-bold mb-4">Insert New Attestation Record</h3>
+
+<div class="insert-link" onclick="goToInsert()">
+        ➕ Click here to insert data
+</div>
 
   <div class="card-box">
     <div class="row g-3">
@@ -363,6 +394,10 @@ function clearForm() {
   document.getElementById("COUNTRY").value = "";
 }
 function goBack(){ window.location.href = 'Dashboard_Admin.html'; }
+function goToView() {
+    window.location.href = "ViewData_Admin.html";
+}
+
 
 
 </script>

@@ -241,6 +241,32 @@
     border-radius: 5px;
     z-index: 9999;    /* ensure stays above content */
 }
+.title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.insert-link {
+    font-size: 15px;
+    font-weight: 600;
+    color: #6366f1;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    transition: 0.2s ease-in-out;
+}
+
+.insert-link:hover {
+    background: #dbe4ff;
+    color: #4338ca;
+    border-color: #818cf8;
+    transform: translateY(-1px);
+}
+
 
 
 
@@ -255,6 +281,9 @@
 
     <div class="top-bar">
     <div class="top-title">View Data</div>
+     <div class="insert-link" onclick="goToInsert()">
+        ➕ Click here to insert data
+    </div>
 
     <div class="reset-filter-box">
         <label class="toggle-label">Reset All Filters</label>
@@ -526,6 +555,11 @@ function renderTable(){
   document.getElementById('nextPage').classList.toggle('disabled', currentPage===pages);
 }
 
+
+function goToInsert() {
+    window.location.href = "Insert_Admin.html";
+}
+
 document.getElementById("firstPage").addEventListener("click", () => {
     currentPage = 1;
     renderTable();
@@ -636,84 +670,81 @@ function goBack(){ window.location.href = 'Dashboard_Admin.html'; }
 // init
 
 // PDF DOWNLOAD HANDLER (jsPDF version)
-async function downloadGridPDF() {
-
-    if (!rawData || rawData.length === 0) {
-        alert("Grid not loaded yet. Please wait.");
+// REPLACEMENT: downloadGridPDF(exportAll = true)
+// - exportAll = true  -> export all filtered rows (all pages from the grid)
+// - exportAll = false -> export only the currently visible page (same as grid view)
+async function downloadGridPDF(exportAll = true) {
+    if (!filteredData || filteredData.length === 0) {
+        alert("No rows to export. Apply filters or wait until data loads.");
         return;
     }
 
-    // pick only needed fields
-    const filtered = rawData.map(r => ({
-        DateofSubmission: r.DateofSubmission || "",
-        CustomerName: r.CustomerName || "",
-        Delivered: r.Delivered || ""
-    }));
+    // choose rows: all filtered rows or only the current visible page
+    let rowsToExport;
+    if (exportAll) {
+        rowsToExport = filteredData.slice(); // clone of all filtered rows
+    } else {
+        const ps = parseInt(document.getElementById('pageSize').value || '10');
+        const total = filteredData.length;
+        const pages = Math.max(1, Math.ceil(total / ps));
+        const curPage = Math.min(Math.max(1, currentPage), pages);
+        const start = (curPage - 1) * ps;
+        const end = start + ps;
+        rowsToExport = filteredData.slice(start, end);
+    }
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF("p", "mm", "a4");
 
-    // ===============================
-    // 1. FULL LETTERHEAD IMAGE (same as screenshot)
-    // ===============================
-    const headerImg = new Image();
-    headerImg.src = "images/header.jpg"; // your screenshot header
-    doc.addImage(headerImg, "PNG", 10, 10, 190, 35);
+    // Optional header image (safe try/catch)
+    try {
+        const headerImg = new Image();
+        headerImg.src = "images/header.jpg";
+        // If you want to ensure load before addImage, you'd need onload - but most small images work directly.
+        doc.addImage(headerImg, "PNG", 10, 10, 190, 35);
+    } catch (e) { /* ignore missing header */ }
 
-    // ===============================
-    // 2. TITLE
-    // ===============================
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.text("Document Status PICS", 105, 55, { align: "center" });
-
-    // ===============================
-    // 3. TABLE HEADER - MATCH GRID
-    // ===============================
-   let y = 70;
-
-// grid header background
-doc.setFillColor(238, 242, 255); // #eef2ff
-doc.setDrawColor(180, 180, 180);  // light gray lines
-doc.setLineWidth(0.3);            // thin lines
+    // Title
+doc.setFont("helvetica", "bold");
+doc.setFontSize(14);
+doc.text("Document Status PICS", 105, 55, { align: "center" });
 
 
-// full header row
-doc.rect(10, y, 190, 12, "F");
-
-// vertical column borders
-doc.line(80, y, 80, y + 12);
-doc.line(150, y, 150, y + 12);
-
-// header text style
-doc.setFont("helvetica", "normal");
-doc.setFontSize(12);
-doc.setTextColor(99, 102, 241); // #6366f1
-
-doc.text("Date of Submission", 15, y + 8);
-doc.text("Customer Name", 90, y + 8);
-
-// SHIFT Delivered slightly LEFT (165 → 158)
-doc.text("Delivered", 158, y + 8);
-
-// reset text color
-doc.setTextColor(0, 0, 0);
-y += 16;
 
 
-    // ===============================
-    // 4. TABLE ROWS (full borders + auto-wrap)
-    // ===============================
+    // function to draw table header (so we can reuse on each new PDF page)
+    function drawTableHeader(yStart) {
+        doc.setFillColor(238, 242, 255);
+        doc.setDrawColor(180, 180, 180);
+        doc.setLineWidth(0.3);
+        doc.rect(10, yStart, 190, 12, "F");
+        doc.line(80, yStart, 80, yStart + 12);
+        doc.line(150, yStart, 150, yStart + 12);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        doc.setTextColor(99, 102, 241);
+        doc.text("Date of Submission", 15, yStart + 8);
+        doc.text("Customer Name", 90, yStart + 8);
+        doc.text("Delivered", 158, yStart + 8);
+        doc.setTextColor(0, 0, 0);
+        return yStart + 16;
+    }
+
+    // start position for rows (below title & header)
+let y = 85;   // was 70
+y = drawTableHeader(y - 16);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.setLineWidth(0.4);
     doc.setDrawColor(60, 60, 60);
 
-    filtered.forEach(row => {
+    // iterate all rowsToExport
+    for (let i = 0; i < rowsToExport.length; i++) {
+        const row = rowsToExport[i];
 
-        // ---- DATE FIX ----
-        let d = row.DateofSubmission.toString();
-        if (d.includes("T")) {
+        // Normalize/format date
+        let d = (row.DateofSubmission ?? "").toString();
+        if (d && d.includes("T")) {
             const dt = new Date(d);
             const dd = String(dt.getDate()).padStart(2, "0");
             const mm = String(dt.getMonth() + 1).padStart(2, "0");
@@ -721,37 +752,42 @@ y += 16;
             d = `${dd}/${mm}/${yyyy}`;
         }
 
-        const nameLines = doc.splitTextToSize(row.CustomerName.toString(), 60);
+        const nameText = (row.CustomerName ?? "").toString();
+        const nameLines = doc.splitTextToSize(nameText, 60);
         const rowHeight = Math.max(10, nameLines.length * 6);
 
-        // outer box
-        doc.rect(10, y, 190, rowHeight);
+        // page break check (A4 usable height ~ 277mm considering margins)
+        if (y + rowHeight + 20 > 287) { // leave bottom margin
+            doc.addPage();
+            y = 20;
+            y = drawTableHeader(y);
+        }
 
-        // column borders
+        // draw box and vertical separators for this row
+        doc.rect(10, y, 190, rowHeight);
         doc.line(80, y, 80, y + rowHeight);
         doc.line(150, y, 150, y + rowHeight);
 
-        // text
+        // text content inside columns
         doc.text(d, 15, y + 7);
         doc.text(nameLines, 90, y + 7);
-        doc.text(row.Delivered.toString(), 165, y + 7, { align: "right" });
+        doc.text((row.Delivered ?? "").toString(), 165, y + 7, { align: "right" });
 
         y += rowHeight + 2;
+    }
 
-        // Page break ONLY if next row won't fit
-if (y + rowHeight + 20 > 297) {   // 297mm = A4 height
-    doc.addPage();
-    y = 20; // Reset y only AFTER new page is added
-}
+    // optional: add page numbers
+    const pageCount = doc.getNumberOfPages();
+    for (let p = 1; p <= pageCount; p++) {
+        doc.setPage(p);
+        doc.setFontSize(9);
+        doc.text(`Page ${p} of ${pageCount}`, 105, 292, { align: "center" });
+    }
 
-    });
-
-    // ===============================
-    // 5. FILENAME (today's date)
-    // ===============================
+    // save file with date stamp
     const now = new Date();
-    const dd = String(now.getDate()).padStart(2);
-    const mm = String(now.getMonth() + 1).padStart(2);
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
     const yyyy = now.getFullYear();
     const today = `${dd}-${mm}-${yyyy}`;
 
