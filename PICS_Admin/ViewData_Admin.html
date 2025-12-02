@@ -532,31 +532,33 @@ function applyAll(){
 }
 
 // --- Add these helpers near top of your script ---
-
-function formatDateDisplay(value){
-  if (value === null || value === undefined || value === '') return '';
+function formatDateDisplay(value) {
+  if (value == null || value === "") return "";
   const s = String(value).trim();
 
-  // If already dd/mm/yyyy, return unchanged
-  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) return s;
+  // already formatted like dd/mm/yyyy -> return as-is
+  if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(s)) return s;
 
-  // Try to extract yyyy-mm-dd from ISO-like string (no timezone math)
-  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (m){
-    const [, yyyy, mm, dd] = m;
+  // ISO style with 'T' (e.g. 2025-04-01T18:30:00.000Z)
+  if (s.includes("T")) {
+    const dt = new Date(s);
+    if (isNaN(dt.getTime())) return s; // fallback if parsing fails
+    const dd = String(dt.getDate()).padStart(2, "0");
+    const mm = String(dt.getMonth() + 1).padStart(2, "0");
+    const yyyy = dt.getFullYear();
     return `${dd}/${mm}/${yyyy}`;
   }
 
-  // Fallback: try Date parsing and format using local date parts
-  const d = new Date(s);
-  if (!isNaN(d.getTime())){
-    const dd = String(d.getDate()).padStart(2,'0');
-    const mm = String(d.getMonth() + 1).padStart(2,'0');
-    const yyyy = d.getFullYear();
+  // try Date parsing as a fallback (covers other formats)
+  const maybeDt = new Date(s);
+  if (!isNaN(maybeDt.getTime())) {
+    const dd = String(maybeDt.getDate()).padStart(2, "0");
+    const mm = String(maybeDt.getMonth() + 1).padStart(2, "0");
+    const yyyy = maybeDt.getFullYear();
     return `${dd}/${mm}/${yyyy}`;
   }
 
-  // Nothing matched — return original
+  // otherwise return original value
   return s;
 }
 

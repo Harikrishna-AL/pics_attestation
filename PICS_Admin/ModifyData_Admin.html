@@ -532,30 +532,33 @@ function applyAll(){
 
 // --- Add these helpers near top of your script ---
 
-function formatDateDisplay(value){
-  if (value === null || value === undefined || value === '') return '';
+function formatDateDisplay(value) {
+  if (value == null || value === "") return "";
   const s = String(value).trim();
 
-  // If already dd/mm/yyyy, return unchanged
-  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) return s;
+  // already formatted like dd/mm/yyyy -> return as-is
+  if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(s)) return s;
 
-  // Try to extract yyyy-mm-dd from ISO-like string (no timezone math)
-  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (m){
-    const [, yyyy, mm, dd] = m;
+  // ISO style with 'T' (e.g. 2025-04-01T18:30:00.000Z)
+  if (s.includes("T")) {
+    const dt = new Date(s);
+    if (isNaN(dt.getTime())) return s; // fallback if parsing fails
+    const dd = String(dt.getDate()).padStart(2, "0");
+    const mm = String(dt.getMonth() + 1).padStart(2, "0");
+    const yyyy = dt.getFullYear();
     return `${dd}/${mm}/${yyyy}`;
   }
 
-  // Fallback: try Date parsing and format using local date parts
-  const d = new Date(s);
-  if (!isNaN(d.getTime())){
-    const dd = String(d.getDate()).padStart(2,'0');
-    const mm = String(d.getMonth() + 1).padStart(2,'0');
-    const yyyy = d.getFullYear();
+  // try Date parsing as a fallback (covers other formats)
+  const maybeDt = new Date(s);
+  if (!isNaN(maybeDt.getTime())) {
+    const dd = String(maybeDt.getDate()).padStart(2, "0");
+    const mm = String(maybeDt.getMonth() + 1).padStart(2, "0");
+    const yyyy = maybeDt.getFullYear();
     return `${dd}/${mm}/${yyyy}`;
   }
 
-  // Nothing matched — return original
+  // otherwise return original value
   return s;
 }
 
@@ -575,48 +578,60 @@ function isDateColumn(colName){
   return false;
 }
 
-// --- Replace your renderTable() with this version ---
-
 function renderTable(){
-  const tbody = document.querySelector('#dataTable tbody');
-  tbody.innerHTML = '';
-
+  const tbody = document.querySelector('#dataTable tbody'); tbody.innerHTML = '';
   pageSize = parseInt(document.getElementById('pageSize').value || '10');
   const total = filteredData.length;
   const pages = Math.max(1, Math.ceil(total / pageSize));
   if (currentPage > pages) currentPage = pages;
-  const start = (currentPage - 1) * pageSize;
-  const end = start + pageSize;
-  const pageRows = filteredData.slice(start, end);
+  const start = (currentPage-1)*pageSize; const end = start + pageSize;
+  const pageRows = filteredData.slice(start,end);
 
-  if (pageRows.length === 0){
-    document.getElementById('noRecords').style.display = 'block';
-    document.getElementById('dataTable').style.display = 'none';
-  } else {
-    document.getElementById('noRecords').style.display = 'none';
-    document.getElementById('dataTable').style.display = 'table';
-  }
+  if (pageRows.length === 0){ document.getElementById('noRecords').style.display = 'block'; document.getElementById('dataTable').style.display='none'; }
+  else { document.getElementById('noRecords').style.display = 'none'; document.getElementById('dataTable').style.display='table'; }
 
-  pageRows.forEach(row => {
-    const tr = document.createElement('tr');
+pageRows.forEach((row, rowIdx) => {
+  const tr = document.createElement('tr');
 
-    // build each cell but format date columns
-    const tds = COLUMNS.map(c => {
-      let cellVal = row[c] ?? '';
-      if (isDateColumn(c)) {
-        cellVal = formatDateDisplay(cellVal);
-      }
-      return `<td>${escapeHtml(cellVal)}</td>`;
-    }).join('');
+  COLUMNS.forEach(col => {
+    const td = document.createElement('td');
+    td.className = 'grid-cell';
+    td.dataset.field = col;
 
-    tr.innerHTML = tds;
+    // ← ADD THIS PART
+    let cellVal = row[col] ?? '';
+    if (isDateColumn(col)) {
+      cellVal = formatDateDisplay(cellVal);
+    }
+    // ← END
+
+    td.innerHTML = escapeHtml(cellVal);
+    tr.appendChild(td);
+  });
+
+    // action cell (last cell) - keep same visual style: two-pill buttons like your image
+    const actionTd = document.createElement('td');
+    actionTd.style.width = '140px';
+    actionTd.style.whiteSpace = 'nowrap';
+    actionTd.innerHTML = `
+      <div style="display:flex; gap:8px; align-items:center">
+        <button class="btn-edit page-btn" style="padding:6px 12px">Edit</button>
+      </div>
+    `;
+    tr.appendChild(actionTd);
+
+    // store a reference to the rawData object (we render references from rawData)
+    // We will find the global index when editing by using rawData.indexOf(row)
     tbody.appendChild(tr);
+
+    // wire edit event
+    actionTd.querySelector('.btn-edit').addEventListener('click', ()=> enterEditMode(tr, row));
   });
 
   document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${pages} — ${total} records`;
   renderPageNumbers(pages);
-  document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
-  document.getElementById('nextPage').classList.toggle('disabled', currentPage === pages);
+  document.getElementById('prevPage').classList.toggle('disabled', currentPage===1);
+  document.getElementById('nextPage').classList.toggle('disabled', currentPage===pages);
 }
 
 // ----- Helper: make row editable ----- //
@@ -640,7 +655,7 @@ function enterEditMode(tr, rowRef){
 // Allow date picker for all *other* date fields except userReleaseDate
 if (
     td.dataset.field.toLowerCase().includes('date') &&
-    td.dataset.field.toLowerCase() !== 'UAENumberReleasingDate'
+    td.dataset.field.toLowerCase() !== 'uaenumberreleasingdate'
 ) {
     inp.type = 'date';
 } else {
@@ -687,8 +702,8 @@ function cancelEdit(tr, original){
 
 
 // ----- Helper: save changes back to rawData and re-render ----- //
-function saveUpdate(tr, rowRef){
-  // collect inputs
+async function saveUpdate(tr, rowRef){
+  // collect inputs (same as your current code)
   const updated = {};
   tr.querySelectorAll('td[data-field]').forEach(td => {
     const field = td.dataset.field;
@@ -697,23 +712,43 @@ function saveUpdate(tr, rowRef){
     updated[field] = val;
   });
 
-  // find index in rawData (rowRef is an object reference from filteredData; rawData contains same object)
+  // 1) update local rawData as before
   const idx = rawData.indexOf(rowRef);
   if (idx !== -1) {
-    // update the rawData object (only fields present in COLUMNS)
     COLUMNS.forEach(col => rawData[idx][col] = updated[col] ?? '');
-  } else {
-    // fallback: try to match by TrackingNumber if rawData did not have reference (rare)
-    if (updated.TrackingNumber) {
-      const fidx = rawData.findIndex(r => String(r.TrackingNumber) === String(updated.TrackingNumber));
-      if (fidx !== -1) { COLUMNS.forEach(col => rawData[fidx][col] = updated[col] ?? ''); }
-    }
   }
 
-  // re-run current filters/sort and render (preserves page & selection)
-  applyAll();
-}
+  // 2) Send the update to Google Apps Script web app
+  try {
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbznCd-diCX5QDpMi7FOLha8XYyDX7jEjRp4YXID0IgSWDRqvk9jsrThls8fo7Q27spG/exec'; // <- REPLACE with your web app URL
+    const payload = {
+      action: 'updateRow',            // tells Apps Script what to do
+      keyName: 'TrackingNumber',      // which column is your unique key
+      keyValue: updated.TrackingNumber,
+      updatedFields: updated          // full row object (you may send only changed fields)
+    };
 
+    const resp = await fetch(WEBAPP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      mode: 'cors'
+    });
+
+    const json = await resp.json();
+    if (json && json.status === 'success') {
+      alert("Data updated successfully!");
+      applyAll(); 
+      // optionally show a toast / success UI
+    } else {
+      // server returned an error
+      alert('Save failed: ' + (json.message || 'server error'));
+      // optionally revert to original or keep in edit state
+    }
+  } catch (err) {
+    alert('Could not save: ' + err.message);
+  }
+}
 
 // ----- Utility: find rowRef (object) from table row by matching cell values to rawData entry ----- //
 function findRowRefFromTr(tr){

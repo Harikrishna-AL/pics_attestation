@@ -374,6 +374,22 @@
   <script>
     const excelUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNdL-odS32YpWW70Zjko2amZg5duTOyf1e7UK-5Z7JTjdousVV09S4Nj8T4NvDcGYEr95KtIx1otBy/pub?output=csv"; // Replace with your direct Google Drive link
 
+
+function excelDateToJSDate(serial) {
+    if (!serial) return "--";
+
+    let utc_days = serial - 25569;
+    let utc_value = utc_days * 86400; 
+    let d = new Date(utc_value * 1000);
+
+    let day = String(d.getDate()).padStart(2, '0');
+    let month = String(d.getMonth() + 1).padStart(2, '0');
+    let year = d.getFullYear();
+
+    return `${day}/${month}/${year}`;
+}
+
+
     function formatExcelDate(excelSerial) {
     if (!excelSerial) return "--"; // Handle empty or undefined values
 
@@ -420,6 +436,7 @@
         console.log(userData)
         document.getElementById("submittedBy").textContent = userData["Submittedby"] || "--";
         document.getElementById("currentStatus").textContent = userData["Status"] || "--";
+        userData["DateofSubmission"] = excelDateToJSDate(userData["DateofSubmission"]);
         document.getElementById("dateofsubmission").textContent = userData["DateofSubmission"] || "--";
         document.getElementById("docType").textContent = userData["Type"] || "--";
         document.getElementById("docName").textContent = userData["CustomerName"] || "--";
