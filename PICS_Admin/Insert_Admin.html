@@ -129,6 +129,7 @@ body { background:#eef1f6; font-family:system-ui; }
       <div class="col-md-4">
         <label>Date of Submission</label>
         <input type="date" id="DateofSubmission" class="form-control" />
+
       </div>
 
       <div class="col-md-4">
@@ -415,6 +416,23 @@ function goToView() {
 
 
 </script>
+<!-- your form, inputs, page UI here -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+
+    // Set ISO value so browser can display correctly
+    document.getElementById("DateofSubmission").value = `${yyyy}-${mm}-${dd}`;
+});
+</script>
+
+
+</body>
+</html>
+
 
 </body>
 </html>
