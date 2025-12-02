@@ -280,9 +280,9 @@
 
 
     <div class="top-bar">
-    <div class="top-title">View Data</div>
+    <div class="top-title">Modify Data</div>
      <div class="insert-link" onclick="goToInsert()">
-        ➕ Click here to insert data
+        ➕ Click here to View data
     </div>
 
     <div class="reset-filter-box">
@@ -342,7 +342,6 @@
     <span id="pageInfo" class="range-text"></span>
 </div>
 
-<button id="btnDownloadPDF" class="pdf-btn-fixed">Download PDF</button>
 
 </div>
  <!-- Supabase client -->
@@ -620,6 +619,118 @@ function renderTable(){
   document.getElementById('nextPage').classList.toggle('disabled', currentPage === pages);
 }
 
+// ----- Helper: make row editable ----- //
+function enterEditMode(tr, rowRef){
+  // Save original values on the tr for cancel
+  const original = {};
+  tr.querySelectorAll('td[data-field]').forEach(td => {
+    original[td.dataset.field] = td.innerHTML;
+    const val = rowRef[td.dataset.field] ?? '';
+    // create input (use textarea for long fields)
+    if (String(val).length > 80 || td.dataset.field.toLowerCase().includes('comments') || td.dataset.field.toLowerCase().includes('details')) {
+      const ta = document.createElement('textarea');
+      ta.className = 'form-control form-control-sm';
+      ta.style.minWidth = '220px';
+      ta.style.minHeight = '48px';
+      ta.value = val;
+      td.innerHTML = '';
+      td.appendChild(ta);
+    } else {
+      const inp = document.createElement('input');
+// Allow date picker for all *other* date fields except userReleaseDate
+if (
+    td.dataset.field.toLowerCase().includes('date') &&
+    td.dataset.field.toLowerCase() !== 'UAENumberReleasingDate'
+) {
+    inp.type = 'date';
+} else {
+    inp.type = 'text';
+}
+      inp.className = 'form-control form-control-sm';
+      inp.value = val;
+      td.innerHTML = '';
+      td.appendChild(inp);
+    }
+  });
+
+  // replace action buttons
+  const actionTd = tr.querySelector('td:last-child');
+  actionTd.innerHTML = `
+    <div style="display:flex; gap:8px; align-items:center">
+      <button class="btn-update pdf-btn-fixed" style="padding:6px 12px">Update</button>
+      <button class="btn-cancel page-btn" style="padding:6px 12px; background:#var(--accent);">Cancel</button>
+    </div>
+  `;
+
+  // wire update/cancel
+  actionTd.querySelector('.btn-cancel').addEventListener('click', ()=> cancelEdit(tr, original));
+  actionTd.querySelector('.btn-update').addEventListener('click', ()=> saveUpdate(tr, rowRef));
+}
+
+
+// ----- Helper: cancel and restore original HTML ----- //
+function cancelEdit(tr, original){
+  // restore cells
+  tr.querySelectorAll('td[data-field]').forEach(td => {
+    td.innerHTML = original[td.dataset.field] ?? '';
+  });
+
+  // restore action cell to Edit button
+  const actionTd = tr.querySelector('td:last-child');
+  actionTd.innerHTML = `<div style="display:flex; gap:8px; align-items:center"><button class="btn-edit page-btn" style="padding:6px 12px">Edit</button></div>`;
+  actionTd.querySelector('.btn-edit').addEventListener('click', ()=> {
+    // find rowRef by matching a unique key (we rely on object reference by looking up rawData)
+    const rowRef = findRowRefFromTr(tr);
+    enterEditMode(tr, rowRef);
+  });
+}
+
+
+// ----- Helper: save changes back to rawData and re-render ----- //
+function saveUpdate(tr, rowRef){
+  // collect inputs
+  const updated = {};
+  tr.querySelectorAll('td[data-field]').forEach(td => {
+    const field = td.dataset.field;
+    const inp = td.querySelector('input, textarea');
+    const val = inp ? inp.value : td.innerText;
+    updated[field] = val;
+  });
+
+  // find index in rawData (rowRef is an object reference from filteredData; rawData contains same object)
+  const idx = rawData.indexOf(rowRef);
+  if (idx !== -1) {
+    // update the rawData object (only fields present in COLUMNS)
+    COLUMNS.forEach(col => rawData[idx][col] = updated[col] ?? '');
+  } else {
+    // fallback: try to match by TrackingNumber if rawData did not have reference (rare)
+    if (updated.TrackingNumber) {
+      const fidx = rawData.findIndex(r => String(r.TrackingNumber) === String(updated.TrackingNumber));
+      if (fidx !== -1) { COLUMNS.forEach(col => rawData[fidx][col] = updated[col] ?? ''); }
+    }
+  }
+
+  // re-run current filters/sort and render (preserves page & selection)
+  applyAll();
+}
+
+
+// ----- Utility: find rowRef (object) from table row by matching cell values to rawData entry ----- //
+function findRowRefFromTr(tr){
+  // find a candidate by comparing the TrackingNumber cell value (if present)
+  const tnTd = tr.querySelector('td[data-field="TrackingNumber"]');
+  if (tnTd){
+    const tn = tnTd.querySelector('input,textarea') ? tnTd.querySelector('input,textarea').value : tnTd.innerText;
+    const found = rawData.find(r => String(r.TrackingNumber) === String(tn));
+    if (found) return found;
+  }
+  // fallback: match by all cells
+  const cells = {};
+  tr.querySelectorAll('td[data-field]').forEach(td => cells[td.dataset.field] = td.innerText.trim());
+  return rawData.find(r => {
+    return COLUMNS.every(c => String(r[c] ?? '').trim() === String(cells[c] ?? '').trim());
+  }) || null;
+}
 
 function goToInsert() {
     window.location.href = "Insert_Admin.html";
@@ -731,136 +842,6 @@ function makeEllipsis() {
 }
 
 function goBack(){ window.location.href = 'Dashboard_Admin.html'; }
-
-// init
-
-// PDF DOWNLOAD HANDLER (jsPDF version)
-// REPLACEMENT: downloadGridPDF(exportAll = true)
-// - exportAll = true  -> export all filtered rows (all pages from the grid)
-// - exportAll = false -> export only the currently visible page (same as grid view)
-async function downloadGridPDF(exportAll = true) {
-    if (!filteredData || filteredData.length === 0) {
-        alert("No rows to export. Apply filters or wait until data loads.");
-        return;
-    }
-
-    // choose rows: all filtered rows or only the current visible page
-    let rowsToExport;
-    if (exportAll) {
-        rowsToExport = filteredData.slice(); // clone of all filtered rows
-    } else {
-        const ps = parseInt(document.getElementById('pageSize').value || '10');
-        const total = filteredData.length;
-        const pages = Math.max(1, Math.ceil(total / ps));
-        const curPage = Math.min(Math.max(1, currentPage), pages);
-        const start = (curPage - 1) * ps;
-        const end = start + ps;
-        rowsToExport = filteredData.slice(start, end);
-    }
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF("p", "mm", "a4");
-
-    // Optional header image (safe try/catch)
-    try {
-        const headerImg = new Image();
-        headerImg.src = "images/header.jpg";
-        // If you want to ensure load before addImage, you'd need onload - but most small images work directly.
-        doc.addImage(headerImg, "PNG", 10, 10, 190, 35);
-    } catch (e) { /* ignore missing header */ }
-
-    // Title
-doc.setFont("helvetica", "bold");
-doc.setFontSize(14);
-doc.text("Document Status PICS", 105, 55, { align: "center" });
-
-
-
-
-    // function to draw table header (so we can reuse on each new PDF page)
-    function drawTableHeader(yStart) {
-        doc.setFillColor(238, 242, 255);
-        doc.setDrawColor(180, 180, 180);
-        doc.setLineWidth(0.3);
-        doc.rect(10, yStart, 190, 12, "F");
-        doc.line(80, yStart, 80, yStart + 12);
-        doc.line(150, yStart, 150, yStart + 12);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(12);
-        doc.setTextColor(99, 102, 241);
-        doc.text("Date of Submission", 15, yStart + 8);
-        doc.text("Customer Name", 90, yStart + 8);
-        doc.text("Delivered", 158, yStart + 8);
-        doc.setTextColor(0, 0, 0);
-        return yStart + 16;
-    }
-
-    // start position for rows (below title & header)
-let y = 85;   // was 70
-y = drawTableHeader(y - 16);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setLineWidth(0.4);
-    doc.setDrawColor(60, 60, 60);
-
-    // iterate all rowsToExport
-    for (let i = 0; i < rowsToExport.length; i++) {
-        const row = rowsToExport[i];
-
-        // Normalize/format date
-        let d = (row.DateofSubmission ?? "").toString();
-        if (d && d.includes("T")) {
-            const dt = new Date(d);
-            const dd = String(dt.getDate()).padStart(2, "0");
-            const mm = String(dt.getMonth() + 1).padStart(2, "0");
-            const yyyy = dt.getFullYear();
-            d = `${dd}/${mm}/${yyyy}`;
-        }
-
-        const nameText = (row.CustomerName ?? "").toString();
-        const nameLines = doc.splitTextToSize(nameText, 60);
-        const rowHeight = Math.max(10, nameLines.length * 6);
-
-        // page break check (A4 usable height ~ 277mm considering margins)
-        if (y + rowHeight + 20 > 287) { // leave bottom margin
-            doc.addPage();
-            y = 20;
-            y = drawTableHeader(y);
-        }
-
-        // draw box and vertical separators for this row
-        doc.rect(10, y, 190, rowHeight);
-        doc.line(80, y, 80, y + rowHeight);
-        doc.line(150, y, 150, y + rowHeight);
-
-        // text content inside columns
-        doc.text(d, 15, y + 7);
-        doc.text(nameLines, 90, y + 7);
-        doc.text((row.Delivered ?? "").toString(), 165, y + 7, { align: "right" });
-
-        y += rowHeight + 2;
-    }
-
-    // optional: add page numbers
-    const pageCount = doc.getNumberOfPages();
-    for (let p = 1; p <= pageCount; p++) {
-        doc.setPage(p);
-        doc.setFontSize(9);
-        doc.text(`Page ${p} of ${pageCount}`, 105, 292, { align: "center" });
-    }
-
-    // save file with date stamp
-    const now = new Date();
-    const dd = String(now.getDate()).padStart(2, '0');
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const yyyy = now.getFullYear();
-    const today = `${dd}-${mm}-${yyyy}`;
-
-    doc.save(`DocumentStatusPICS_${today}.pdf`);
-}
-
-document.getElementById("btnDownloadPDF")
-        .addEventListener("click", downloadGridPDF);
 
 
 

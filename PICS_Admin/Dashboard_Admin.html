@@ -48,14 +48,20 @@
   transition: 0.25s ease;
 }
 
+
+
 /* individual spacing */
 #insertVerticalBtn {
-  top: 40%;
+  top: 35%;
 }
 
 #ViewDataVerticalBtn {
-  top: 55%;
+  top: 50%;
 }
+#ModifyDataVerticalBtn {
+  top: 65%;
+}
+
 
 
 .side-pill-btn:hover {
@@ -112,6 +118,9 @@
  <div id="ViewDataVerticalBtn" class="side-pill-btn">
   <span>View Data</span>
 </div>
+ <div id="ModifyDataVerticalBtn" class="side-pill-btn">
+  <span>Modify Data</span>
+</div>
 <script>
 document.getElementById("insertVerticalBtn").addEventListener("click", () => {
   
@@ -121,6 +130,11 @@ document.getElementById("ViewDataVerticalBtn").addEventListener("click", () => {
   
     window.location.href = "ViewData_Admin.html";  // new page
 });
+document.getElementById("ModifyDataVerticalBtn").addEventListener("click", () => {
+  
+    window.location.href = "ModifyData_Admin.html";  // new page
+});
+
 
 
 </script>
