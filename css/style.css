@@ -2922,3 +2922,28 @@ ul.dropdown-menu li {
   background-color: #0056b3;
   transform: scale(1.05);
 }
+
+.brand-logo {
+    height: 36px;      /* slightly smaller logo */
+    width: auto;
+}
+
+.brand-title {
+    font-weight: 600;
+    font-size: 0.95rem;   /* reduced from 1.05rem */
+    line-height: 1.1;
+    color: #007bff;
+}
+
+.brand-subtitle {
+    font-size: 0.85rem;   /* reduced from 0.72rem */
+    font-weight: 600;
+    /* color: #666; */
+    color: #007bff;
+    margin-top: -3px;
+    white-space: nowrap;
+}
+
+.brand-text {
+    margin-left: 14px; /* adjust to your taste */
+}
