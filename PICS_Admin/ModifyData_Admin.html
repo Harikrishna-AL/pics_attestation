@@ -634,38 +634,101 @@ pageRows.forEach((row, rowIdx) => {
   document.getElementById('nextPage').classList.toggle('disabled', currentPage===pages);
 }
 
-// ----- Helper: make row editable ----- //
 function enterEditMode(tr, rowRef){
   // Save original values on the tr for cancel
   const original = {};
   tr.querySelectorAll('td[data-field]').forEach(td => {
     original[td.dataset.field] = td.innerHTML;
-    const val = rowRef[td.dataset.field] ?? '';
+
+    // prefer actual raw value (from rowRef), fallback to td.dataset.raw, fallback to innerText
+    let rawVal = (rowRef[td.dataset.field] ?? td.dataset.raw ?? td.innerText ?? '');
+    if (String(rawVal).toLowerCase().trim() === 'dd-mm-yyyy') rawVal = '';
+
     // create input (use textarea for long fields)
-    if (String(val).length > 80 || td.dataset.field.toLowerCase().includes('comments') || td.dataset.field.toLowerCase().includes('details')) {
+    if (String(rawVal).length > 80 || td.dataset.field.toLowerCase().includes('comments') || td.dataset.field.toLowerCase().includes('details')) {
       const ta = document.createElement('textarea');
       ta.className = 'form-control form-control-sm';
       ta.style.minWidth = '220px';
       ta.style.minHeight = '48px';
-      ta.value = val;
+      ta.value = rawVal;
       td.innerHTML = '';
       td.appendChild(ta);
-    } else {
-      const inp = document.createElement('input');
-// Allow date picker for all *other* date fields except userReleaseDate
-if (
-    td.dataset.field.toLowerCase().includes('date') &&
-    td.dataset.field.toLowerCase() !== 'uaenumberreleasingdate'
-) {
-    inp.type = 'date';
-} else {
-    inp.type = 'text';
-}
-      inp.className = 'form-control form-control-sm';
-      inp.value = val;
-      td.innerHTML = '';
-      td.appendChild(inp);
+      return;
     }
+
+    const inp = document.createElement('input');
+
+    // Allow date picker for all *other* date fields except uaenumberreleasingdate
+    if (
+      td.dataset.field.toLowerCase().includes('date') &&
+      td.dataset.field.toLowerCase() !== 'uaenumberreleasingdate'
+    ) {
+      inp.type = 'date';
+    } else {
+      inp.type = 'text';
+    }
+    inp.className = 'form-control form-control-sm';
+
+    // helper: convert various date formats (dd/mm/yyyy, d/m/yyyy, dd-mm-yyyy, yyyy-mm-dd, JS Date, Excel serial) to yyyy-mm-dd
+    function toISOForDateInput(v){
+      if (v === null || v === undefined || v === '') return '';
+      v = String(v).trim();
+
+      // already yyyy-mm-dd?
+      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+
+      // dd/mm/yyyy or d/m/yyyy
+      const dm = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (dm) {
+        const d = String(dm[1]).padStart(2,'0');
+        const m = String(dm[2]).padStart(2,'0');
+        const y = dm[3];
+        return `${y}-${m}-${d}`;
+      }
+
+      // dd-mm-yyyy or d-m-yyyy
+      const dm2 = v.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+      if (dm2) {
+        const d = String(dm2[1]).padStart(2,'0');
+        const m = String(dm2[2]).padStart(2,'0');
+        const y = dm2[3];
+        return `${y}-${m}-${d}`;
+      }
+
+      // Excel serial (like 45993 or 45993.00011574074)
+      if (!isNaN(v) && Number.isFinite(Number(v))) {
+        const serial = Number(v);
+        // Excel -> JS date (offset 25569). Round to nearest day for date input.
+        const jsDate = new Date(Math.round((serial - 25569) * 86400 * 1000));
+        if (!isNaN(jsDate.getTime())) {
+          const yyyy = jsDate.getFullYear();
+          const mm = String(jsDate.getMonth() + 1).padStart(2,'0');
+          const dd = String(jsDate.getDate()).padStart(2,'0');
+          return `${yyyy}-${mm}-${dd}`;
+        }
+      }
+
+      // try parse as JS Date string
+      const maybe = new Date(v);
+      if (!isNaN(maybe.getTime())) {
+        const yyyy = maybe.getFullYear();
+        const mm = String(maybe.getMonth() + 1).padStart(2,'0');
+        const dd = String(maybe.getDate()).padStart(2,'0');
+        return `${yyyy}-${mm}-${dd}`;
+      }
+
+      return '';
+    }
+
+    // set value robustly for date inputs, otherwise use rawVal as-is
+    if (inp.type === 'date') {
+      inp.value = toISOForDateInput(rawVal);
+    } else {
+      inp.value = rawVal;
+    }
+
+    td.innerHTML = '';
+    td.appendChild(inp);
   });
 
   // replace action buttons
@@ -673,13 +736,16 @@ if (
   actionTd.innerHTML = `
     <div style="display:flex; gap:8px; align-items:center">
       <button class="btn-update pdf-btn-fixed" style="padding:6px 12px">Update</button>
-      <button class="btn-cancel page-btn" style="padding:6px 12px; background:#var(--accent);">Cancel</button>
+      <button class="btn-cancel page-btn" style="padding:6px 12px;">Cancel</button>
     </div>
   `;
 
   // wire update/cancel
-  actionTd.querySelector('.btn-cancel').addEventListener('click', ()=> cancelEdit(tr, original));
-  actionTd.querySelector('.btn-update').addEventListener('click', ()=> saveUpdate(tr, rowRef));
+  const btnCancel = actionTd.querySelector('.btn-cancel');
+  const btnUpdate = actionTd.querySelector('.btn-update');
+
+  if (btnCancel) btnCancel.addEventListener('click', ()=> cancelEdit(tr, original));
+  if (btnUpdate) btnUpdate.addEventListener('click', ()=> saveUpdate(tr, rowRef));
 }
 
 
