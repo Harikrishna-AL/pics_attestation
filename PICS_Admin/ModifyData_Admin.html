@@ -644,6 +644,21 @@ function enterEditMode(tr, rowRef){
     let rawVal = (rowRef[td.dataset.field] ?? td.dataset.raw ?? td.innerText ?? '');
     if (String(rawVal).toLowerCase().trim() === 'dd-mm-yyyy') rawVal = '';
 
+     const fieldName = String(td.dataset.field || '').toLowerCase();
+    if (fieldName === 'trackingnumber') {
+      // show a disabled input that matches the other inputs styling
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'form-control form-control-sm';
+      inp.value = rawVal;
+      inp.disabled = true; // non-editable
+      // optionally make it visually obvious it's readonly (you can remove this if you don't want style change)
+      inp.style.backgroundColor = '#f5f5f5';
+      td.innerHTML = '';
+      td.appendChild(inp);
+      return;
+    }
+
     // create input (use textarea for long fields)
     if (String(rawVal).length > 80 || td.dataset.field.toLowerCase().includes('comments') || td.dataset.field.toLowerCase().includes('details')) {
       const ta = document.createElement('textarea');
@@ -743,6 +758,45 @@ function enterEditMode(tr, rowRef){
   // wire update/cancel
   const btnCancel = actionTd.querySelector('.btn-cancel');
   const btnUpdate = actionTd.querySelector('.btn-update');
+
+// --- NEW: Show tracking number on hover of Update button ---
+if (btnUpdate) {
+  const trackingNumber = rowRef['trackingnumber'] || rowRef['TrackingNumber'] || '';
+
+  btnUpdate.addEventListener('mouseover', (e) => {
+    if (!trackingNumber) return;
+
+    const tip = document.createElement('div');
+    tip.id = 'updateTooltip';
+    tip.textContent = "Tracking Number: " + trackingNumber;
+    tip.style.position = 'absolute';
+    tip.style.background = '#333';
+    tip.style.color = '#fff';
+    tip.style.padding = '6px 10px';
+    tip.style.borderRadius = '4px';
+    tip.style.fontSize = '12px';
+    tip.style.whiteSpace = 'nowrap';
+    tip.style.zIndex = 9999;
+    tip.style.top = (e.pageY + 10) + 'px';
+    tip.style.left = (e.pageX + 10) + 'px';
+    document.body.appendChild(tip);
+  });
+
+  btnUpdate.addEventListener('mousemove', (e) => {
+    const tip = document.getElementById('updateTooltip');
+    if (tip) {
+      tip.style.top = (e.pageY + 10) + 'px';
+      tip.style.left = (e.pageX + 10) + 'px';
+    }
+  });
+
+  btnUpdate.addEventListener('mouseout', () => {
+    const tip = document.getElementById('updateTooltip');
+    if (tip) tip.remove();
+  });
+}
+// --- END NEW ---
+
 
   if (btnCancel) btnCancel.addEventListener('click', ()=> cancelEdit(tr, original));
   if (btnUpdate) btnUpdate.addEventListener('click', ()=> saveUpdate(tr, rowRef));

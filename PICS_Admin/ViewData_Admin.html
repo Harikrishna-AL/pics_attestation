@@ -266,6 +266,27 @@
     border-color: #818cf8;
     transform: translateY(-1px);
 }
+.modify-link {
+    font-size: 15px;
+    font-weight: 600;
+    color: #6366f1;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    transition: 0.2s ease-in-out;
+    margin-top: -4px;      /* NEW - moves Modify closer to Insert */
+    display: inline-block; /* NEW - removes unwanted spacing */
+}
+
+.modify-link:hover {
+    background: #dbe4ff;
+    color: #4338ca;
+    border-color: #818cf8;
+    transform: translateY(-1px);
+}
+
 
 
 
@@ -284,6 +305,10 @@
      <div class="insert-link" onclick="goToInsert()">
         ➕ Click here to insert data
     </div>
+   <div class="modify-link" onclick="goToModify()">
+    ✏️ Click here to modify data
+</div>
+
 
     <div class="reset-filter-box">
         <label class="toggle-label">Reset All Filters</label>
@@ -626,6 +651,10 @@ function renderTable(){
 function goToInsert() {
     window.location.href = "Insert_Admin.html";
 }
+function goToModify() {
+    window.location.href = "ModifyData_Admin.html";
+}
+
 
 document.getElementById("firstPage").addEventListener("click", () => {
     currentPage = 1;
