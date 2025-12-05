@@ -715,7 +715,7 @@ if (toDate)   toDate.setHours(23, 59, 59, 999);
     if (statusVal && row["Status"] !== statusVal) pass = false;
     if (countryVal && row["COUNTRY"] !== countryVal) pass = false;
     if (typeVal && row["Type"] !== typeVal) pass = false;
-    if (customerVal && row["Customer Name"] !== customerVal) pass = false;
+    if (customerVal && row["CustomerName"] !== customerVal) pass = false;
     if (paymentVal && row["PaymentMode"] !== paymentVal) pass = false;
 
     return pass;
@@ -918,7 +918,7 @@ if (toDate)   toDate.setHours(23, 59, 59, 999);
 
   // Unique values
   const types = uniqueValues(allData, "Type");
-  const customers = uniqueValues(allData, "Customer Name");
+  const customers = uniqueValues(allData, "CustomerName");
   const payments = uniqueValues(allData, "PaymentMode");
 
   types.forEach(v => {
