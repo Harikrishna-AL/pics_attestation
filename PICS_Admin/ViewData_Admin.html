@@ -603,7 +603,6 @@ function isDateColumn(colName){
   return false;
 }
 
-// --- Replace your renderTable() with this version ---
 
 function renderTable(){
   const tbody = document.querySelector('#dataTable tbody');
@@ -634,6 +633,13 @@ function renderTable(){
       if (isDateColumn(c)) {
         cellVal = formatDateDisplay(cellVal);
       }
+        // 🔥 If this is the tracking number column → make clickable
+  if (c === "TrackingNumber") {
+    return `<td class="track-cell" data-track="${cellVal}" style="color:blue; cursor:pointer; text-decoration:underline;">
+              ${escapeHtml(cellVal)}
+            </td>`;
+  }
+
       return `<td>${escapeHtml(cellVal)}</td>`;
     }).join('');
 
@@ -646,6 +652,21 @@ function renderTable(){
   document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
   document.getElementById('nextPage').classList.toggle('disabled', currentPage === pages);
 }
+
+// Attach click event to tracking number cells
+const tbody = document.querySelector('#dataTable tbody');
+
+// Event delegation — runs even after re-rendering rows
+tbody.addEventListener('click', function (e) {
+  const td = e.target.closest('.track-cell'); // find nearest .track-cell ancestor
+  if (!td || !tbody.contains(td)) return;     // ignore clicks outside track cells
+
+  const num = td.getAttribute('data-track') || td.textContent.trim();
+
+  // Redirect to your status report page
+  // use window.open(..., '_blank') to open new tab
+window.location.href = `../statusreport.html?track=${encodeURIComponent(num)}`;
+});
 
 
 function goToInsert() {

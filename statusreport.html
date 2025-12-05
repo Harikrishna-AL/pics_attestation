@@ -731,6 +731,32 @@ function excelDateToJSDate(serial) {
   doc.save(fileName);
 }
 
+
+
+
+
+
+//Getting tracking number from viewdata
+function getQueryStringValue(key) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(key);
+}
+
+window.onload = function () {
+    const trackNum = getQueryStringValue("track");
+
+    // Example: Assign to an input field
+    const trackInput = document.getElementById("trackingNumber");
+
+    if (trackNum) {
+        trackInput.value = trackNum;  // assign value
+    } else {
+        trackInput.value = "";        // keep blank
+    }
+
+};
+
+
     </script>
   </body>
 
