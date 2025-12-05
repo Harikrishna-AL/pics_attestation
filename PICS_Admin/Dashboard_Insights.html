@@ -33,6 +33,15 @@
 
     .chart-box { background:#fff; border-radius:10px; padding:16px; box-shadow:var(--card-shadow); border:1px solid var(--card-border); }
     .muted { color:var(--muted); font-size:13px; }
+    /* Add inside your existing <style> */
+.chart-box { position: relative; }
+.chart-box canvas {
+  width: 100% !important;
+  height: 260px !important;   /* fixed height — change to desired px */
+  display: block;
+}
+
+    .debug { margin-top:12px; font-family:monospace; font-size:12px; color:#111; background:#fff; padding:10px; border-radius:8px; border:1px solid #eee; overflow:auto; max-height:160px;}
     @media (max-width:780px) { .cards { flex-direction:column; } }
   </style>
 </head>
@@ -47,7 +56,7 @@
 
       <div class="ms-auto d-flex align-items-center gap-2">
         <label class="muted mb-0">Range</label>
-        <select id="rangeSelect" class="form-select form-select-sm" style="width:110px;">
+        <select id="rangeSelect" class="form-select form-select-sm" style="width:130px;">
           <option value="7">Last 7 days</option>
           <option value="30">Last 30 days</option>
         </select>
@@ -84,6 +93,12 @@
           <div class="muted" id="summarySmall">—</div>
         </div>
         <canvas id="visitsChart" height="120"></canvas>
+
+        <!-- debug area: shows raw worker warnings / response for troubleshooting -->
+        <div id="workerDebug" class="debug" aria-live="polite"style='display:none;'>
+          <strong>Worker debug:</strong>
+          <pre id="workerDebugText">waiting...</pre>
+        </div>
       </div>
     </div>
   </div>
@@ -91,9 +106,6 @@
   <!-- Supabase auth (keeps your session check) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabaseConfig.js"></script>
-
-  <!-- (Optional) Cloudflare client-side beacon — replace token if you want client-side RUM -->
-  <!-- <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "YOUR_BEACON_TOKEN"}'></script> -->
 
   <script>
     // keep your existing Supabase session check
@@ -106,232 +118,222 @@
     function goBack(){ window.location.href = "Dashboard_Admin.html"; }
   </script>
 
-  
- <script>
-  // CONFIG: your worker url
-  const WORKER_PUBLIC_URL = "https://flat-resonance-1865.skpradhas.workers.dev";
+  <script>
+  /******************************
+   * CONFIG
+   ******************************/
+  const WORKER_PUBLIC_URL = "https://flat-resonance-1865.skpradhas.workers.dev"; // your worker
+  const MIN_FETCH_INTERVAL_MS = 800; // prevent accidental repeated calls
 
-  // Simple guard to avoid multiple concurrent fetches
-  let isFetching = false;
-  let lastFetchAt = 0; // timestamp of last successful fetch (ms)
-  const FETCH_MIN_INTERVAL_MS = 3000; // minimum gap between fetches
-
-  // Remove any accidental scroll handlers that might be triggering refreshes
-  // (some other scripts or service worker might have added them)
-  try { window.onscroll = null; window.removeEventListener('scroll', window._insightsAutoScrollFetcher); } catch (e) {}
-
-  async function fetchVisits(days = 7) {
-    // Prevent too-frequent calls
-    const now = Date.now();
-    if (isFetching) return null;
-    if (now - lastFetchAt < FETCH_MIN_INTERVAL_MS) return null;
-
-    isFetching = true;
-    try {
-      const resp = await fetch(`${WORKER_PUBLIC_URL}?days=${days}`, { cache: "no-cache" });
-      if (!resp.ok) {
-        const txt = await resp.text();
-        console.error("Worker responded with error:", resp.status, txt);
-        return null;
-      }
-      const json = await resp.json();
-      lastFetchAt = Date.now();
-      return json;
-    } catch (err) {
-      console.error("Fetch failed:", err);
-      return null;
-    } finally {
-      // small delay to avoid immediate refires
-      setTimeout(() => { isFetching = false; }, 300);
+  /******************************
+   * Chart setup
+   ******************************/
+  let visitsChart;
+  function renderChart(labels = [], values = []) {
+  const ctx = document.getElementById("visitsChart").getContext("2d");
+  if (visitsChart) visitsChart.destroy();
+  visitsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Visits',
+        data: values,
+        fill: true,
+        tension: 0.28,
+        pointRadius: 3,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { autoSkip: true } },
+        y: { beginAtZero: true, ticks: { precision:0 } }
+      },
+      // IMPORTANT: keep maintainAspectRatio true, chart will use the canvas size above
+      maintainAspectRatio: true,
+      // aspectRatio is width/height ratio — since we set a fixed CSS height, a modest ratio is fine
+      aspectRatio: 4, 
+      responsive: true
     }
+  });
+}
+
+
+  /******************************
+   * Fetch + UI logic
+   ******************************/
+  let isFetching = false;
+  let lastFetchTime = 0;
+
+ 
+
+  function setLoadingUI() {
+    document.getElementById("totalVisitors").textContent = "Loading...";
+    document.getElementById("todayVisitors").textContent = "Loading...";
+    document.getElementById("summarySmall").textContent = "Loading...";
+  }
+
+  function setErrorUI(msg) {
+    document.getElementById("totalVisitors").textContent = "—";
+    document.getElementById("todayVisitors").textContent = "—";
+    document.getElementById("summarySmall").textContent = msg || "Failed to load";
+    document.getElementById("lastUpdated").textContent = new Date().toLocaleString();
   }
 
   // compute today index in returned date array using IST timezone (UTC+5:30)
   function getTodayIndexFromDates(dates) {
     if (!Array.isArray(dates) || dates.length === 0) return -1;
     const now = new Date();
-    // convert current time to IST
     const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
     const istISODate = istTime.toISOString().substring(0, 10);
     return dates.indexOf(istISODate);
   }
 
-  // update UI cards and chart (chart code must exist in page)
+  async function fetchVisits(days = 7) {
+    // guard: avoid repeating too often
+    const now = Date.now();
+    if (isFetching) return null;
+    if (now - lastFetchTime < MIN_FETCH_INTERVAL_MS) return null;
+
+    isFetching = true;
+    setLoadingUI();
+
+    // cache-buster param to force fresh Worker results
+    const url = `${WORKER_PUBLIC_URL}?days=${encodeURIComponent(days)}&_ts=${Date.now()}`;
+
+    try {
+      const resp = await fetch(url, { cache: "no-cache" });
+      const txt = await resp.text();
+      lastFetchTime = Date.now();
+
+      // try parse JSON, else return error
+      let json;
+      try { json = JSON.parse(txt); } catch (e) {
+        debugOut({ error: "invalid_json", body: txt });
+        setErrorUI("Invalid response");
+        return null;
+      }
+
+      // show warnings if present
+      if (json?.warnings && Array.isArray(json.warnings) && json.warnings.length > 0) {
+        debugOut(json.warnings);
+      } else {
+        debugOut(json);
+      }
+
+      // result validation
+      if (!json || !Array.isArray(json.dates) || !Array.isArray(json.visits)) {
+        setErrorUI("No data");
+        return null;
+      }
+
+      return json;
+    } catch (err) {
+      debugOut({ error: String(err) });
+      setErrorUI("Fetch failed");
+      return null;
+    } finally {
+      isFetching = false;
+      // small delay before allowing another fetch
+      setTimeout(()=> { lastFetchTime = Date.now(); }, 300);
+    }
+  }
+
+   function debugOut(obj) {
+    const el = document.getElementById("workerDebugText");
+    try {
+      el.textContent = typeof obj === "string" ? obj : JSON.stringify(obj, null, 2);
+    } catch (e) {
+      el.textContent = String(obj);
+    }
+  }
   function updateUIWithData(data) {
     if (!data || !Array.isArray(data.dates) || data.dates.length === 0) {
-      document.getElementById("totalVisitors").textContent = "No data";
-      document.getElementById("todayVisitors").textContent = "No data";
-      document.getElementById("lastUpdated").textContent = new Date().toLocaleString();
-      if (typeof renderChart === "function") renderChart([], []);
+      setErrorUI("No data");
+      renderChart([], []);
       return;
     }
 
-    // If the worker already provides total/today, prefer that.
+    // compute total/today with fallbacks
     let total = Number(data.total || 0);
-    let today = Number(data.today || 0);
+    if ((!total || total === 0) && Array.isArray(data.visits)) {
+      total = data.visits.reduce((a,b) => a + Number(b || 0), 0);
+    }
 
-    // If today is 0 but dates exist, compute today using IST index (fallback)
-    if ((!today || today === 0) && Array.isArray(data.dates) && data.dates.length > 0) {
+    let today = Number(data.today || 0);
+    if ((!today || today === 0)) {
       const idx = getTodayIndexFromDates(data.dates);
-      if (idx >= 0 && Array.isArray(data.visits) && data.visits.length > idx) {
+      if (idx >= 0 && data.visits && data.visits.length > idx) {
         today = Number(data.visits[idx] || 0);
       } else {
-        // fallback: last non-empty day
+        // fallback: last non-zero day
         const rev = [...(data.visits || [])].reverse();
         today = rev.find(v => Number(v) > 0) ?? 0;
       }
     }
 
-    // If total is 0 but visits array exists, compute sum as fallback
-    if ((!total || total === 0) && Array.isArray(data.visits)) {
-      total = data.visits.reduce((a,b)=>a + Number(b || 0), 0);
-    }
-
-    document.getElementById("totalVisitors").textContent = total > 0 ? total.toLocaleString() : "0";
-    document.getElementById("todayVisitors").textContent = today > 0 ? today.toLocaleString() : "0";
+    document.getElementById("totalVisitors").textContent = total.toLocaleString();
+    document.getElementById("todayVisitors").textContent = (today || 0).toLocaleString();
     document.getElementById("lastUpdated").textContent = new Date().toLocaleString();
+    document.getElementById("summarySmall").textContent = `${total.toLocaleString()} visits • ${(today||0).toLocaleString()} today`;
 
-    // draw chart if renderChart exists (your Chart.js code)
-    if (typeof renderChart === "function") {
-      renderChart(data.dates || [], data.visits || []);
-    }
+    renderChart(data.dates || [], data.visits || []);
   }
 
-  // main refresh wrapper (debounced and guarded)
-  async function refreshVisits(days = 7) {
-    // quick guard: don't start if fetching
-    if (isFetching) return;
-    const data = await fetchVisits(days);
-    if (data) {
-      updateUIWithData(data);
-    } else {
-      // show fallback or leave last known state
-      // if there's absolutely no data, UI updated by updateUIWithData(null) elsewhere
-      console.warn("No data returned from worker.");
-    }
+  /******************************
+   * Range wiring (robust + debounced)
+   ******************************/
+  function parseDaysFromSelect(sel) {
+    if (!sel) return 7;
+    const v = (sel.value || "").toString().trim();
+    if (/^\d+$/.test(v)) return Number(v);
+    const text = (sel.options[sel.selectedIndex]?.text || "");
+    const m = text.match(/(\d{1,3})/);
+    if (m) return Number(m[1]);
+    return 7;
   }
 
-  // wire range select
-  const rangeSelect = document.getElementById("rangeSelect");
-  if (rangeSelect) {
-    rangeSelect.addEventListener("change", (e) => {
-      const days = Number(e.target.value) || 7;
-      refreshVisits(days);
+  function initRange() {
+    const sel = document.getElementById("rangeSelect");
+    if (!sel) return;
+
+    // normalize option values to numbers
+    for (const opt of Array.from(sel.options)) {
+      if (!/^\d+$/.test(opt.value)) {
+        const m = (opt.text || "").match(/(\d{1,3})/);
+        opt.value = m ? m[1] : "7";
+      }
+    }
+
+    let debounceTimer = null;
+    sel.addEventListener("change", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(async () => {
+        const days = parseDaysFromSelect(sel);
+        const data = await fetchVisits(days);
+        if (data) updateUIWithData(data);
+      }, 180);
     });
+
+    // initial load
+    setTimeout(async () => {
+      const days = parseDaysFromSelect(sel);
+      const data = await fetchVisits(days);
+      if (data) updateUIWithData(data);
+    }, 80);
   }
 
-  // initial load once
-  refreshVisits(Number(rangeSelect?.value || 7));
-
-  // Optional: add a small manual refresh button if you want
-  // document.getElementById("refreshBtn")?.addEventListener("click", () => refreshVisits(Number(rangeSelect?.value || 7)));
-
-  // Defensive: stop external scripts from triggering page reloads on scroll
-  // If some third-party script still attaches handlers, remove them repeatedly (last resort)
-  setInterval(() => {
-    try { window.onscroll = null; window.removeEventListener('scroll', window._insightsAutoScrollFetcher); } catch(e) {}
-  }, 2000);
-
-</script>
-<script>
-/*
-  Robust range selector wiring
-  - Works if <select id="rangeSelect"> options are:
-      <option value="7">Last 7 days</option>
-      <option value="30">Last 30 days</option>
-    OR if values are not numeric, it will parse the visible text ("Last 30 days") to extract the number.
-  - Debounces fast changes.
-  - Calls refresh(days) (use refreshVisits if your code uses that name).
-*/
-
-// Name of your refresh function used elsewhere on page
-const REFRESH_FN_NAME = "refresh"; // set to "refreshVisits" if that's what you used
-
-// safe reference to refresh function
-const callRefresh = (days) => {
-  if (typeof window[REFRESH_FN_NAME] === "function") {
-    window[REFRESH_FN_NAME](days);
-  } else if (typeof window.refreshVisits === "function") {
-    window.refreshVisits(days);
+  // When DOM ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initRange);
   } else {
-    console.warn("No refresh function found. Expected window." + REFRESH_FN_NAME + " or window.refreshVisits");
-  }
-};
-
-// parse numeric days from either value or visible text
-function parseDaysFromOption(opt) {
-  if (!opt) return 7;
-  const v = (opt.value || opt.text || "").toString().trim();
-
-  // if numeric value
-  if (/^\d+$/.test(v)) return parseInt(v, 10);
-
-  // fallback: extract first number from visible text (e.g., "Last 30 days")
-  const m = v.match(/(\d{1,3})/);
-  if (m) return parseInt(m[1], 10);
-
-  return 7; // default
-}
-
-function setupRangeSelector() {
-  const sel = document.getElementById("rangeSelect");
-  if (!sel) {
-    // try to find a select by name or class
-    const alt = document.querySelector("select[name='rangeSelect'], select.range-select, select[data-range]");
-    if (alt) {
-      alt.id = "rangeSelect"; // normalize
-    } else {
-      console.warn("Range select not found (id=rangeSelect).");
-      return;
-    }
+    initRange();
   }
 
-  const range = document.getElementById("rangeSelect");
+  
 
-  // ensure options have numeric values if possible (normalize DOM)
-  for (const opt of Array.from(range.options)) {
-    const numeric = parseDaysFromOption(opt);
-    // If option has non-numeric value, set a numeric value so subsequent reads are simple
-    if (!/^\d+$/.test(opt.value)) {
-      opt.value = String(numeric);
-    }
-  }
-
-  // Debounce setup
-  let debounceTimer = null;
-  const DEBOUNCE_MS = 250;
-
-  function onChangeHandler(e) {
-    // read the numeric value safely
-    const days = parseInt(e.target.value, 10) || 7;
-    // debounce the actual refresh
-    if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      callRefresh(days);
-      debounceTimer = null;
-    }, DEBOUNCE_MS);
-  }
-
-  // Remove any duplicate handlers first (defensive)
-  range.removeEventListener("change", onChangeHandler);
-  range.addEventListener("change", onChangeHandler);
-
-  // If page already loaded and value is present, trigger initial refresh
-  // But do so slightly after load to let other page init complete
-  setTimeout(() => {
-    const initialDays = parseInt(range.value, 10) || parseDaysFromOption(range.options[range.selectedIndex]);
-    callRefresh(initialDays);
-  }, 80);
-}
-
-// Wait for DOM ready if needed, then run setup
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", setupRangeSelector);
-} else {
-  setupRangeSelector();
-}
-</script>
-
-
+  </script>
 </body>
 </html>
