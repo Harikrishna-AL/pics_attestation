@@ -53,6 +53,10 @@
     border-radius: 5px;
     z-index: 9999;    /* ensure stays above content */
 }
+body {
+    padding-top: 20px; /* pushes content down so logout button won't overlap */
+}
+
 
     .debug { margin-top:12px; font-family:monospace; font-size:12px; color:#111; background:#fff; padding:10px; border-radius:8px; border:1px solid #eee; overflow:auto; max-height:160px;}
     @media (max-width:780px) { .cards { flex-direction:column; } }
