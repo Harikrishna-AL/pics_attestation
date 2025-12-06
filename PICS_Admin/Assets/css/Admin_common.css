@@ -1,0 +1,128 @@
+/* Global modal/toast card */
+.gm-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  pointer-events: none; /* allow clicks through when hidden */
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.gm-backdrop.show {
+  pointer-events: auto;
+  opacity: 1;
+  background: rgba(15, 23, 42, 0.35); /* subtle dark backdrop */
+}
+
+/* card */
+.gm-card {
+  width: min(760px, calc(100% - 40px));
+  max-width: 760px;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 20px 50px rgba(18, 33, 68, 0.18);
+  padding: 36px 44px;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 20px;
+  align-items: center;
+  transform: translateY(10px) scale(0.98);
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 260ms;
+  opacity: 0;
+}
+
+/* card visible */
+.gm-backdrop.show .gm-card {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* icon area */
+.gm-icon-wrap {
+  width: 120px;
+  height: 120px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(66,133,244,0.10), rgba(66,133,244,0.03));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 8px 20px rgba(66,133,244,0.08);
+}
+
+/* circle icon */
+.gm-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 34px;
+}
+
+/* titles/text */
+.gm-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.gm-text {
+  margin-top: 12px;
+  margin-bottom: 18px;
+  color: #4b5563;
+  line-height: 1.45;
+}
+
+/* button */
+.gm-btn {
+  display: inline-block;
+  padding: 10px 22px;
+  border-radius: 28px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: 0 8px 20px rgba(59,130,246,0.18);
+  background: linear-gradient(180deg, #4f9bff, #3a76f0);
+  color: #fff;
+  transition: transform 120ms ease;
+}
+.gm-btn:active { transform: translateY(1px); }
+
+/* icon color variants */
+.gm-success .gm-icon { background: linear-gradient(180deg,#e6f6ef,#dff3ea); color: #1f9b53; }
+.gm-success .gm-icon svg { fill: #1f9b53; }
+
+.gm-error .gm-icon { background: linear-gradient(180deg,#fff2f2,#ffecec); color: #d6332a; }
+.gm-error .gm-icon svg { fill: #d6332a; }
+
+.gm-info .gm-icon { background: linear-gradient(180deg,#eef6ff,#eef7ff); color: #2563eb; }
+.gm-info .gm-icon svg { fill: #2563eb; }
+
+/* small close X top-right (optional) */
+.gm-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#6b7280;
+}
+
+/* responsive */
+@media (max-width:720px) {
+  .gm-card { grid-template-columns: 1fr; padding: 28px; gap: 14px; }
+  .gm-icon-wrap { width: 100%; height: 96px; border-radius: 14px; justify-content: flex-start; padding-left: 12px; }
+  .gm-icon { margin-left: 6px; }
+  .gm-title { font-size: 20px; }
+}

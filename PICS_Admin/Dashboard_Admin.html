@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="Assets/css/Admin_common.css">
+<script src="Assets/js/message.js" defer></script>
   <title>Dashboard</title>
   <style>
     body {
@@ -314,9 +316,7 @@ document.getElementById("ModifyDataVerticalBtn").addEventListener("click", () =>
     .form-label {
   color: #212529 !important; /* bootstrap default */
 }
-body {
-    padding-top: 20px; /* pushes content down so logout button won't overlap */
-}
+
 
   </style>
 </head>
@@ -1032,8 +1032,9 @@ document.getElementById("yearFilter").addEventListener("change", refreshDashboar
   <!-- Supabase client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Your global config -->
-  <script src="supabaseConfig.js"></script>
-      <script src="Logout.js"></script>
+  <script src="Assets/js/supabaseConfig.js"></script>
+      <script src="Assets/js/Logout.js"></script>
+      
 
   <script>
     // Protect dashboard page
@@ -1044,7 +1045,7 @@ document.getElementById("yearFilter").addEventListener("change", refreshDashboar
 
     });
 
-    document.getElementById("logoutBtn").addEventListener("click", logoutUser);
+document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
 
 
 document.addEventListener("DOMContentLoaded", () => {
