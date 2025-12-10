@@ -127,9 +127,51 @@
     .btn{ width:100%; }
     .mark-btn{ width:100%; }
   }
+  .logout-btn {
+    position: absolute;
+    top: 15px;        /* place near top */
+    right: 20px;      /* place at right */
+    background: #ff4d4f;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 9999;    /* ensure stays above content */
+}
+body {
+    padding-top: 20px; /* pushes content down so logout button won't overlap */
+}
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 15px; /* ⬅️ Adds space so button stays inside screen */
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #eee;
+    z-index: 999;
+}
+
+      .back-circle { background:#3a3a3a; color:#fff; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(17,24,39,0.08); }
+    .back-circle:hover { transform:translateY(-2px); background:#2b2b2b; }
 </style>
 </head>
 <body>
+  
+<div class="topbar">
+      <button class="back-circle" onclick="goBack()" aria-label="Back"><i class="fa fa-arrow-left"></i></button>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+</div>
   <div class="card" role="main" aria-labelledby="title">
     <h1 id="title">Mark Attendance</h1>
 
@@ -139,17 +181,17 @@
     </div>
 
     <div class="field">
-      <label for="employeeName">Employee Name:</label>
+      <label for="employeeName"><b>Employee Name:</b></label>
 <input id="employeeName" type="text" disabled />
     </div>
 
     <div class="row" style="margin-top:8px;">
       <div class="col">
-        <label class="small-label">Date</label>
+        <label class="small-label"><b>Date</b></label>
         <div id="dateBox" class="small-box">-- / -- / ----</div>
       </div>
       <div class="col">
-        <label class="small-label" id="timeLabel">Punch In Time</label>
+        <label class="small-label" id="timeLabel"><b>Punch In Time</b></label>
         <div id="timeBox" class="small-box">-- : -- --</div>
       </div>
     </div>
@@ -204,7 +246,8 @@ punchInBtn.addEventListener('click', () => {
   const now = new Date();
   dateBox.textContent = formatDateDDMMYYYY(now);
   timeBox.textContent = formatTime12(now);
-  timeLabel.textContent = 'Punch In Time';
+  timeLabel.innerHTML = '<b>Punch In Time</b>';
+
 
   // NO success message here (user asked only on MARK)
   // Provide a subtle visual confirmation instead (optional)
@@ -232,7 +275,7 @@ punchOutBtn.addEventListener('click', () => {
   const now = new Date();
   dateBox.textContent = formatDateDDMMYYYY(now);
   timeBox.textContent = formatTime12(now);
-  timeLabel.textContent = 'Punch Out Time';
+timeLabel.innerHTML = '<b>Punch Out Time</b>';
 
   // NO success message here (user asked only on MARK)
   statusNote.style.color = "#666";
@@ -252,8 +295,16 @@ punchOutBtn.addEventListener('click', () => {
   };
 });
 
-markBtn.addEventListener('click', () => {
+const OFFICE_LAT = 9.48806788570355;
+const OFFICE_LNG = 76.33736953783057;
+const ALLOWED_RADIUS_METERS = 150; // 150 meters allowed
 
+markBtn.addEventListener('click', () => {
+// 0️⃣ Check if Punch In / Punch Out was clicked
+  if (!window.attendance || !window.attendance.action) {
+    showError("Please click Punch In or Punch Out first.");
+    return;
+  }
   // 1️⃣ Ask for user location
   navigator.geolocation.getCurrentPosition(async (pos) => {
 
@@ -263,7 +314,8 @@ markBtn.addEventListener('click', () => {
       // 2️⃣ Compare with office location
       const distance = getDistanceInMeters(userLat, userLng, OFFICE_LAT, OFFICE_LNG);
 
-      showError("Distance from office:", distance);
+const distanceFormatted = distance.toFixed(2);   // 2 decimal places
+showError(`Distance from office: ${distanceFormatted} meters`);
 
       // 3️⃣ Check allowed radius
       if (distance > ALLOWED_RADIUS_METERS) {
@@ -309,7 +361,6 @@ function proceedWithMark() {
     return;
   }
 
-  console.log("MARKED:", window.attendance);
 
   // Show success message depending on action
   if(window.attendance.action === 'in'){
@@ -330,9 +381,7 @@ function proceedWithMark() {
   timeLabel.textContent = "Punch Time";
 }
 
-const OFFICE_LAT = 9.48806788570355;
-const OFFICE_LNG = 76.33736953783057;
-const ALLOWED_RADIUS_METERS = 150; // 150 meters allowed
+
 
 
 function getDistanceInMeters(lat1, lon1, lat2, lon2) {
