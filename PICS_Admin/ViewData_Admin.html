@@ -532,7 +532,9 @@ const response = await fetch(
     currentPage = 1;
     applyAll();
   }catch(err){
-    console.error('Error loading data', err);
+    console.error('', err);
+              showError('Failed!', 'Error loading data.', { autoCloseMs: 5000 });
+
     rawData = [];
     applyAll();
   }finally{ showLoader(false); }

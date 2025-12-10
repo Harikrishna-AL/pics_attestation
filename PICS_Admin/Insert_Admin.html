@@ -92,6 +92,31 @@ body { background:#eef1f6; font-family:system-ui; }
 body {
     padding-top: 20px; /* pushes content down so logout button won't overlap */
 }
+.sidebar {
+    text-align: center; /* Ensures items stay aligned */
+}
+
+.attendance-container {
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.attendance-icon {
+    width: 150px;
+    animation: blink 1s infinite;
+}
+
+.attendance-text {
+    margin-top: 8px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Blinking animation */
+@keyframes blink {
+    50% { opacity: 0.2; }
+}
+
 
 
 </style>
@@ -102,7 +127,16 @@ body {
   <div class="mb-3 fw-bold text-primary">Insert Data</div>
       <img src="images/pics_logo.jpg" alt="Company Logo" class="logo">
 
+
+      <div id="mattbtn" class="attendance-container">
+      <img src="images/markattendance.png"
+           class="attendance-icon"
+           alt="Mark Attendance"
+           onclick="goToMarkAttendance()">
+      <div class="attendance-text">Mark Attendance</div>
+  </div>
 </div>
+
 
 <div class="content-area">
   <button id="backBtn" class="back-circle" onclick="goBack()">←</button>
@@ -272,12 +306,19 @@ body {
     if (role === "staff") {
         // hide back button for staff
         const backBtn = document.getElementById("backBtn");
+        
         if (backBtn) backBtn.style.display = "none";
+
+
     } 
     else {
         // show back button for admin
         const backBtn = document.getElementById("backBtn");
+                const markbtn = document.getElementById("mattbtn");
+
         if (backBtn) backBtn.style.display = "inline-block";
+                 if (markbtn) markbtn.style.display = "none";
+
     }
 });
 document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
@@ -311,6 +352,7 @@ function submitData() {
     "OtherDocs",
     "UaeNumberReleasingDate",
     "Delivered",
+    "Submitted",
     "COUNTRY"
   ];
 
@@ -422,6 +464,11 @@ function goBack(){ window.location.href = 'Dashboard_Admin.html'; }
 function goToView() {
     window.location.href = "ViewData_Admin.html";
 }
+function goToMarkAttendance() {
+    window.location.href = "Markattendance.html";
+}
+
+
 
 
 
