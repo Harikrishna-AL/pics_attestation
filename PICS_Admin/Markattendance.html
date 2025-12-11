@@ -348,6 +348,7 @@ markBtn.addEventListener('click', () => {
 
       const userLat = pos.coords.latitude;
       const userLng = pos.coords.longitude;
+      const accuracy = pos.coords.accuracy;
 
       // 2️⃣ Compare with office location
       const distance = getDistanceInMeters(userLat, userLng, OFFICE_LAT, OFFICE_LNG);
@@ -362,6 +363,13 @@ showError(`Distance from office: ${distanceFormatted} meters`);
       }
 
       // 🟢 If inside office radius → continue with existing MARK logic
+      // 🔥 SAVE GEO INFO HERE — THIS FIXES YOUR PROBLEM
+    window.attendance.geo = {
+        lat: userLat,
+        lng: userLng,
+        accuracy: accuracy,
+        distance: distanceFormatted
+    };
       proceedWithMark();
 
   }, (err) => {
@@ -385,36 +393,83 @@ async function loadEmployeeName() {
   }
 }
 
-function proceedWithMark() {
+async function proceedWithMark() {
   const emp = employeeInput.value.trim();
-  if(!emp){
+  if (!emp) {
     statusNote.style.color = "red";
     statusNote.textContent = "Please enter Employee Name.";
     return;
   }
 
-  if(!window.attendance || !window.attendance.action){
+  if (!window.attendance || !window.attendance.action) {
     statusNote.style.color = "red";
     statusNote.textContent = "Please click Punch In or Punch Out first.";
     return;
   }
 
+  // Build payload for server
+  const payload = {
+    employee: emp,
+    action: window.attendance.action || "",
+    date: window.attendance.date || "",               // dd/mm/yyyy
+    punchIn: window.attendance.punchIn || null,
+    punchOut: window.attendance.punchOut || null,
+    geo: window.attendance.geo || null,
+    clientTimestampISO: new Date().toISOString()
+  };
 
-      saveAttendanceToSheet();
+  // show saving indicator
+  statusNote.style.color = "#333";
+  statusNote.textContent = "Saving attendance...";
 
+  try {
+    // Assume saveAttendanceToSheet is async and throws on error or returns a JSON result
+    const result = await saveAttendanceToSheet(payload);
 
+    // If your save function returns { success: true, ... } handle that; otherwise assume no error = success
+    if (result && result.success === false) {
+      // server indicated failure
+      statusNote.style.color = "red";
+      statusNote.textContent = result.error || "Failed to save attendance.";
+      return;
+    }
 
-  // Reset UI
-  punchInBtn.disabled = false;
-  punchOutBtn.disabled = false;
-  punchInBtn.style.opacity = 1;
-  punchOutBtn.style.opacity = 1;
+    // Success — show appropriate message
+    if (window.attendance.action === 'in') {
+      showSuccess("Punch In Marked Successfully!");
+    } else {
+      // If server returned present/absent, show it
+      if (result && result.present) {
+        showSuccess("Punch Out Marked Successfully! Status: " + result.present);
+      } else {
+        showSuccess("Punch Out Marked Successfully!");
+      }
+    }
 
-  window.attendance = {};
-  prefillDate();
-  timeBox.textContent = "-- : -- --";
-  timeLabel.textContent = "Punch Time";
+    // Reset UI (same as before)
+    punchInBtn.disabled = false;
+    punchOutBtn.disabled = false;
+    punchInBtn.style.opacity = 1;
+    punchOutBtn.style.opacity = 1;
+
+    window.attendance = {};
+    prefillDate();
+    timeBox.textContent = "-- : -- --";
+    timeLabel.textContent = "Punch Time";
+
+    return true;
+
+  } catch (err) {
+    // Save failed (network/server). Show error and keep current UI/state so user can retry.
+    const msg = (err && err.message) ? err.message : "Could not save attendance. Try again.";
+    statusNote.style.color = "red";
+    statusNote.textContent = msg;
+              showError(err.message, { autoCloseMs: 5000 });
+
+    return false;
+  }
 }
+
 
 
 
@@ -434,34 +489,36 @@ function getDistanceInMeters(lat1, lon1, lat2, lon2) {
   const d = R * c;
   return d;
 }
-async function saveAttendanceToSheet(data) {
+
+async function saveAttendanceToSheet(payload) {
   try {
     const response = await fetch("https://script.google.com/macros/s/AKfycbw99lCxbw9Mk8EtUWOC78JIhf1TNKOencK56drcuSQAwUF-4eW1dWIqJlsIqd_FMhxMcA/exec", {
       method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data)
+            mode: "no-cors",
+
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     });
 
-    // no-cors won't return response, but request is sent successfully
-    if(window.attendance.action === 'in'){
-
-          showSuccess("Punch In Marked Successfully!");
+    // try to parse JSON even if res.ok is false
+    const text = await res.text();
+    let json;
+    try { json = text ? JSON.parse(text) : {}; } catch (e) {
+            showError("Invalid response from server");
 
     }
-    else{
 
-    showSuccess("Punch Out Marked Successfully!");
+    if (!res.ok || !json || json.success !== true) {
+      // server responded but indicated failure
+      showError("Server rejected the request");
     }
 
+    return json; // { success:true, present: "Present" } etc.
   } catch (err) {
+    // normalize error
           showError('Could not Puch In Attendance: ',  + err.message, { autoCloseMs: 5000 });
-
   }
 }
-
 
 document.addEventListener("DOMContentLoaded", loadEmployeeName);
 
