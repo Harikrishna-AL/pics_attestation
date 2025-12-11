@@ -169,7 +169,7 @@ body {
 <body>
   
 <div class="topbar">
-      <button class="back-circle" onclick="goBack()" aria-label="Back"><i class="fa fa-arrow-left"></i></button>
+<button id="backBtn"class="back-circle" onclick="goBack()">←</button>
       <button class="logout-btn" id="logoutBtn">Logout</button>
 </div>
   <div class="card" role="main" aria-labelledby="title">
@@ -200,7 +200,45 @@ body {
     <div class="note" id="statusNote"></div>
   </div>
 
+
+<!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Your global config -->
+  <script src="Assets/js/supabaseConfig.js"></script>
+  <script src="Assets/js/Logout.js"></script>
 <script>
+// logout
+
+
+
+
+   supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+            window.location.href = "Login_Admin.html";
+        }
+        // ROLE-BASED BACK BUTTON CONTROL
+    const role = session.user.user_metadata?.role;
+
+    if (role === "staff") {
+        // staff
+        const backBtn = document.getElementById("backBtn");
+                if (backBtn) backBtn.style.display = "inline-block";
+
+    } 
+    else {
+        //   admin
+        const backBtn = document.getElementById("backBtn");
+                if (backBtn) backBtn.style.display = "none";
+
+                    window.location.href = "Login_Admin.html";
+
+
+    }
+    });
+document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
+
+function goBack(){ window.location.href = 'Insert_Admin.html'; }
+
    // ---- Utility functions ----
 function pad(n){ return n < 10 ? '0' + n : n; }
 
@@ -362,12 +400,9 @@ function proceedWithMark() {
   }
 
 
-  // Show success message depending on action
-  if(window.attendance.action === 'in'){
-    showSuccess("Punch In Marked Successfully!");
-  } else {
-    showSuccess("Punch Out Marked Successfully!");
-  }
+      saveAttendanceToSheet();
+
+
 
   // Reset UI
   punchInBtn.disabled = false;
@@ -398,6 +433,33 @@ function getDistanceInMeters(lat1, lon1, lat2, lon2) {
 
   const d = R * c;
   return d;
+}
+async function saveAttendanceToSheet(data) {
+  try {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbw99lCxbw9Mk8EtUWOC78JIhf1TNKOencK56drcuSQAwUF-4eW1dWIqJlsIqd_FMhxMcA/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data)
+    });
+
+    // no-cors won't return response, but request is sent successfully
+    if(window.attendance.action === 'in'){
+
+          showSuccess("Punch In Marked Successfully!");
+
+    }
+    else{
+
+    showSuccess("Punch Out Marked Successfully!");
+    }
+
+  } catch (err) {
+          showError('Could not Puch In Attendance: ',  + err.message, { autoCloseMs: 5000 });
+
+  }
 }
 
 
