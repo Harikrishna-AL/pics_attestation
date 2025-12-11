@@ -556,10 +556,14 @@ async function proceedWithMark() {
     // Success — show appropriate message
     if (window.attendance.action === 'in') {
       showSuccess("Punch In Marked Successfully!");
+          markBtn.disabled = false;
+
     } else {
       // If server returned present/absent, show it
       if (result) {
          showSuccess("Punch Out Marked Successfully!");
+             markBtn.disabled = false;
+
       } 
     }
 
