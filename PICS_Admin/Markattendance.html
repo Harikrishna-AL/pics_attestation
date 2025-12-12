@@ -615,7 +615,7 @@ function getDistanceInMeters(lat1, lon1, lat2, lon2) {
 
 
 async function saveAttendanceToSheet(payload) {
-  const resp = await fetch("https://script.google.com/macros/s/AKfycbzOOJwXvH_hmBYgB1LslQRQaVtxcaRMvKMgBrKOmWl9l7jlYw9Q9Zmz0oPA_ec_dRoKPA/exec", {
+  const resp = await fetch("https://script.google.com/macros/s/AKfycbwTJwRXO8rSjAZ_5edJ6kRBRSemawMyhPEdYGeuwqxgupbGMfTifGVFt4Cw6mlgYNNn8w/exec", {
     method: "POST",
     headers: { "Content-Type": "text/plain" },
     body: JSON.stringify(payload)
