@@ -298,7 +298,12 @@ body {
 
     } 
      else {
-      
+      //   admin
+        const backBtn = document.getElementById("backBtn");
+                if (backBtn) backBtn.style.display = "none";
+
+                    window.location.href = "Login_Admin.html";
+
 
 
     }
@@ -402,8 +407,8 @@ timeLabel.innerHTML = '<b>Punch Out Time</b>';
   };
 });
 
-const OFFICE_LAT = 9.48806788570355;
-const OFFICE_LNG = 76.33736953783057;
+const OFFICE_LAT = 10.00247;
+const OFFICE_LNG = 76.31729;
 const ALLOWED_RADIUS_METERS = 150; // 150 meters allowed
 
 // Add this at top-level once (near other globals)
@@ -538,7 +543,7 @@ async function proceedWithMark() {
   };
 
   // show saving indicator
-  statusNote.style.color = "#333";
+  statusNote.style.color = "green";
   statusNote.textContent = "Saving attendance...";
 
   try {
