@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="Assets/css/Admin_common.css">
+<script src="Assets/js/message.js" defer></script>
+<title>Attendance Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+  background:#f5f7fb;
+  font-family: "Inter", sans-serif;
+}
+.page-title{
+  font-weight:700;
+}
+.card{
+  border:none;
+  border-radius:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.05);
+}
+.circle{
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  border:10px solid #4f46e5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:700;
+  color:#4f46e5;
+  margin:auto;
+}
+.stat-row{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+  font-size:14px;
+}
+.stat-row span{
+  font-weight:600;
+}
+.activity-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+  font-size:14px;
+}
+.activity-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#22c55e;
+}
+.table thead th{
+  font-size:13px;
+  text-transform:uppercase;
+  color:#6b7280;
+}
+.status-present{color:#16a34a;font-weight:600;}
+.status-half{color:#f59e0b;font-weight:600;}
+.status-absent{color:#dc2626;font-weight:600;}
+.section-title {
+  color: #1e3a8a;           /* dark blue */
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.stat-item {
+  margin-bottom: 16px;
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.progress {
+  height: 8px;
+  border-radius: 6px;
+  background-color: #e5e7eb;
+}
+
+.progress-bar {
+  border-radius: 6px;
+}
+
+/* Individual colors */
+.bg-today { background-color: #22c55e; }
+.bg-week { background-color: #ef4444; }
+.bg-month { background-color: #f59e0b; }
+.bg-remaining { background-color: #2563eb; }
+
+
+  .logout-btn {
+    position: absolute;
+    top: 15px;        /* place near top */
+    right: 20px;      /* place at right */
+    background: #ff4d4f;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 9999;    /* ensure stays above content */
+}
+.back-circle {
+    background: #3a3a3a;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    margin-top: 10px; 
+
+    margin-left: 16px; 
+}
+
+
+.back-circle:hover {
+    background: #2b2b2b;
+}
+
+.back-circle:active {
+    transform: scale(0.92);
+}
+</style>
+</head>
+
+<body onload="loadDashboard()">
+    
+<button id="backBtn"class="back-circle" onclick="goBack()">←</button>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+
+<div class="container-fluid p-4">
+
+  <!-- Header -->
+  <div class="mb-4">
+    <h3 class="page-title">Attendance</h3>
+    <div class="text-muted">Dashboard</div>
+  </div>
+
+  <!-- Top Cards -->
+  <div class="row g-4">
+
+    <!-- Timesheet -->
+    <div class="col-lg-3">
+      <div class="card p-4 text-center">
+        <h6 class="section-title">Timesheet</h6>
+    <div class="circle">
+  <span id="tsTotalHours">--</span>
+</div>
+
+<div class="mt-3 text-muted">
+  Punch In: <span id="tsPunchIn">--</span>
+</div>
+
+<div class="text-muted">
+  Punch Out: <span id="tsPunchOut">--</span>
+</div>
+
+      </div>
+    </div>
+
+    <!-- Statistics -->
+<div class="col-lg-5">
+  <div class="card p-4">
+    <h6 class="section-title">Statistics</h6>
+
+    <!-- Today -->
+    <div class="stat-item">
+      <div class="stat-header">
+        <span>Today</span>
+        <span id="statTodayText">-- / 8 hrs</span>
+      </div>
+      <div class="progress">
+        <div id="statTodayBar" class="progress-bar bg-today" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- This Week -->
+    <div class="stat-item">
+      <div class="stat-header">
+        <span>This Week</span>
+        <span id="statWeekText">-- / 40 hrs</span>
+      </div>
+      <div class="progress">
+        <div id="statWeekBar" class="progress-bar bg-week" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- This Month -->
+    <div class="stat-item">
+      <div class="stat-header">
+        <span>This Month</span>
+        <span id="statMonthText">-- / 160 hrs</span>
+      </div>
+      <div class="progress">
+        <div id="statMonthBar" class="progress-bar bg-month" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Remaining -->
+    <div class="stat-item">
+      <div class="stat-header">
+        <span>Remaining</span>
+        <span id="statRemainingText">-- / 160 hrs</span>
+      </div>
+      <div class="progress">
+        <div id="statRemainingBar" class="progress-bar bg-remaining" style="width:0%"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+    <!-- Today Activity -->
+<div class="col-lg-4">
+  <div class="card p-4">
+    <h6 class="section-title">Today Activity</h6>
+
+    <!-- Punch In -->
+    <div class="activity-item" id="activityPunchInRow">
+      <div class="activity-dot"></div>
+      <div>
+        Punch In at <b><span id="actPunchIn">--</span></b>
+      </div>
+    </div>
+
+    <!-- Punch Out -->
+    <div class="activity-item" id="activityPunchOutRow">
+      <div class="activity-dot"></div>
+      <div>
+        Punch Out at <b><span id="actPunchOut">--</span></b>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="row g-4 mt-2">
+
+    <!-- Attendance List -->
+    <div class="col-lg-8">
+  <div class="card p-4">
+    <h6 class="section-title">Attendance List</h6>
+
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Punch In</th>
+          <th>Punch Out</th>
+          <th>Total Hours</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <!-- Empty body – data will come from Apps Script -->
+      <tbody id="attendanceTableBody">
+        <tr>
+          <td colspan="5" class="text-center text-muted">
+            No attendance records found
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+
+    <!-- Daily Records -->
+    <div class="col-lg-4">
+      <div class="card p-4">
+        <h6 class="section-title">Daily Records</h6>
+
+        <canvas id="dailyChart" height="200"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Your global config -->
+  <script src="Assets/js/supabaseConfig.js"></script>
+  <script src="Assets/js/Logout.js"></script>
+
+<script>
+
+ supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+            window.location.href = "Login_Admin.html";
+        }
+        // ROLE-BASED BACK BUTTON CONTROL
+    const role = session.user.user_metadata?.role;
+
+    if (role === "staff") {
+        // staff
+        const backBtn = document.getElementById("backBtn");
+                if (backBtn) backBtn.style.display = "inline-block";
+
+    } 
+
+   
+    });
+
+
+async function fetchAttendance() {
+  const url = `${"https://script.google.com/macros/s/AKfycbwYpkbgU4ggfCx73QrfM03-tETtG4RINW4O1pqTuuLOtcVQvEGMwFDf_SW3uKZ5oR6l/exec"}`;
+
+  const res = await fetch(url);
+  const json = await res.json();
+
+  if (!json.success) {
+    throw new Error(json.error || "Failed to load attendance");
+  }
+
+  return json.rows;
+}
+
+function groupByDate(rows) {
+  const map = {};
+
+  rows.forEach(r => {
+    if (!map[r.date]) {
+      map[r.date] = { date: r.date };
+    }
+    if (r.action === "in") map[r.date].in = r.time;
+    if (r.action === "out") {
+      map[r.date].out = r.time;
+      map[r.date].status = r.present;
+    }
+  });
+
+  return Object.values(map);
+}
+
+
+function renderAttendanceTable(grouped) {
+  const tbody = document.getElementById("attendanceTableBody");
+  tbody.innerHTML = "";
+
+  if (grouped.length === 0) {
+    tbody.innerHTML = `<tr>
+      <td colspan="5" class="text-center text-muted">No records found</td>
+    </tr>`;
+    return;
+  }
+
+  grouped.forEach(d => {
+    let cls = "status-present";
+    if (d.status === "Half Day") cls = "status-half";
+    if (d.status === "Absent") cls = "status-absent";
+const hours = d.in && d.out
+  ? calculateHours(d.in, d.out, d.date)
+  : 0;
+    tbody.innerHTML += `
+      <tr>
+        <td>${d.date}</td>
+        <td>${d.in || "--"}</td>
+        <td>${d.out || "--"}</td>
+<td>${hours ? hours + " hrs" : "--"}</td>
+        <td class="${cls}">${d.status || "--"}</td>
+      </tr>
+    `;
+  });
+}
+
+
+
+function fillTodayCards(grouped) {
+  const today = new Date().toLocaleDateString("en-GB");
+
+  const rec = grouped.find(
+    r => String(r.date).trim() === today
+  );
+
+  const hours = rec && rec.in && rec.out
+    ? calculateHours(rec.in, rec.out, rec.date)
+    : 0;
+
+  document.getElementById("tsPunchIn").textContent = rec?.in || "--";
+  document.getElementById("tsPunchOut").textContent = rec?.out || "--";
+  document.getElementById("actPunchIn").textContent = rec?.in || "--";
+  document.getElementById("actPunchOut").textContent = rec?.out || "--";
+
+  document.getElementById("tsTotalHours").textContent =
+    hours ? `${hours} hrs` : "--";
+}
+
+
+function fillTodayCards(grouped) {
+  const today = new Date().toLocaleDateString("en-GB"); // dd/mm/yyyy
+  const rec = grouped.find(r => r.date === today);
+
+  document.getElementById("tsPunchIn").textContent = rec?.in || "--";
+  document.getElementById("tsPunchOut").textContent = rec?.out || "--";
+  document.getElementById("actPunchIn").textContent = rec?.in || "--";
+  document.getElementById("actPunchOut").textContent = rec?.out || "--";
+}
+
+
+function calculateHours(inTime, outTime, dateStr) {
+  if (!inTime || !outTime) return 0;
+
+  const [dd, mm, yyyy] = dateStr.split("/").map(Number);
+
+  function parse12(t) {
+    const [time, mer] = t.split(" ");
+    let [h, m] = time.split(":").map(Number);
+    if (mer === "PM" && h !== 12) h += 12;
+    if (mer === "AM" && h === 12) h = 0;
+    return { h, m };
+  }
+
+  const i = parse12(inTime);
+  const o = parse12(outTime);
+
+  const inDate = new Date(yyyy, mm - 1, dd, i.h, i.m);
+  const outDate = new Date(yyyy, mm - 1, dd, o.h, o.m);
+
+  const diff = (outDate - inDate) / (1000 * 60 * 60);
+  return diff > 0 ? +diff.toFixed(2) : 0;
+}
+
+
+function buildDailyChartData(rows) {
+  const map = {};
+
+  rows.forEach(r => {
+    if (!map[r.date]) map[r.date] = {};
+    if (r.action === "in") map[r.date].in = r.time;
+    if (r.action === "out") map[r.date].out = r.time;
+  });
+
+  const labels = [];
+  const hours = [];
+
+  Object.keys(map)
+    .sort((a, b) => {
+      // sort by date dd/mm/yyyy
+      const [d1,m1,y1] = a.split("/").map(Number);
+      const [d2,m2,y2] = b.split("/").map(Number);
+      return new Date(y1,m1-1,d1) - new Date(y2,m2-1,d2);
+    })
+    .slice(-7) // last 7 days only
+    .forEach(date => {
+      labels.push(date);
+      const h = calculateHours(map[date].in, map[date].out, date);
+      hours.push(h);
+    });
+
+  return { labels, hours };
+}
+
+let dailyChart; // keep reference
+
+function renderDailyChart(rows) {
+  const ctx = document.getElementById("dailyChart").getContext("2d");
+
+  const { labels, hours } = buildDailyChartData(rows);
+
+  if (dailyChart) dailyChart.destroy(); // prevent duplicate chart
+
+  dailyChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Hours Worked",
+        data: hours,
+        backgroundColor: "#6366f1",
+        borderRadius: 6
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 12,
+          ticks: { stepSize: 1 }
+        }
+      }
+    }
+  });
+}
+
+
+async function loadDashboard() {
+  try {
+    const rows = await fetchAttendance();
+
+    const grouped = groupByDate(rows);
+
+    renderAttendanceTable(grouped);
+    fillTodayCards(grouped);
+
+    renderDailyChart(rows);
+
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+
+
+document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
+
+function goBack(){ window.location.href = 'Dashboard_Admin.html'; }
+
+
+</script>
+
+</body>
+</html>
