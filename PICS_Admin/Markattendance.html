@@ -439,68 +439,87 @@ markBtn.addEventListener('click', () => {
   }
 
   // Inform user
+try {
+  showSavingModal();
+   proceedWithMark();
+}
+catch (err) {
+  showError(err.message);
+  markBtn.disabled = false;
+}
+finally {
+  hideSavingModal();
+  _markInProgress = false;
 
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-    try {
-      const userLat = pos.coords.latitude;
-      const userLng = pos.coords.longitude;
-      const accuracy = pos.coords.accuracy;
+  if (!markBtn.disabled) {
+    markBtn.style.opacity = 1;
+  }
+}
 
-      const distance = getDistanceInMeters(userLat, userLng, OFFICE_LAT, OFFICE_LNG);
-      const distanceFormatted = Number(distance).toFixed(2);
+
+
+//commented the location check  part 
+//  navigator.geolocation.getCurrentPosition(async (pos) => {
+  //  try {
+     // const userLat = pos.coords.latitude;
+      // const userLng = pos.coords.longitude;
+      // const accuracy = pos.coords.accuracy;
+
+     // const distance = getDistanceInMeters(userLat, userLng, OFFICE_LAT, OFFICE_LNG);
+      // const distanceFormatted = Number(distance).toFixed(2);
 
       // show distance as info (not an error)
       //showError(`Distance from office: ${distanceFormatted} meters (accuracy ${Math.round(accuracy)} m)`);
 
-      window.attendance.geo = {
-        lat: userLat,
-        lng: userLng,
-        accuracy: accuracy,
-        distance: Number(distanceFormatted)
-      };
+      //window.attendance.geo = {
+       // lat: userLat,
+       // lng: userLng,
+       // accuracy: accuracy,
+       // distance: Number(distanceFormatted)
+     // };
 
       // 3️⃣ Check allowed radius — ONLY THEN call proceedWithMark
-      if (distance > ALLOWED_RADIUS_METERS) {
-        showError(`You are ${distanceFormatted} meters away. Attendance cannot be marked.`);
+      //if (distance > ALLOWED_RADIUS_METERS) {
+       // showError(`You are ${distanceFormatted} meters away. Attendance cannot be marked.`);
         // cleanup UI / allow retry
-        _markInProgress = false;
-        markBtn.disabled = false;
-        markBtn.style.opacity = 1;
-        return;
-      }
+        //_markInProgress = false;
+        //markBtn.disabled = false;
+        //markBtn.style.opacity = 1;
+        //return;
+      //}
 
       // Inside radius -> proceed (proceedWithMark is async)
       // inside success branch when inside radius
-      try {
-        showSavingModal();
-        await proceedWithMark(); 
-      } finally {
-        hideSavingModal();
-      }
+    //  try {
+      //  showSavingModal();
+      //  await proceedWithMark(); 
+      //} finally {
+       // hideSavingModal();
+     // }
 
 
-    } catch (err) {
-      showError(err.message);
-              markBtn.disabled = false;
+    // } catch (err) {
+    //  showError(err.message);
+  //            markBtn.disabled = false;
 
-    } finally {
-      _markInProgress = false;
-      if (!markBtn.disabled) {
-        markBtn.style.opacity = 1;
-      }
-    }
-  }, (err) => {
+//    } finally {
+      //_markInProgress = false;
+      //if (!markBtn.disabled) {
+      //  markBtn.style.opacity = 1;
+    //  }
+   // }
+  //}, (err) => {
     // geolocation error
-    showError("Location permission denied. Cannot mark attendance.");
+    //showError("Location permission denied. Cannot mark attendance.");
     
-    _markInProgress = false;
-    markBtn.disabled = false;
-    markBtn.style.opacity = 1;
-  }, {
-    enableHighAccuracy: true,
-    timeout: 20000,
-    maximumAge: 0
-  });
+    //_markInProgress = false;
+    //markBtn.disabled = false;
+   // markBtn.style.opacity = 1;
+  //}, {
+    //enableHighAccuracy: true,
+    //timeout: 20000,
+    //maximumAge: 0
+  //});
 });
 
 
