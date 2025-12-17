@@ -3,7 +3,12 @@
 async function logoutUser() {
 
     // 1. Check if user session exists
-    const { data: sessionData } = await supabase.auth.getSession();
+ const supabase = window.supabaseClient;
+
+    // 1. Get current session (Supabase v2 way)
+    const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+
     const session = sessionData?.session;
 
     // 2. If no session → redirect directly (prevents "Auth session missing!")

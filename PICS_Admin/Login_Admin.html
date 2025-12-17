@@ -112,7 +112,10 @@
       const email = emailInput.value.trim();
       const password = passwordInput.value;
 
-      const { data, error } = await supabase.auth.signInWithPassword({
+    const supabase = window.supabaseClient;
+
+const { data, error } = await supabase.auth.signInWithPassword({
+
         email,
         password
       });

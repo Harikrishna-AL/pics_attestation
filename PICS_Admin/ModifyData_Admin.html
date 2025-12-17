@@ -356,8 +356,8 @@ body {
 
   <script>
 
-   supabase.auth.getSession().then(({ data: { session } }) => {
-        if (!session) {
+ window.supabaseClient.auth.getSession().then(({ data }) => {
+          if (!session) {
             window.location.href = "Login_Admin.html";
         }
         // ROLE-BASED BACK BUTTON CONTROL

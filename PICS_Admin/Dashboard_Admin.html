@@ -1038,8 +1038,9 @@ document.getElementById("yearFilter").addEventListener("change", refreshDashboar
 
   <script>
     // Protect dashboard page
-    supabase.auth.getSession().then(({ data: { session } }) => {
-        if (!session) {
+    
+ window.supabaseClient.auth.getSession().then(({ data }) => {
+          if (!session) {
             window.location.href = "Login_Admin.html";
         }
 
