@@ -294,14 +294,17 @@ body {
 
   <script>
 
- window.supabaseClient.auth.getSession().then(({ data }) => {
-      if (!session) {
-        window.location.href = "Login_Admin.html";
-        return;
+window.supabaseClient.auth
+  .getSession()
+  .then(({ data }) => {
+    if (!data.session) {
+      window.location.href = "Login_Admin.html";
+      return;
     }
 
+
     // ROLE-BASED BACK BUTTON CONTROL
-    const role = session.user.user_metadata?.role;
+    const role = data.session.user.user_metadata?.role;
 
     if (role === "staff") {
         // hide back button for staff

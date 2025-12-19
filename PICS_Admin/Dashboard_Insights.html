@@ -133,12 +133,18 @@ body {
 
   <script>
     // keep your existing Supabase session check
- window.supabaseClient.auth.getSession().then(({ data }) => {
-        if (!session) {
-        window.location.href = "Login_Admin.html";
-      }
-   
-    const role = session.user.user_metadata?.role;
+
+window.supabaseClient.auth
+  .getSession()
+  .then(({ data }) => {
+    if (!data.session) {
+      window.location.href = "Login_Admin.html";
+      return;
+    }
+
+
+    // ROLE-BASED BACK BUTTON CONTROL
+    const role = data.session.user.user_metadata?.role;
     if (role === "staff") {
         window.location.href = "Login_Admin.html";
     } 
