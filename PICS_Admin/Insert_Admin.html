@@ -201,10 +201,38 @@ body {
         <input id="phoneno" class="form-control" />
       </div>
 
-      <div class="col-md-4">
-        <label>Payment Mode</label>
-        <input id="PaymentMode" class="form-control" />
-      </div>
+<div class="col-md-4">
+  <label>Payment Mode</label>
+
+  <div class="position-relative">
+    <input
+      id="PaymentMode"
+      class="form-control"
+      list="paymentModeList"
+    placeholder="Select or type Payment Mode"
+    />
+    <span style="
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      pointer-events:none;
+      color:#6c757d;
+    ">
+      ▼
+    </span>
+  </div>
+
+  <datalist id="paymentModeList">
+    <option value="GPAY"></option>
+    <option value="GPAY & CASH"></option>
+    <option value="CASH"></option>
+    <option value="Account"></option>
+  </datalist>
+</div>
+
+
+
 
       <div class="col-md-4">
         <label>Total Amount</label>
@@ -273,11 +301,43 @@ body {
         <input id="Submitted" class="form-control" />
       </div>
 
-      
-      <div class="col-md-4">
-        <label>COUNTRY</label>
-        <input id="COUNTRY" class="form-control" />
-      </div>
+<div class="col-md-4">
+  <label>COUNTRY</label>
+
+  <div class="position-relative">
+    <input
+      id="COUNTRY"
+      class="form-control"
+      list="countryList"
+      placeholder="Select or type country"
+    />
+    <span style="
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      pointer-events:none;
+      color:#6c757d;
+    ">
+      ▼
+    </span>
+  </div>
+
+  <datalist id="countryList">
+    <option value="UAE"></option>
+    <option value="Kuwait"></option>
+    <option value="Bahrain"></option>
+    <option value="Qatar"></option>
+    <option value="Saudi Arabia"></option>
+    <option value="Oman"></option>
+    <option value="UK"></option>
+    <option value="Canada"></option>
+    <option value="Europe"></option>
+    <option value="USA"></option>
+  </datalist>
+</div>
+
+
 
       <div class="col-12 mt-4">
         <button class="submit-btn" onclick="submitData()">Submit</button>
