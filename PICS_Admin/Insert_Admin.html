@@ -291,15 +291,71 @@ body {
         <input id="DateProcess" class="form-control" type="date" />
       </div>
 
-      <div class="col-md-4">
-        <label>Delivered</label>
-        <input id="Delivered" class="form-control" />
-      </div>
+   
 
-      <div class="col-md-4">
-        <label>Submitted</label>
-        <input id="Submitted" class="form-control" />
-      </div>
+<div class="col-md-4">
+  <label>Delivered</label>
+
+  <div class="position-relative">
+    <input
+      id="Delivered"
+      class="form-control"
+      list="deliveredList"
+      placeholder="Select or type Delivered"
+    />
+    <span style="
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      pointer-events:none;
+      color:#6c757d;
+    ">
+      ▼
+    </span>
+  </div>
+
+  <datalist id="deliveredList">
+<option value="Y"></option>
+<option value="N"></option>
+<option value="Cancel"></option>
+  </datalist>
+</div>
+
+
+
+
+<div class="col-md-4">
+  <label>Submitted</label>
+
+  <div class="position-relative">
+    <input
+      id="Submitted"
+      class="form-control"
+      list="submittedList"
+      placeholder="Select or type Submitted"
+    />
+    <span style="
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      pointer-events:none;
+      color:#6c757d;
+    ">
+      ▼
+    </span>
+  </div>
+
+  <datalist id="submittedList">
+<option value="COK"></option>
+<option value="MUM"></option>
+<option value="KTM"></option>
+<option value="ALP"></option>
+  </datalist>
+</div>
+
+
 
 <div class="col-md-4">
   <label>COUNTRY</label>
@@ -324,16 +380,17 @@ body {
   </div>
 
   <datalist id="countryList">
-    <option value="UAE"></option>
-    <option value="Kuwait"></option>
-    <option value="Bahrain"></option>
-    <option value="Qatar"></option>
-    <option value="Saudi Arabia"></option>
-    <option value="Oman"></option>
-    <option value="UK"></option>
-    <option value="Canada"></option>
-    <option value="Europe"></option>
-    <option value="USA"></option>
+<option value="UAE"></option>
+<option value="KUWAIT"></option>
+<option value="BAHRAIN"></option>
+<option value="QATAR"></option>
+<option value="SAUDI ARABIA"></option>
+<option value="OMAN"></option>
+<option value="UK"></option>
+<option value="CANADA"></option>
+<option value="EUROPE"></option>
+<option value="USA"></option>
+
   </datalist>
 </div>
 
@@ -549,6 +606,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Set ISO value so browser can display correctly
     document.getElementById("DateofSubmission").value = `${yyyy}-${mm}-${dd}`;
+        document.getElementById("DateProcess").value = `${yyyy}-${mm}-${dd}`;
+
 });
 </script>
 
