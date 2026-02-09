@@ -230,7 +230,7 @@ body{
     <div class="stat-item">
       <div class="stat-header">
         <span>Today</span>
-        <span id="statTodayText">-- / 8 hrs</span>
+        <span id="statTodayText">-- / 8.5 hrs</span>
       </div>
       <div class="progress">
         <div id="statTodayBar" class="progress-bar bg-today" style="width:0%"></div>
@@ -316,7 +316,13 @@ body{
           <th>Punch In</th>
           <th>Punch Out</th>
           <th>Total Hours</th>
-          <th>Status</th>
+          <th>Status
+             <div class="d-flex gap-1 mt-1">
+        <input type="date" id="fromDate" class="form-control form-control-sm">
+        <input type="date" id="toDate" class="form-control form-control-sm">
+      </div>
+          </th>
+          
         </tr>
       </thead>
 
@@ -408,36 +414,95 @@ function groupByDate(rows) {
 }
 
 
-function renderAttendanceTable(grouped) {
+  function parseDDMMYYYY(dateStr) {
+  if (!dateStr) return null;
+  const parts = dateStr.split("/");
+  if (parts.length !== 3) return null;
+
+  const dd = Number(parts[0]);
+  const mm = Number(parts[1]) - 1;
+  const yyyy = Number(parts[2]);
+
+  return new Date(yyyy, mm, dd);
+}
+
+function getDisplayData(data) {
+  if (!Array.isArray(data)) return [];
+
+  const fromVal = document.getElementById("fromDate").value;
+  const toVal = document.getElementById("toDate").value;
+
+  // 🔹 Sort by date DESC
+  const sorted = [...data].sort((a, b) => {
+    return parseDDMMYYYY(b.date) - parseDDMMYYYY(a.date);
+  });
+
+  // 🔹 If calendar filter selected
+  if (fromVal || toVal) {
+    const fromDate = fromVal ? new Date(fromVal) : null;
+    const toDate = toVal ? new Date(toVal + "T23:59:59") : null;
+
+    return sorted.filter(row => {
+      const rowDate = parseDDMMYYYY(row.date);
+      if (!rowDate) return false;
+
+      if (fromDate && rowDate < fromDate) return false;
+      if (toDate && rowDate > toDate) return false;
+
+      return true;
+    });
+  }
+
+  // 🔹 Default: last 7 UNIQUE dates
+  const result = [];
+  const seenDates = new Set();
+
+  for (let row of sorted) {
+    if (!seenDates.has(row.date)) {
+      seenDates.add(row.date);
+    }
+    if (seenDates.size > 7) break;
+    result.push(row);
+  }
+
+  return result;
+}
+
+
+function renderAttendanceTable(data) {
   const tbody = document.getElementById("attendanceTableBody");
   tbody.innerHTML = "";
 
-  if (grouped.length === 0) {
-    tbody.innerHTML = `<tr>
-      <td colspan="5" class="text-center text-muted">No records found</td>
-    </tr>`;
+  const rows = getDisplayData(data);
+
+  if (rows.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center text-muted">No records found</td>
+      </tr>`;
     return;
   }
 
-  grouped.forEach(d => {
+  rows.forEach(d => {
     let cls = "status-present";
     if (d.status === "Half Day") cls = "status-half";
     if (d.status === "Absent") cls = "status-absent";
-const hours = d.in && d.out
-  ? calculateHours(d.in, d.out, d.date)
-  : 0;
+
+    const hours = d.in && d.out
+      ? calculateHours(d.in, d.out, d.date)
+      : "--";
+
     tbody.innerHTML += `
       <tr>
         <td>${d.date}</td>
         <td>${d.in || "--"}</td>
         <td>${d.out || "--"}</td>
-<td>${hours ? hours + " hrs" : "--"}</td>
+        <td>${hours}</td>
         <td class="${cls}">${d.status || "--"}</td>
       </tr>
     `;
   });
 }
-
 
 
 function fillTodayCards(grouped) {
@@ -497,7 +562,16 @@ function updateTimesheetCircle(hours) {
 }
 
 function calculateStatistics(grouped) {
-  const todayStr = new Date().toLocaleDateString("en-GB"); // dd/mm/yyyy
+  const today = new Date();
+  const todayStr = today.toLocaleDateString("en-GB");
+
+  // Start of week (Monday)
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  weekStart.setHours(0, 0, 0, 0);
+
+  // Start of month
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
   let todayHrs = 0;
   let weekHrs = 0;
@@ -507,16 +581,22 @@ function calculateStatistics(grouped) {
     if (!r.in || !r.out) return;
 
     const hrs = calculateHours(r.in, r.out, r.date);
+    const recordDate = new Date(r.date.split("/").reverse().join("-"));
 
     // Today
     if (String(r.date).trim() === todayStr) {
       todayHrs += hrs;
     }
 
-    // For now: treat all records as current week & month
-    // (This is OK since you currently have only few days)
-    weekHrs += hrs;
-    monthHrs += hrs;
+    // This week
+    if (recordDate >= weekStart) {
+      weekHrs += hrs;
+    }
+
+    // This month
+    if (recordDate >= monthStart) {
+      monthHrs += hrs;
+    }
   });
 
   return {
@@ -526,6 +606,8 @@ function calculateStatistics(grouped) {
     remaining: Math.max(160 - monthHrs, 0)
   };
 }
+
+
 
 function updateStatistics(stats) {
   setStat(
@@ -665,9 +747,20 @@ async function loadDashboard() {
   try {
     const rows = await fetchAttendance();
 
+
+
     const grouped = groupByDate(rows);
 
-    renderAttendanceTable(grouped);
+
+renderAttendanceTable(grouped);
+
+document.getElementById("fromDate").onchange = () =>
+  renderAttendanceTable(grouped);
+
+document.getElementById("toDate").onchange = () =>
+  renderAttendanceTable(grouped);
+
+
     fillTodayCards(grouped);
 
     const stats = calculateStatistics(grouped);
@@ -676,10 +769,14 @@ async function loadDashboard() {
 
     renderDailyChart(rows);
 
+
+
+
   } catch (err) {
     showError(err.message);
   }
 }
+
 
 
 

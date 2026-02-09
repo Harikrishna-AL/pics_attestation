@@ -317,6 +317,59 @@ document.getElementById("ModifyDataVerticalBtn").addEventListener("click", () =>
   color: #212529 !important; /* bootstrap default */
 }
 
+/* ONLY Balance Pending card */
+.kpi-card[data-courier] {
+  position: relative;
+  padding: 18px;
+}
+
+/* Left side stays same */
+.kpi-card[data-courier] .kpi-title,
+.kpi-card[data-courier] .kpi-value,
+.kpi-card[data-courier] .kpi-sub {
+  width: 50%;
+  text-align: center;
+}
+
+/* Vertical divider */
+.kpi-card[data-courier]::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 50%;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.kpi-card[data-courier]::before {
+  content: "Courier Charges\A\A" attr(data-courier);
+  white-space: pre;
+  position: absolute;
+  right: 0;
+  top: 40%;
+  transform: translateY(-50%);
+  width: 50%;
+  text-align: center;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 2.8;
+}
+
+/* Label */
+.kpi-card[data-courier]::before {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Value emphasis (fake spacing + size) */
+.kpi-card[data-courier]::before {
+  letter-spacing: 0.5px;
+}
+
+
+
 
   </style>
 </head>
@@ -749,12 +802,28 @@ if (toDate)   toDate.setHours(23, 59, 59, 999);
         0
       );
 
+const courierSum = filtered.reduce(
+  (sum, row) => sum + parseNumber(row["UaeDeliveryCharges"]),
+  0
+);
+
+  
       document.getElementById("kpi-total-cases").textContent = totalCases.toLocaleString();
       document.getElementById("kpi-delivered").textContent =
         deliveredCount.toLocaleString();
       document.getElementById("kpi-total-amount").textContent =
         formatCurrency(totalAmountSum);
       document.getElementById("kpi-balance").textContent = formatCurrency(balanceSum);
+
+      const balanceCard = document
+  .getElementById("kpi-balance")
+  .closest(".kpi-card");
+
+balanceCard.setAttribute(
+  "data-courier",
+  formatCurrency(courierSum)
+);
+
     }
 
     function renderCharts(filtered) {
