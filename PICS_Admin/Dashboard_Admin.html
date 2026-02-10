@@ -369,6 +369,71 @@ document.getElementById("ModifyDataVerticalBtn").addEventListener("click", () =>
 }
 
 
+/* css for gemini icon */
+#geminiIcon {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 1000;
+  background: transparent;   /* IMPORTANT */
+}
+
+#geminiIcon img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transform: scale(0.9);
+  transition: 
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Hover only affects image */
+#geminiIcon:hover img {
+  transform: scale(1.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+}
+
+.modal-content {
+  position: relative;
+  width: 90%;
+  height: 90%;
+  margin: 3% auto;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+
+
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  z-index: 10;
+}
+.modal-content.small {
+  width: 400px;
+  height: auto;
+  padding: 30px;
+  text-align: center;
+}
+
+
 
 
   </style>
@@ -467,8 +532,18 @@ document.getElementById("ModifyDataVerticalBtn").addEventListener("click", () =>
     </select>
   </div>
 
+
+
+
 </div>
 
+<!-- Gemini Icon -->
+<div id="geminiIcon" onclick="openGeminiPopup()">
+  <img
+    src="https://www.gstatic.com/images/branding/product/2x/gemini_48dp.png"
+    alt="Gemini"
+  />
+</div>
 
 
     <!-- KPI cards -->
@@ -1066,6 +1141,9 @@ function populateYearFilter() {
       renderRecentTable(filtered);
     }
 
+
+
+
     // ---------- INIT ----------
     fetch(excelUrl)
       .then((res) => res.text())
@@ -1236,7 +1314,58 @@ function OpenAtDashboard() {
     window.location.href = "Attendance_Dashboard.html";   // new page
 }
 
+let geminiWindow = null;
+
+function openGeminiPopup() {
+  const width = 1200;
+  const height = 800;
+
+  const left = (screen.width - width) / 2;
+  const top = (screen.height - height) / 2;
+
+  // Reuse existing popup
+  if (geminiWindow && !geminiWindow.closed) {
+    geminiWindow.focus();
+    return;
+  }
+
+  geminiWindow = window.open(
+    "https://gemini.google.com/",
+    "GeminiPopup",
+    `
+      width=${width},
+      height=${height},
+      top=${top},
+      left=${left},
+      resizable=yes,
+      scrollbars=yes,
+      menubar=no,
+      toolbar=no,
+      location=no,
+      status=no
+    `
+  );
+
+  // Fallback if popup blocked
+  if (!geminiWindow) {
+    alert("Popup blocked. Please allow popups for this site.");
+  }
+}
+
 </script>
+
+<div id="geminiModal" class="modal">
+  <div class="modal-content small">
+
+    <span class="close-btn" onclick="closeGeminiPopup()">✕</span>
+
+    <h3>Open Gemini</h3>
+    <p>Gemini will open in a new tab</p>
+
+    <button onclick="openGemini()">Open Gemini</button>
+
+  </div>
+</div>
 
 
 
