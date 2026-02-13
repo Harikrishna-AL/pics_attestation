@@ -153,7 +153,7 @@ function initQuickEnquiry() {
 
 async function saveEnquiryToSheet(payload) {
 
-  const resp = await fetch("https://script.google.com/macros/s/AKfycbwT1kwHs44v0qiD16hQ2UglAiB4n6ywEAC3_pOUKEkl0UZAigo91UoS5kSwb460XjmAYQ/exec", {
+  const resp = await fetch("https://script.google.com/macros/s/AKfycbyi442eYkNw38MUFTwvgjW96Bt-EyyTDlbKVZTtlTa8pka7SGqmqYdbTfnvJ8SDED5k/exec", {
     method: "POST",
     headers: { "Content-Type": "text/plain" },
     body: JSON.stringify(payload)
