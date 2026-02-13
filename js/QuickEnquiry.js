@@ -1,7 +1,7 @@
 // Load HTML and initialize
 document.addEventListener("DOMContentLoaded", function () {
 
-    fetch("QuickEnquiry.html")
+fetch("/QuickEnquiry.html")
         .then(res => res.text())
         .then(html => {
             document.body.insertAdjacentHTML("beforeend", html);
@@ -27,7 +27,7 @@ function initQuickEnquiry() {
         modal.style.display = "none";
     };
 
-  sendBtn.onclick = function () {
+  sendBtn.onclick = async  function () {
 
     const name = document.getElementById("qeName");
     const email = document.getElementById("qeEmail");
@@ -90,20 +90,135 @@ function initQuickEnquiry() {
         isValid = false;
     }
 
-    if (!isValid) return;
+   if (!isValid) return;
 
-    // Success
-    successMsg.textContent = "Message sent successfully!";
-    successMsg.style.color = "green";
+    const payload = {
+        name: name.value.trim(),
+        email: email.value.trim(),
+        phone: phone.value.trim(),
+        message: message.value.trim()
+    };
 
-    name.value = "";
-    email.value = "";
-    phone.value = "";
-    message.value = "";
+    try {
 
-    setTimeout(() => {
-        document.getElementById("quickEnquiryModal").style.display = "none";
-    }, 1500);
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Sending...";
+
+       const clientDetails = getClientDetails();
+        const ipData = await getIPAndCountry();
+
+        const payload = {
+            name: name.value.trim(),
+            email: email.value.trim(),
+            phone: phone.value.trim(),
+            message: message.value.trim(),
+            pageUrl: window.location.href,
+            ip: ipData.ip,
+            country: ipData.country,
+            browser: clientDetails.browser,
+            os: clientDetails.os,
+            device: clientDetails.device
+        };
+
+        await saveEnquiryToSheet(payload);
+
+        successMsg.textContent = "Message sent successfully!";
+        successMsg.style.color = "green";
+
+        name.value = "";
+        email.value = "";
+        phone.value = "";
+        message.value = "";
+
+        setTimeout(() => {
+            document.getElementById("quickEnquiryModal").style.display = "none";
+        }, 1500);
+
+    } catch (error) {
+
+        successMsg.textContent = error.message;
+        successMsg.style.color = "red";
+
+    } finally {
+
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Send Message";
+    }
 };
 
+}
+
+
+
+
+async function saveEnquiryToSheet(payload) {
+
+  const resp = await fetch("https://script.google.com/macros/s/AKfycbywiUa9pRcejyzO6V6tBurfxe_ySV4okB6nQcl58Tc-lecxoxbrPa1obhbJ-AqZXp-8/exec", {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(payload)
+  });
+
+  const text = await resp.text();
+
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch (e) {
+    throw new Error("Invalid server response");
+  }
+
+  if (!json.success) {
+    throw new Error(json.error);
+  }
+
+  return json;
+}
+
+function getClientDetails() {
+
+    const userAgent = navigator.userAgent;
+
+    let browser = "Unknown";
+    let os = "Unknown";
+    let device = "Desktop";
+
+    // Browser detection
+    if (userAgent.includes("Chrome")) browser = "Chrome";
+    else if (userAgent.includes("Firefox")) browser = "Firefox";
+    else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) browser = "Safari";
+    else if (userAgent.includes("Edg")) browser = "Edge";
+
+    // OS detection
+    if (userAgent.includes("Windows")) os = "Windows";
+    else if (userAgent.includes("Mac")) os = "MacOS";
+    else if (userAgent.includes("Linux")) os = "Linux";
+    else if (userAgent.includes("Android")) os = "Android";
+    else if (userAgent.includes("iPhone") || userAgent.includes("iPad")) os = "iOS";
+
+    // Device detection
+    if (/Mobi|Android|iPhone|iPad/i.test(userAgent)) {
+        device = "Mobile";
+    }
+
+    return { browser, os, device };
+}
+
+
+async function getIPAndCountry() {
+    try {
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+
+        return {
+            ip: data.ip || "Unknown",
+            country: data.country_name || "Unknown"
+        };
+
+    } catch (error) {
+        return {
+            ip: "Unknown",
+            country: "Unknown"
+        };
+    }
 }
