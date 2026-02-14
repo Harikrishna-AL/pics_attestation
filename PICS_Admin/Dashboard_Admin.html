@@ -462,7 +462,7 @@ document.getElementById("ModifyDataVerticalBtn").addEventListener("click", () =>
         <button class="active">Overview</button>
         <button onclick="openInsights()">Insights</button>
         <button onclick="OpenAtDashboard()"></buttononclick>Attendance Dashboard</button>
-        <button>Countries</button>
+        <button onclick="OpenEnquiry()"></buttononclick>Enquiry Dashboard</button>
       </div>
     </div>
 
@@ -1313,6 +1313,13 @@ function OpenAtDashboard() {
 
     window.location.href = "Attendance_Dashboard.html";   // new page
 }
+function OpenEnquiry() {
+
+    window.location.href = "EnquiryDashboard.html";   // new page
+}
+
+
+
 
 let geminiWindow = null;
 
