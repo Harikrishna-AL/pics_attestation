@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enquiry CRM Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+    --bg-light: #f4f6f9;
+    --bg-dark: #121212;
+    --card-light: rgba(255,255,255,0.7);
+    --card-dark: rgba(30,30,30,0.8);
+    --text-light: #333;
+    --text-dark: #fff;
+}
+
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-light);
+    transition: 0.3s;
+}
+
+body.dark {
+    background: var(--bg-dark);
+    color: var(--text-dark);
+}
+
+/* Topbar */
+.topbar {
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding:20px;
+    background: linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+}
+
+.topbar h1 {
+    margin:0;
+}
+
+.top-actions button {
+    margin-left:10px;
+    padding:6px 12px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.dark-toggle { background:#111; color:white; }
+.export-btn { background:#22c55e; color:white; }
+
+/* KPI */
+.kpi-grid {
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:20px;
+    padding:20px;
+}
+
+.kpi {
+    padding:20px;
+    border-radius:15px;
+    background: linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
+
+.kpi h2 { margin:5px 0; }
+
+/* Cards */
+.card {
+    background: var(--card-light);
+    backdrop-filter: blur(10px);
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.05);
+    margin:20px;
+}
+
+body.dark .card {
+    background: var(--card-dark);
+}
+
+/* Layout */
+.grid-2 {
+    display:grid;
+    grid-template-columns: 2fr 1fr;
+    gap:20px;
+}
+
+/* Table */
+table {
+    width:100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding:10px;
+    border-bottom:1px solid #ddd;
+}
+
+.badge {
+    padding:4px 10px;
+    border-radius:12px;
+    color:white;
+    font-size:12px;
+}
+
+.badge-green { background:#22c55e; }
+.badge-orange { background:#f59e0b; }
+.badge-red { background:#ef4444; }
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <h1>Enquiry Dashboard</h1>
+    <div class="top-actions">
+        <button class="export-btn" onclick="exportToCSV()">Export</button>
+        <button class="dark-toggle" onclick="toggleDark()">Dark Mode</button>
+    </div>
+</div>
+
+<!-- KPI -->
+<div class="kpi-grid">
+    <div class="kpi">
+        <h4>Total</h4>
+        <h2 id="totalEnquiries">0</h2>
+    </div>
+    <div class="kpi">
+        <h4>Pending</h4>
+        <h2 id="pendingCount">0</h2>
+    </div>
+    <div class="kpi">
+        <h4>Converted</h4>
+        <h2 id="convertedCount">0</h2>
+    </div>
+    <div class="kpi">
+        <h4>Rejected</h4>
+        <h2 id="rejectedCount">0</h2>
+    </div>
+</div>
+
+<!-- Chart + Activity -->
+<div class="grid-2">
+    <div class="card">
+        <h3>Daily Enquiry Trend</h3>
+        <canvas id="enquiryChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h3>Today Activity</h3>
+        <div id="todayActivity"></div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card">
+    <h3>All Enquiries</h3>
+    <table id="enquiryTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Country</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+const API_URL = "YOUR_WEB_APP_URL";  // 🔥 Replace with your Apps Script URL
+
+let enquiryData = [];
+let chartInstance;
+
+/* Animated Counter */
+function animateCounter(id, value) {
+    let el = document.getElementById(id);
+    let count = 0;
+    let step = Math.ceil(value / 30);
+    let interval = setInterval(() => {
+        count += step;
+        if (count >= value) {
+            count = value;
+            clearInterval(interval);
+        }
+        el.innerText = count;
+    }, 20);
+}
+
+async function loadEnquiries() {
+    const res = await fetch(API_URL);
+    const result = await res.json();
+    enquiryData = result.data || [];
+    renderDashboard();
+}
+
+function renderDashboard() {
+    renderStats();
+    renderTable();
+    renderChart();
+    renderToday();
+}
+
+function renderStats() {
+    const total = enquiryData.length;
+    const pending = enquiryData.filter(x=>x.status==="Pending").length;
+    const converted = enquiryData.filter(x=>x.status==="Converted").length;
+    const rejected = enquiryData.filter(x=>x.status==="Rejected").length;
+
+    animateCounter("totalEnquiries", total);
+    animateCounter("pendingCount", pending);
+    animateCounter("convertedCount", converted);
+    animateCounter("rejectedCount", rejected);
+}
+
+function renderTable() {
+    const tbody = document.querySelector("#enquiryTable tbody");
+    tbody.innerHTML="";
+    enquiryData.forEach(row=>{
+        tbody.innerHTML+=`
+        <tr>
+            <td>${row.timestamp}</td>
+            <td>${row.name}</td>
+            <td>${row.phone}</td>
+            <td>${row.country}</td>
+            <td><span class="badge ${getStatusClass(row.status)}">${row.status}</span></td>
+        </tr>`;
+    });
+}
+
+function getStatusClass(status){
+    if(status==="Converted") return "badge-green";
+    if(status==="Rejected") return "badge-red";
+    return "badge-orange";
+}
+
+function renderChart(){
+    const counts={};
+    enquiryData.forEach(row=>{
+        const d=row.timestamp.split(" ")[0];
+        counts[d]=(counts[d]||0)+1;
+    });
+
+    if(chartInstance) chartInstance.destroy();
+
+    chartInstance=new Chart(document.getElementById("enquiryChart"),{
+        type:"line",
+        data:{
+            labels:Object.keys(counts),
+            datasets:[{
+                label:"Enquiries",
+                data:Object.values(counts),
+                borderColor:"#4f46e5",
+                fill:false
+            }]
+        }
+    });
+}
+
+function renderToday(){
+    const today=new Date().toLocaleDateString('en-GB');
+    const container=document.getElementById("todayActivity");
+    container.innerHTML="";
+    enquiryData.filter(x=>x.timestamp.includes(today))
+        .forEach(x=>{
+            container.innerHTML+=`<p>• ${x.name}</p>`;
+        });
+}
+
+function toggleDark(){
+    document.body.classList.toggle("dark");
+}
+
+function exportToCSV(){
+    let csv="Date,Name,Phone,Country,Status\n";
+    enquiryData.forEach(r=>{
+        csv+=`${r.timestamp},${r.name},${r.phone},${r.country},${r.status}\n`;
+    });
+    const blob=new Blob([csv],{type:"text/csv"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="enquiries.csv";
+    a.click();
+}
+
+loadEnquiries();
+</script>
+
+</body>
+</html>
