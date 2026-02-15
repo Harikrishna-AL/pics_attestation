@@ -26,6 +26,11 @@ function initQuickEnquiry() {
     closeBtn.onclick = function () {
         modal.style.display = "none";
     };
+    // Auto open on page load
+setTimeout(() => {
+    modal.style.display = "block";
+}, 500);
+
 
   sendBtn.onclick = async  function () {
 
