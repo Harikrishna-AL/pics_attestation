@@ -121,12 +121,13 @@
 
 .back-circle:active {
     transform: scale(0.92);
-}.top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
 }
+.top-bar {
+    display: flex;
+    align-items: center;
+    gap: 20px;  /* space between title and button */
+}
+
 
 .reset-filter-box {
     display: flex;
@@ -293,6 +294,21 @@
 body {
     padding-top: 20px; /* pushes content down so logout button won't overlap */
 }
+.home-btn {
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 25px;
+    box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+    transition: 0.3s;
+}
+
+.home-btn:hover {
+    transform: scale(1.08);
+}
+
 
 
 
@@ -301,16 +317,19 @@ body {
 <body>
 
 <div class="page-wrap">
-<button id="backBtn"class="back-circle" onclick="goBack()">←</button>
+<button id="backBtn"class="back-circle" onclick="goBack() "style="display:none;">←</button>
 <button class="logout-btn" id="logoutBtn">Logout</button>
 
 
     <div class="top-bar">
     <div class="top-title">View Data</div>
-     <div class="insert-link" onclick="goToInsert()">
+  <a href="Home.html" class="home-btn" id="home-btn">
+    🏠 Home
+</a>
+     <div class="insert-link" onclick="goToInsert()" style="display:none;">
         ➕ Click here to insert data
     </div>
-   <div class="modify-link" onclick="goToModify()">
+   <div class="modify-link" onclick="goToModify()" style="display:none;">
     ✏️ Click here to modify data
 </div>
 
@@ -402,8 +421,12 @@ window.supabaseClient.auth
     } 
     else {
         // show back button for admin
-        const backBtn = document.getElementById("backBtn");
-        if (backBtn) backBtn.style.display = "inline-block";
+        //const backBtn = document.getElementById("backBtn");
+        const homebtn = document.getElementById("home-btn");
+homebtn.style.display = "none";
+        //if (backBtn) backBtn.style.display = "inline-block";
+         
+
     }
     });
 document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);

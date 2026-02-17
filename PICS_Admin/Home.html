@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="Assets/css/Admin_common.css">
+<script src="Assets/js/message.js" defer></script>
+</head>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+<style>
+    .logout-btn {
+    position: absolute;
+    top: 15px;        /* place near top */
+    right: 20px;      /* place at right */
+    background: #ff4d4f;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 9999;    /* ensure stays above content */
+}
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+
+    background: radial-gradient(circle at center, 
+                #00c6ff 0%, 
+                #0093c4 40%, 
+                #005f87 70%, 
+                #002b3d 100%);
+}
+
+
+.home-container {
+    position: relative;
+    width: 600px;
+    height: 600px;
+}
+
+.center-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.center-logo img {
+    width: 180px;
+    border-radius: 50%;
+    box-shadow: 0 0 25px rgba(255,255,255,0.5);
+}
+
+/* Common Menu Style */
+.menu-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 0;
+}
+
+.menu-item img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+.menu-item button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px;
+    background: #00c6ff;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.menu-item button:hover {
+    background: #0072ff;
+    transform: scale(1.1);
+}
+
+/* Top */
+.top {
+    transform: rotate(0deg) translate(0, -220px) rotate(0deg);
+}
+
+/* Right Top */
+.top-right {
+    transform: rotate(72deg) translate(0, -220px) rotate(-72deg);
+}
+
+/* Right */
+.right {
+    transform: rotate(144deg) translate(0, -220px) rotate(-144deg);
+}
+
+/* Bottom */
+.bottom {
+    transform: rotate(216deg) translate(0, -220px) rotate(-216deg);
+}
+
+.left {
+    left: 10px;   /* move more left */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+
+
+</style>
+<body>
+
+<div class="home-container">
+
+    <!-- Center Logo -->
+    <div class="center-logo">
+        <img src="images/pics_logo.jpg" alt="Logo">
+    </div>
+    
+    <!-- Menu Items -->
+    <div class="menu-item top">
+        <img src="images/Attendancelogo.png" alt="Mark Attendance">
+        <button onclick="location.href='Markattendance.html'">Mark Attendance</button>
+    </div>
+<div class="menu-item top-right">
+        <img src="images/quick-enquiry.jpeg" alt="Enquiry">
+        <button onclick="location.href='EnquiryDashboard.html'">Enquiry Dashboard</button>
+    </div>
+
+
+    <div class="menu-item left">
+        <img src="images/insert.png" alt="Insert Data">
+        <button onclick="location.href='insert_Admin.html'">Insert Data</button>
+    </div>
+
+    <div class="menu-item right">
+        <img src="images/view-data.png" alt="View Data">
+        <button onclick="location.href='ViewData_Admin.html'">View Data</button>
+    </div>
+
+    <div class="menu-item bottom">
+        <img src="images/modify.webp" alt="Modify">
+        <button onclick="location.href='ModifyData_Admin.html'">Modify Data</button>
+    </div>
+
+   
+
+</div>
+
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Your global config -->
+<script src="Assets/js/supabaseConfig.js"></script>
+<script src="Assets/js/Logout.js"></script>
+  <script>
+    // Protect dashboard page
+
+    window.supabaseClient.auth
+  .getSession()
+  .then(({ data }) => {
+    if (!data.session) {
+      window.location.href = "Login_Admin.html";
+      return;
+    }
+
+
+    
+    });
+
+    document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
+
+    </script>
+      

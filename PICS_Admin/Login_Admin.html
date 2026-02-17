@@ -130,7 +130,7 @@ const { data, error } = await supabase.auth.signInWithPassword({
     const role = user.user_metadata?.role;
 
     if (role === "staff") {
-        window.location.href = "Insert_Admin.html";
+        window.location.href = "Home.html";
     } 
     else if (role === "admin") {
         window.location.href = "Dashboard_Admin.html";

@@ -2,11 +2,11 @@
 <html>
 <head>
     <title>Enquiry Dashboard</title>
+   
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="Assets/css/Admin_common.css">
 <script src="Assets/js/message.js" defer></script>
-<button id="backBtn"class="back-circle" onclick="goBack()">←</button>
-      <button class="logout-btn" id="logoutBtn">Logout</button>
+<button id="backBtn"class="back-circle" onclick="goBack()" style="display: none;">←</button>
 <style>
 :root {
     --bg-light: #f4f6f9;
@@ -204,7 +204,6 @@ body.dark .styled-table td {
 
 
   .logout-btn {
-    position: absolute;
     top: 15px;        /* place near top */
     right: 20px;      /* place at right */
     background: #ff4d4f;
@@ -243,6 +242,22 @@ body.dark .styled-table td {
 .back-circle:active {
     transform: scale(0.92);
 }
+
+.home-btn {
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 25px;
+    box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+    transition: 0.3s;
+}
+
+.home-btn:hover {
+    transform: scale(1.08);
+}
+
 </style>
 </head>
 
@@ -250,6 +265,11 @@ body.dark .styled-table td {
 
 <div class="topbar">
     <h1>Enquiry Dashboard</h1>
+         <a href="Home.html" class="home-btn" id="home-btn">
+    🏠 Home
+</a>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+
     <div class="top-actions">
         <button class="export-btn" onclick="exportToCSV()">Export</button>
         <button class="dark-toggle" onclick="toggleDark()">Dark Mode</button>
@@ -365,10 +385,19 @@ window.supabaseClient.auth
 
     if (role === "staff") {
         // staff
-        const backBtn = document.getElementById("backBtn");
-                if (backBtn) backBtn.style.display = "inline-block";
+        //const backBtn = document.getElementById("backBtn");
+             //   if (backBtn) backBtn.style.display = "inline-block";
 
-    } 
+    }  else {
+        // show back button for admin
+        //const backBtn = document.getElementById("backBtn");
+
+        //if (backBtn) backBtn.style.display = "inline-block";
+
+          const homebtn = document.getElementById("home-btn");
+        homebtn.style.display = "none";
+
+    }
 
    
     });
