@@ -301,8 +301,8 @@ body {
       </div>
 
       <div class="col-md-6">
-        <label>UAE Number Releasing Date</label>
-        <input id="UaeNumberReleasingDate" class="form-control" />
+        <label>UAE Attestation Number</label>
+        <input id="UAEATTESTNUMBER" class="form-control" />
       </div>
 
       
@@ -497,7 +497,7 @@ function submitData() {
     "SubmittedDocument2",
     "SubmittedDocument3",
     "OtherDocs",
-    "UaeNumberReleasingDate",
+    "UAEATTESTNUMBER",
     "Delivered",
     "Submitted",
     "COUNTRY"
@@ -530,7 +530,7 @@ nvalid.scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
 
-  const apiUrl ="https://script.google.com/macros/s/AKfycbwmXI284lkBIw4eYCFQLY8p0kxGb4XxVS9d3LQ7ANyMTYG0LcqvsWmYmJLkX6XxRnlb/exec";
+  const apiUrl ="https://script.google.com/macros/s/AKfycbzEHL5jJkkkRL4d4srQb3_W5ZgiBSzx0xRkCH-wm9fjCf8V9vaz4W2sDHuOfrYCLffk/exec";
   const data = {
     TrackingNumber: document.getElementById("TrackingNumber").value,
     Submittedby: document.getElementById("Submittedby").value,
@@ -551,7 +551,7 @@ nvalid.scrollIntoView({ behavior: "smooth", block: "center" });
     SubmittedDocument2: document.getElementById("SubmittedDocument2").value,
     SubmittedDocument3: document.getElementById("SubmittedDocument3").value,
     OtherDocs: document.getElementById("OtherDocs").value,
-    UaeNumberReleasingDate: document.getElementById("UaeNumberReleasingDate").value,
+    UAEATTESTNUMBER: document.getElementById("UAEATTESTNUMBER").value,
     DateProcess: document.getElementById("DateProcess").value,
     Delivered: document.getElementById("Delivered").value,
     Submitted: document.getElementById("Submitted").value,
@@ -601,7 +601,7 @@ function clearForm() {
   document.getElementById("SubmittedDocument2").value = "";
   document.getElementById("SubmittedDocument3").value = "";
   document.getElementById("OtherDocs").value = "";
-  document.getElementById("UaeNumberReleasingDate").value = "";
+  document.getElementById("UAEATTESTNUMBER").value = "";
   document.getElementById("DateProcess").value = "";
   document.getElementById("Delivered").value = "";
  document.getElementById("Submitted").value = ""; 
