@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Under Maintenance</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(-45deg, #1e3c72, #2a5298, #0f2027, #203a43);
+        background-size: 400% 400%;
+        animation: gradientMove 10s ease infinite;
+        color: #fff;
+        text-align: center;
+    }
+
+    @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .container {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        padding: 50px 40px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        animation: floatCard 4s ease-in-out infinite;
+    }
+
+    @keyframes floatCard {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .logo {
+        width: 120px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 28px;
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+    }
+
+    p {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-bottom: 25px;
+    }
+
+    .loader {
+        border: 4px solid rgba(255,255,255,0.2);
+        border-top: 4px solid #fff;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        margin: 0 auto;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .footer {
+        margin-top: 20px;
+        font-size: 13px;
+        opacity: 0.7;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- 🔹 PUT YOUR COMPANY LOGO PATH BELOW -->
+    <img src="images/pics_logo.jpg" alt="Company Logo" class="logo">
+
+    <h1>We'll Be Back Soon!</h1>
+    <p>Our website is currently undergoing scheduled maintenance.<br>
+    Thank you for your patience.</p>
+
+    <div class="loader"></div>
+
+    <div class="footer">
+        © 2026 PICS
+    </div>
+
+</div>
+
+</body>
+</html>
