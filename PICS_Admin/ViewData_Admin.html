@@ -437,11 +437,11 @@ document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
 
 <script>
 const COLUMNS = [
-  'TrackingNumber','Submittedby','DateofSubmission','Status','Type','CustomerName','DocumentDetails','GeneralComments','phoneno','PaymentMode','TotalAmount','UaeDeliveryCharges','AdvancePaid','Balance','PassportNumber','SubmittedDocument1','SubmittedDocument2','SubmittedDocument3','OtherDocs','UaeNumberReleasingDate','DateProcess','Delivered','Submitted','TYPE','COUNTRY'
+  'TrackingNumber','Submittedby','DateofSubmission','Status','Type','CustomerName','DocumentDetails','GeneralComments','phoneno','PaymentMode','TotalAmount','UaeDeliveryCharges','AdvancePaid','Balance','PassportNumber','SubmittedDocument1','SubmittedDocument2','SubmittedDocument3','OtherDocs','UAEATTESTNUMBER','DateProcess','Delivered','Submitted','TYPE','COUNTRY'
 ];
 // readable labels
 const LABELS = {
-  TrackingNumber:'Tracking Number', Submittedby:'Submitted By', DateofSubmission:'Date of Submission', Status:'Status', Type:'Type', CustomerName:'Customer Name', DocumentDetails:'Document Details', GeneralComments:'General Comments', phoneno:'Phone No', PaymentMode:'Payment Mode', TotalAmount:'Total Amount', UaeDeliveryCharges:'UAE Delivery Charges', AdvancePaid:'Advance Paid', Balance:'Balance', PassportNumber:'Passport Number', SubmittedDocument1:'Submitted Document 1', SubmittedDocument2:'Submitted Document 2', SubmittedDocument3:'Submitted Document 3', OtherDocs:'Other Docs', UaeNumberReleasingDate:'UAE Number Releasing Date', DateProcess:'Date Process', Delivered:'Delivered', Submitted:'Submitted', TYPE:'TYPE', COUNTRY:'COUNTRY'
+  TrackingNumber:'Tracking Number', Submittedby:'Submitted By', DateofSubmission:'Date of Submission', Status:'Status', Type:'Type', CustomerName:'Customer Name', DocumentDetails:'Document Details', GeneralComments:'General Comments', phoneno:'Phone No', PaymentMode:'Payment Mode', TotalAmount:'Total Amount', UaeDeliveryCharges:'UAE Delivery Charges', AdvancePaid:'Advance Paid', Balance:'Balance', PassportNumber:'Passport Number', SubmittedDocument1:'Submitted Document 1', SubmittedDocument2:'Submitted Document 2', SubmittedDocument3:'Submitted Document 3', OtherDocs:'Other Docs', UAEATTESTNUMBER:'UAE Attestation Number', DateProcess:'Date Process', Delivered:'Delivered', Submitted:'Submitted', TYPE:'TYPE', COUNTRY:'COUNTRY'
 };
 
 let rawData = [];
@@ -547,7 +547,8 @@ async function loadGridData(){
   showLoader(true);
     try {
 const response = await fetch(
-  "https://script.google.com/macros/s/AKfycby3Acczn4d39LvPtvSSsLj4vXuGhKJz_Ib2wNGOtmzEF6r9PMvVtgUxopVKdc5zbH34/exec?action=getData"
+  "https://script.google.com/macros/s/AKfycbyke5S8QoMyHEBhrxu1zR-b7OgnM6M-4sKEo5z6q2nODuf_gzfIY-JYPDH-ExT8hjww/exec?action=getData"
+  
 );
 
 
@@ -674,6 +675,13 @@ function renderTable(){
               ${escapeHtml(cellVal)}
             </td>`;
   }
+   if (c === "UAEATTESTNUMBER") {
+    return `<td class="track-cell uae-track"${cellVal}" style="color:blue; cursor:pointer; text-decoration:underline;">
+              ${escapeHtml(cellVal)}
+            </td>`;
+  }
+
+
 
       return `<td>${escapeHtml(cellVal)}</td>`;
     }).join('');
@@ -693,14 +701,28 @@ const tbody = document.querySelector('#dataTable tbody');
 
 // Event delegation — runs even after re-rendering rows
 tbody.addEventListener('click', function (e) {
-  const td = e.target.closest('.track-cell'); // find nearest .track-cell ancestor
-  if (!td || !tbody.contains(td)) return;     // ignore clicks outside track cells
+  const td = e.target.closest('.track-cell');
+  if (!td) return;
 
   const num = td.getAttribute('data-track') || td.textContent.trim();
 
   // Redirect to your status report page
   // use window.open(..., '_blank') to open new tab
+
+
+  if (td.classList.contains("uae-track")) {
+        console.log("UAE clicked");
+
+    // 👉 Put your different link here
+    navigator.clipboard.writeText(num);
+
+window.open("https://verify.mofa.gov.ae/#/", "_blank");
+
+
+  } else {
+
 window.location.href = `../statusreport.html?track=${encodeURIComponent(num)}`;
+  }
 });
 
 
