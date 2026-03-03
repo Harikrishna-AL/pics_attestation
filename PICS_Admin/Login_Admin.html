@@ -181,7 +181,10 @@ magicBtn.addEventListener("click", async () => {
   if (error) {
     errorMessage.textContent = error.message;
   } else {
-    alert("Magic link sent! Please check your email.");
+    showSuccess("Magic link sent! Please check your email.", {
+            buttonText: "Continue",
+            onClose: () => window.location.href = "Login_Admin.html"
+        });
   }
 });
 
