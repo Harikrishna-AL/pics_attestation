@@ -172,7 +172,7 @@ magicBtn.addEventListener("click", async () => {
  const { error } = await supabase.auth.signInWithOtp({
   email: email,
   options: {
-    emailRedirectTo: "https://picsattestation.in/PICS_Admin/Login_Admin.html"
+    emailRedirectTo: "https://picsattestation.in/PICS_Admin/auth-callback.html"
   }
 });
 
@@ -183,40 +183,7 @@ magicBtn.addEventListener("click", async () => {
   }
 });
 
-
-
-const supabase1 = window.supabaseClient;
-
-// This runs when page loads
-document.addEventListener("DOMContentLoaded", async () => {
-
-  const { data: { session } } = await supabase1.auth.getSession();
-
-  if (session) {
-    redirectBasedOnRole(session);
-  }
-});
-
-// This runs when magic link login completes
-supabase1.auth.onAuthStateChange((event, session) => {
-  if (event === "SIGNED_IN" && session) {
-    redirectBasedOnRole(session);
-  }
-});
-
-function redirectBasedOnRole(session) {
-  const role = session.user.user_metadata?.role;
-
-  if (role === "admin") {
-    window.location.href = "Dashboard_Admin.html";
-  } 
-  else if (role === "staff") {
-    window.location.href = "Home.html";
-  }
-  else {
-    alert("Role not assigned.");
-  }
-}
+ 
   </script>
 </body>
 </html>

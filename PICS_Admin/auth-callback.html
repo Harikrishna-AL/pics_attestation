@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Authenticating...</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="Assets/js/supabaseConfig.js"></script>
+</head>
+<body style="font-family: Arial; text-align:center; margin-top:100px;">
+
+  <h2>Authenticating...</h2>
+  <p>Please wait...</p>
+
+  <script>
+    const supabase = window.supabaseClient;
+
+    async function handleLogin() {
+
+      // Wait a moment to ensure session is created
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session) {
+        const role = session.user.user_metadata?.role;
+
+        if (role === "admin") {
+          window.location.replace("Dashboard_Admin.html");
+        } 
+        else if (role === "staff") {
+          window.location.replace("Home.html");
+        }
+        else {
+          alert("No role assigned.");
+          window.location.replace("Login_Admin.html");
+        }
+      } else {
+        window.location.replace("Login_Admin.html");
+      }
+    }
+
+    // Give small delay for token processing
+    setTimeout(handleLogin, 1000);
+
+  </script>
+
+</body>
+</html>
