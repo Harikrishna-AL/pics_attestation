@@ -172,7 +172,9 @@ magicBtn.addEventListener("click", async () => {
  const { error } = await supabase.auth.signInWithOtp({
   email: email,
   options: {
-    emailRedirectTo: "https://picsattestation.in/PICS_Admin/auth-callback.html"
+    emailRedirectTo: "https://picsattestation.in/PICS_Admin/auth-callback.html",
+    shouldCreateUser: false
+
   }
 });
 
