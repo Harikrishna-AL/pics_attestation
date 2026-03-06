@@ -7,16 +7,16 @@
 <script src="Assets/js/message.js" defer></script>
   <title>Login</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
+   body{
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+}
     .login-container {
       background: #fff;
       padding: 40px 30px;
@@ -77,6 +77,37 @@
       font-size: 14px;
       margin-top: 10px;
     }
+   
+
+    .google-login-wrapper{
+  width:340px;
+  margin-top:20px;
+}
+
+.google-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  background:#fff;
+  color:#444;
+  font-size:15px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+
+.google-btn img{
+  width:20px;
+  height:20px;
+}
+
+.google-btn:hover{
+  background:#f5f5f5;
+}
   </style>
 </head>
 <body>
@@ -100,9 +131,19 @@
   We’ll send a secure login link to your email.
 </p>
 
+
+
       <p id="error-message" class="error"></p>
     </form>
   </div>
+
+
+<div class="google-login-wrapper">
+  <button type="button" id="google-login-btn" class="google-btn">
+    <img src="https://developers.google.com/identity/images/g-logo.png">
+    <span>Sign in with Google</span>
+  </button>
+</div>
 
   <!-- Supabase client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -186,6 +227,26 @@ magicBtn.addEventListener("click", async () => {
             onClose: () => window.location.href = "Login_Admin.html"
         });
   }
+});
+
+
+const googleBtn = document.getElementById("google-login-btn");
+
+googleBtn.addEventListener("click", async () => {
+
+  const supabase = window.supabaseClient;
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "https://picsattestation.in/PICS_Admin/auth-callback.html"
+    }
+  });
+
+  if (error) {
+    errorMessage.textContent = error.message;
+  }
+
 });
 
  
