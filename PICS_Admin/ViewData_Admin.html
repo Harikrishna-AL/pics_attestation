@@ -331,10 +331,38 @@ body {
     box-shadow: 0 6px 14px rgba(37,211,102,0.45);
 }
 
+.uae-tooltip {
+    position: relative;
+    display: inline-block;
+}
 
+.tooltip-text {
+    visibility: hidden;
+    width: 320px;
+    background: #f4ecd8;
+    color: #5b4339;
+    padding: 12px 14px;
+    border-left: 5px solid #f0c419;
+    border-radius: 8px;
+    position: absolute;
+    z-index: 99999;
+    top: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    opacity: 0;
+    transition: all 0.2s ease;
+}
 
+.uae-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
 </style>
 </head>
+
 <body>
 
 <div class="page-wrap">
@@ -702,10 +730,17 @@ function renderTable(){
             </td>`;
   }
    if (c === "UAEATTESTNUMBER") {
-    return `<td class="track-cell uae-track"${cellVal}" style="color:blue; cursor:pointer; text-decoration:underline;">
-              ${escapeHtml(cellVal)}
-            </td>`;
-  }
+    return `
+    <td class="track-cell uae-track" style="color:blue; cursor:pointer; text-decoration:underline;">
+        <span class="uae-tooltip">
+            ${escapeHtml(cellVal)}
+            <span class="tooltip-text">
+                UAE Attestation Number will be copied automatically.<br>
+                Just paste it into the new page that opens.
+            </span>
+        </span>
+    </td>`;
+}
 
 
 
@@ -773,7 +808,7 @@ tbody.addEventListener('click', function (e) {
         console.log("UAE clicked");
 
     // 👉 Put your different link here
-    navigator.clipboard.writeText(num);
+   navigator.clipboard.writeText(num);
 
 window.open("https://verify.mofa.gov.ae/#/", "_blank");
 
