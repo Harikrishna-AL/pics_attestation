@@ -375,20 +375,29 @@
     const excelUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNdL-odS32YpWW70Zjko2amZg5duTOyf1e7UK-5Z7JTjdousVV09S4Nj8T4NvDcGYEr95KtIx1otBy/pub?output=csv"; // Replace with your direct Google Drive link
 
 
-function excelDateToJSDate(serial) {
-    if (!serial) return "--";
+function excelDateToJSDate(value) {
+    if (!value) return "--";
 
-    let utc_days = serial - 25569;
-    let utc_value = utc_days * 86400; 
-    let d = new Date(utc_value * 1000);
+    // If it's already a date string
+    if (typeof value === "string") {
+        const d = new Date(value);
+        if (!isNaN(d.getTime())) {
+            return d.toLocaleDateString("en-GB");
+        }
+        return value; // show original value instead of NaN
+    }
 
-    let day = String(d.getDate()).padStart(2, '0');
-    let month = String(d.getMonth() + 1).padStart(2, '0');
-    let year = d.getFullYear();
+    // Excel serial number
+    if (!isNaN(value)) {
+        const date = XLSX.SSF.parse_date_code(value);
 
-    return `${day}/${month}/${year}`;
+        if (!date) return "--";
+
+        return `${String(date.d).padStart(2, '0')}/${String(date.m).padStart(2, '0')}/${date.y}`;
+    }
+
+    return "--";
 }
-
 
     function formatExcelDate(excelSerial) {
     if (!excelSerial) return "--"; // Handle empty or undefined values
@@ -436,8 +445,9 @@ function excelDateToJSDate(serial) {
         console.log(userData)
         document.getElementById("submittedBy").textContent = userData["Submittedby"] || "--";
         document.getElementById("currentStatus").textContent = userData["Status"] || "--";
-        userData["DateofSubmission"] = excelDateToJSDate(userData["DateofSubmission"]);
-        document.getElementById("dateofsubmission").textContent = userData["DateofSubmission"] || "--";
+document.getElementById("dateofsubmission").textContent =
+    excelDateToJSDate(userData["DateofSubmission"]);
+            document.getElementById("dateofsubmission").textContent = userData["DateofSubmission"] || "--";
         document.getElementById("docType").textContent = userData["Type"] || "--";
         document.getElementById("docName").textContent = userData["CustomerName"] || "--";
         document.getElementById("docDetails").textContent = userData["DocumentDetails"];
