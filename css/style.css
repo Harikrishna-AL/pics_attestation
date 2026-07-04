@@ -2658,14 +2658,15 @@ ul.dropdown-menu li {
   background: #1d7ad1;
   text-align: center;
   padding: 80px 0;
+  color: #fff;
 }
 .footer p {
   font-size: 13px;
   line-height: 25px;
-  color: black;
+  color: #f8fbff;
 }
 .footer a {
-  color: black;
+  color: #fff;
 }
 .footer .footer-manu {
   padding-bottom: 25px;
@@ -2680,10 +2681,16 @@ ul.dropdown-menu li {
 }
 .footer .footer-manu ul li a {
   display: inline-block;
-  color: black;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 6px;
+  padding: 8px 18px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .footer .footer-manu ul li a:hover {
-  color: #000;
+  background: #fff;
+  border-color: #fff;
+  color: #1d7ad1;
 }
 .footer .copyright a {
   font-weight: 600;

@@ -135,6 +135,43 @@ body {
 
 
 
+.loader-submit {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+.loadersubmit-box {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.spinnersubmit {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 15px;
+    border: 4px solid #ddd;
+    border-top: 4px solid #0078d4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 </style>
 </head>
 <body>
@@ -421,6 +458,12 @@ body {
         <button class="submit-btn" onclick="submitData()">Submit</button>
       </div>
 
+
+    <div id="loadersubmit" class="loader-submit" style="display:none;">
+    <div class="loadersubmit-box">
+        <div class="spinnersubmit"></div>
+        <p>Submitting data, please wait...</p>
+    </div>
     </div>
   </div>
 </div>
@@ -525,7 +568,7 @@ function submitData() {
     //alert("Please fill all required fields.");
 showError('Failed!', 'Please fill all required fields.', { autoCloseMs: 5000 });
 
-nvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
     firstInvalid.focus();
     return;
   }
@@ -560,6 +603,8 @@ nvalid.scrollIntoView({ behavior: "smooth", block: "center" });
     TYPE:"none"
   };
 
+  showLoadersubmit();
+
   fetch(apiUrl, {
     method: "POST",
     mode: "no-cors",
@@ -570,11 +615,14 @@ nvalid.scrollIntoView({ behavior: "smooth", block: "center" });
   })
   .then(() => {
   //alert("Data submitted successfully!");
+  hideLoadersubmit();
 showSuccess('Saved!', 'Data submitted successfully!');
 
   clearForm();
 })
 .catch(err => {
+    hideLoadersubmit();
+
   //alert("Request failed: " + err);
   showError('Failed!', 'Request failed:', { autoCloseMs: 5000 });
 
@@ -633,6 +681,13 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("DateProcess").value = `${yyyy}-${mm}-${dd}`;
 
 });
+function showLoadersubmit() {
+    document.getElementById("loadersubmit").style.display = "flex";
+}
+
+function hideLoadersubmit() {
+    document.getElementById("loadersubmit").style.display = "none";
+}
 </script>
 
 
