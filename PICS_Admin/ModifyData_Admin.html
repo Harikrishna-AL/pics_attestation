@@ -1,416 +1,582 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<link rel="stylesheet" href="Assets/css/Admin_common.css">
-<script src="Assets/js/message.js" defer></script>
-<title>Modify Data</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-<!-- PDF Download Button -->
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="Assets/css/Admin_common.css">
+  <script src="Assets/js/message.js" defer></script>
+  <title>Modify Data</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- PDF Download Button -->
 
-<style>
-:root{--accent:#6366f1;--accent-2:#eef2ff;--muted:#6b7280}
-.page-wrap { padding: 20px 30px; }
-.back-link { color: #1d4ed8; font-size: 16px; text-decoration: underline; cursor: pointer; padding-left: 5px; }
-.back-link:hover { color: #1e40af; text-decoration-thickness: 2px; }
-.top-title { font-size: 22px; font-weight: 600; margin-top: 10px; margin-bottom: 12px; }
-.grid-wrapper { width: 100%; overflow-x: auto; overflow-y: auto; max-height: 650px; border: 1px solid #d1d5db; border-radius: 12px; background: #f8fafc; box-shadow: 0 6px 18px rgba(99,102,241,0.06); }
-.table thead th { position: sticky; top: 0; background: var(--accent-2); color: var(--accent); font-weight: 700; z-index: 10; border-bottom: 2px solid rgba(99,102,241,0.15); }
-.table tbody tr:nth-child(even) { background: #ffffff; }
-.table tbody tr:hover { background: #eef2ff; }
-.filter-box { width: 100%; }
-.header-cell { display:flex; gap:6px; align-items:center; }
-.filter-icon { width:18px; height:18px; display:inline-block; cursor:pointer; border-radius:3px; padding:2px; }
-.filter-icon svg { display:block; }
-/* filter popup */
-.filter-popup { position:absolute; min-width:220px; background:#fff; border:1px solid #e6e9f8; box-shadow:0 8px 24px rgba(15,23,42,0.08); border-radius:8px; padding:12px; z-index:9999; }
-.filter-popup .btn-apply { background:#10b981; color:#fff; border:none; padding:6px 12px; border-radius:6px; }
-.filter-popup .btn-cancel { background:#fff; border:1px solid #e6e9f8; padding:6px 12px; border-radius:6px; margin-left:8px; }
-.small-muted { color:var(--muted); font-size:13px }
-/* spinner */
-.loader-wrap { position:relative; }
-.loader { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.6); z-index:50; }
-/* pagination */
-.pagination { padding:10px; display:flex; gap:8px; align-items:center; justify-content:flex-end; }
-.page-btn { border:1px solid #e6e9f8; background:#fff; padding:6px 10px; border-radius:6px; cursor:pointer }
-.page-btn.disabled { opacity:0.5; cursor:not-allowed }
-.no-records { padding:20px; text-align:center; color:var(--muted); }
-/* Pagination container */
-.pagination {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 10px;
-}
-
-/* Arrow buttons (first/prev/next/last) */
-.page-btn {
-    background: #f0f3ff;               /* light blue */
-    border: 1px solid #d8ddff;         /* soft border */
-    color: #4f46e5;                    /* grid blue */
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.page-btn:hover:not(.disabled) {
-    background: #e4e9ff;
-}
-
-.page-btn.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-/* Page number buttons */
-.page-numbers button {
-    background: #ffffff;
-    border: 1px solid #d8ddff;
-    color: #4f46e5;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s ease;
-    min-width: 36px;
-    text-align: center;
-}
-
-.page-numbers button:hover:not(.active) {
-    background: #eef2ff;
-}
-
-.page-numbers .active {
-    background: #4f46e5 !important;   /* active blue */
-    color: white !important;
-    border-color: #4f46e5 !important;
-}
-
-/* Ellipsis (…) */
-.page-ellipsis {
-    padding: 6px 10px;
-    color: #6b7280;
-    font-size: 14px;
-}
-
-/* Items per page + page info text */
-.items-text, .range-text {
-    color: #6b7280;
-    font-size: 13px;
-}
-.back-circle {
-    background: #3a3a3a;      /* dark grey */
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;           /* white arrow */
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-.back-circle:hover {
-    background: #2b2b2b;
-}
-
-.back-circle:active {
-    transform: scale(0.92);
-}
-.top-bar {
-    display: flex;
-    align-items: center;
-    gap: 20px;  /* space between title and button */
-}
-
-
-.reset-filter-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Toggle label */
-.toggle-label {
-    font-size: 15px;
-    color: #374151;
-    font-weight: 500;
-}
-
-/* Switch */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 22px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #d1d5db;
-    transition: .3s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    transition: .3s;
-    border-radius: 50%;
-}
-
-.switch input:checked + .slider {
-    background-color: #3b82f6;
-}
-
-.switch input:checked + .slider:before {
-    transform: translateX(22px);
-}
-.grid-reset-flash {
-    animation: flash 0.5s ease;
-}
-
-@keyframes flash {
-    from { background-color: #e0f2ff; }
-    to { background-color: transparent; }
-}
-
-.pdf-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--accent);
-  color: #fff;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  z-index: 9999;
-}
-.pdf-btn:hover { background:#4f46e5; }
-
-.pdf-download-btn {
-    position: absolute;
-    right: 20px;
-    margin-top: 30px;
-    z-index: 10;
-}
-.pdf-btn-fixed {
-    display: inline-block;
-    background: #6366f1;
-    color: white;
-    font-weight: 600;
-    padding: 10px 18px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-
-    position: relative;
-    float: right;
-    margin-top: 20px;     /* gap from pagination */
-    margin-right: 10px;   /* right spacing */
-    margin-bottom: 25px;  /* NEW: gap from bottom */
-}
-.logout-btn {
-    position: absolute;
-    top: 15px;        /* place near top */
-    right: 20px;      /* place at right */
-    background: #ff4d4f;
-    border: none;
-    color: white;
-    padding: 8px 15px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 5px;
-    z-index: 9999;    /* ensure stays above content */
-}
-.title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
-
-.insert-link {
-    font-size: 15px;
-    font-weight: 600;
-    color: #6366f1;
-    cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: #eef2ff;
-    border: 1px solid #c7d2fe;
-    transition: 0.2s ease-in-out;
-}
-
-.insert-link:hover {
-    background: #dbe4ff;
-    color: #4338ca;
-    border-color: #818cf8;
-    transform: translateY(-1px);
-}
-body {
-    padding-top: 20px; /* pushes content down so logout button won't overlap */
-}
-
-.home-btn {
-    padding: 8px 20px;
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 25px;
-    box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
-    transition: 0.3s;
-}
-
-.home-btn:hover {
-    transform: scale(1.08);
-}
-
-.loader-submit {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-}
-
-.loadersubmit-box {
-    background: white;
-    padding: 20px 30px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-}
-
-.spinnersubmit {
-    width: 40px;
-    height: 40px;
-    margin: 0 auto 15px;
-    border: 4px solid #ddd;
-    border-top: 4px solid #0078d4;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    100% {
-        transform: rotate(360deg);
+  <style>
+    :root {
+      --accent: #6366f1;
+      --accent-2: #eef2ff;
+      --muted: #6b7280
     }
-}
 
-</style>
+    .page-wrap {
+      padding: 20px 30px;
+    }
+
+    .back-link {
+      color: #1d4ed8;
+      font-size: 16px;
+      text-decoration: underline;
+      cursor: pointer;
+      padding-left: 5px;
+    }
+
+    .back-link:hover {
+      color: #1e40af;
+      text-decoration-thickness: 2px;
+    }
+
+    .top-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-top: 10px;
+      margin-bottom: 12px;
+    }
+
+    .grid-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 650px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      background: #f8fafc;
+      box-shadow: 0 6px 18px rgba(99, 102, 241, 0.06);
+    }
+
+    .table thead th {
+      position: sticky;
+      top: 0;
+      background: var(--accent-2);
+      color: var(--accent);
+      font-weight: 700;
+      z-index: 10;
+      border-bottom: 2px solid rgba(99, 102, 241, 0.15);
+    }
+
+    .table tbody tr:nth-child(even) {
+      background: #ffffff;
+    }
+
+    .table tbody tr:hover {
+      background: #eef2ff;
+    }
+
+    .filter-box {
+      width: 100%;
+    }
+
+    .header-cell {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .filter-icon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      cursor: pointer;
+      border-radius: 3px;
+      padding: 2px;
+    }
+
+    .filter-icon svg {
+      display: block;
+    }
+
+    /* filter popup */
+    .filter-popup {
+      position: absolute;
+      min-width: 220px;
+      background: #fff;
+      border: 1px solid #e6e9f8;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      z-index: 9999;
+    }
+
+    .filter-popup .btn-apply {
+      background: #10b981;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    .filter-popup .btn-cancel {
+      background: #fff;
+      border: 1px solid #e6e9f8;
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin-left: 8px;
+    }
+
+    .small-muted {
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    /* spinner */
+    .loader-wrap {
+      position: relative;
+    }
+
+    .loader {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.6);
+      z-index: 50;
+    }
+
+    /* pagination */
+    .pagination {
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .page-btn {
+      border: 1px solid #e6e9f8;
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    .page-btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed
+    }
+
+    .no-records {
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    /* Pagination container */
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 10px;
+    }
+
+    /* Arrow buttons (first/prev/next/last) */
+    .page-btn {
+      background: #f0f3ff;
+      /* light blue */
+      border: 1px solid #d8ddff;
+      /* soft border */
+      color: #4f46e5;
+      /* grid blue */
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .page-btn:hover:not(.disabled) {
+      background: #e4e9ff;
+    }
+
+    .page-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Page number buttons */
+    .page-numbers button {
+      background: #ffffff;
+      border: 1px solid #d8ddff;
+      color: #4f46e5;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .page-numbers button:hover:not(.active) {
+      background: #eef2ff;
+    }
+
+    .page-numbers .active {
+      background: #4f46e5 !important;
+      /* active blue */
+      color: white !important;
+      border-color: #4f46e5 !important;
+    }
+
+    /* Ellipsis (…) */
+    .page-ellipsis {
+      padding: 6px 10px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    /* Items per page + page info text */
+    .items-text,
+    .range-text {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .back-circle {
+      background: #3a3a3a;
+      /* dark grey */
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      /* white arrow */
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-circle:hover {
+      background: #2b2b2b;
+    }
+
+    .back-circle:active {
+      transform: scale(0.92);
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      /* space between title and button */
+    }
+
+
+    .reset-filter-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Toggle label */
+    .toggle-label {
+      font-size: 15px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    /* Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #d1d5db;
+      transition: .3s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    .switch input:checked+.slider {
+      background-color: #3b82f6;
+    }
+
+    .switch input:checked+.slider:before {
+      transform: translateX(22px);
+    }
+
+    .grid-reset-flash {
+      animation: flash 0.5s ease;
+    }
+
+    @keyframes flash {
+      from {
+        background-color: #e0f2ff;
+      }
+
+      to {
+        background-color: transparent;
+      }
+    }
+
+    .pdf-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      z-index: 9999;
+    }
+
+    .pdf-btn:hover {
+      background: #4f46e5;
+    }
+
+    .pdf-download-btn {
+      position: absolute;
+      right: 20px;
+      margin-top: 30px;
+      z-index: 10;
+    }
+
+    .pdf-btn-fixed {
+      display: inline-block;
+      background: #6366f1;
+      color: white;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+
+      position: relative;
+      float: right;
+      margin-top: 20px;
+      /* gap from pagination */
+      margin-right: 10px;
+      /* right spacing */
+      margin-bottom: 25px;
+      /* NEW: gap from bottom */
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 15px;
+      /* place near top */
+      right: 20px;
+      /* place at right */
+      background: #ff4d4f;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 5px;
+      z-index: 9999;
+      /* ensure stays above content */
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .insert-link {
+      font-size: 15px;
+      font-weight: 600;
+      color: #6366f1;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      transition: 0.2s ease-in-out;
+    }
+
+    .insert-link:hover {
+      background: #dbe4ff;
+      color: #4338ca;
+      border-color: #818cf8;
+      transform: translateY(-1px);
+    }
+
+    body {
+      padding-top: 20px;
+      /* pushes content down so logout button won't overlap */
+    }
+
+    .home-btn {
+      padding: 8px 20px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 25px;
+      box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+      transition: 0.3s;
+    }
+
+    .home-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .loader-submit {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+    }
+
+    .loadersubmit-box {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .spinnersubmit {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 15px;
+      border: 4px solid #ddd;
+      border-top: 4px solid #0078d4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="page-wrap">
-<button id="backBtn"class="back-circle" onclick="goBack()"style="display:none;">←</button>
-<button class="logout-btn" id="logoutBtn">Logout</button>
+  <div class="page-wrap">
+    <button id="backBtn" class="back-circle" onclick="goBack()" style="display:none;">←</button>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
 
 
     <div class="top-bar">
-    <div class="top-title">Modify Data</div>
+      <div class="top-title">Modify Data</div>
       <a href="Home.html" class="home-btn" id="home-btn">
-    🏠 Home
-</a>
-     <div class="insert-link" onclick="goToInsert()" style="display:none;">
+        🏠 Home
+      </a>
+      <div class="insert-link" onclick="goToInsert()" style="display:none;">
         ➕ Click here to Insert data
-    </div>
+      </div>
 
-    <div class="reset-filter-box">
+      <div class="reset-filter-box">
         <label class="toggle-label">Reset All Filters</label>
         <label class="switch">
-            <input type="checkbox" id="resetFiltersToggle">
-            <span class="slider"></span>
+          <input type="checkbox" id="resetFiltersToggle">
+          <span class="slider"></span>
         </label>
+      </div>
     </div>
-</div>
 
 
 
 
     <div class="grid-wrapper loader-wrap">
-        <div id="loader" class="loader" style="display:none;">
-            <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
-        </div>
-        <table id="dataTable" class="table table-bordered table-hover align-middle mb-0">
-            <thead>
-                <tr id="headerRow">
-                    <!-- headers generated by JS to keep markup tidy -->
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be added dynamically here -->
-            </tbody>
-        </table>
-        <div id="noRecords" class="no-records" style="display:none;">No records found</div>
+      <div id="loader" class="loader" style="display:none;">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+      </div>
+      <table id="dataTable" class="table table-bordered table-hover align-middle mb-0">
+        <thead>
+          <tr id="headerRow">
+            <!-- headers generated by JS to keep markup tidy -->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be added dynamically here -->
+        </tbody>
+      </table>
+      <div id="noRecords" class="no-records" style="display:none;">No records found</div>
     </div>
 
     <div class="pagination" id="paginationControls">
 
-    <div class="small-muted">Rows per page:</div>
+      <div class="small-muted">Rows per page:</div>
 
-    <select id="pageSize" class="form-select form-select-sm" style="width:70px;">
+      <select id="pageSize" class="form-select form-select-sm" style="width:70px;">
         <option>10</option>
         <option>25</option>
         <option>50</option>
-    </select>
+      </select>
 
-    <!-- flexible space -->
-    <div style="flex:1"></div>
+      <!-- flexible space -->
+      <div style="flex:1"></div>
 
-    <!-- FIRST / PREV -->
-    <button id="firstPage" class="page-btn">⏮</button>
-    <button id="prevPage" class="page-btn">◀</button>
+      <!-- FIRST / PREV -->
+      <button id="firstPage" class="page-btn">⏮</button>
+      <button id="prevPage" class="page-btn">◀</button>
 
-    <!-- PAGE NUMBERS (required!) -->
-    <span id="pageNumbers" class="page-numbers"></span>
+      <!-- PAGE NUMBERS (required!) -->
+      <span id="pageNumbers" class="page-numbers"></span>
 
-    <!-- NEXT / LAST -->
-    <button id="nextPage" class="page-btn">▶</button>
-    <button id="lastPage" class="page-btn">⏭</button>
+      <!-- NEXT / LAST -->
+      <button id="nextPage" class="page-btn">▶</button>
+      <button id="lastPage" class="page-btn">⏭</button>
 
-    <!-- Records range info -->
-    <span id="pageInfo" class="range-text"></span>
-</div>
+      <!-- Records range info -->
+      <span id="pageInfo" class="range-text"></span>
+    </div>
 
- 
+
     <div id="loadersubmit" class="loader-submit" style="display:none;">
-    <div class="loadersubmit-box">
+      <div class="loadersubmit-box">
         <div class="spinnersubmit"></div>
         <p>Submitting data, please wait...</p>
+      </div>
     </div>
-</div>
-</div>
+  </div>
 
-</div>
- <!-- Supabase client -->
+  </div>
+  <!-- Supabase client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Your global config -->
   <script src="Assets/js/supabaseConfig.js"></script>
@@ -418,61 +584,61 @@ body {
 
   <script>
 
- 
-window.supabaseClient.auth
-  .getSession()
-  .then(({ data }) => {
-    if (!data.session) {
-      window.location.href = "Login_Admin.html";
-      return;
-    }
+
+    window.supabaseClient.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!data.session) {
+          window.location.href = "Login_Admin.html";
+          return;
+        }
 
 
-    // ROLE-BASED BACK BUTTON CONTROL
-    const role = data.session.user.user_metadata?.role;
+        // ROLE-BASED BACK BUTTON CONTROL
+        const role = data.session.user.user_metadata?.role;
 
-    if (role === "staff") {
-        // hide back button for staff
-        const backBtn = document.getElementById("backBtn");
-        if (backBtn) backBtn.style.display = "none";
-    } 
-    else {
-        // show back button for admin
-        //const backBtn = document.getElementById("backBtn");
-        //if (backBtn) backBtn.style.display = "inline-block";
+        if (role === "staff") {
+          // hide back button for staff
+          const backBtn = document.getElementById("backBtn");
+          if (backBtn) backBtn.style.display = "none";
+        }
+        else {
+          // show back button for admin
+          //const backBtn = document.getElementById("backBtn");
+          //if (backBtn) backBtn.style.display = "inline-block";
           const homebtn = document.getElementById("home-btn");
-homebtn.style.display = "none";
-    }
-    });
-document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
+          homebtn.style.display = "none";
+        }
+      });
+    document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
 
-    </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<script>
-const COLUMNS = [
-  'TrackingNumber','Submittedby','DateofSubmission','Status','Type','CustomerName','DocumentDetails','GeneralComments','phoneno','PaymentMode','TotalAmount','UaeDeliveryCharges','AdvancePaid','Balance','PassportNumber','SubmittedDocument1','SubmittedDocument2','SubmittedDocument3','OtherDocs','UAEATTESTNUMBER','DateProcess','Delivered','Submitted','TYPE','COUNTRY'
-];
-// readable labels
-const LABELS = {
-  TrackingNumber:'Tracking Number', Submittedby:'Submitted By', DateofSubmission:'Date of Submission', Status:'Status', Type:'Type', CustomerName:'Customer Name', DocumentDetails:'Document Details', GeneralComments:'General Comments', phoneno:'Phone No', PaymentMode:'Payment Mode', TotalAmount:'Total Amount', UaeDeliveryCharges:'UAE Delivery Charges', AdvancePaid:'Advance Paid', Balance:'Balance', PassportNumber:'Passport Number', SubmittedDocument1:'Submitted Document 1', SubmittedDocument2:'Submitted Document 2', SubmittedDocument3:'Submitted Document 3', OtherDocs:'Other Docs', UAEATTESTNUMBER:'UAE Attestation Number', DateProcess:'Date Process', Delivered:'Delivered', Submitted:'Submitted', TYPE:'TYPE', COUNTRY:'COUNTRY'
-};
+  <script>
+    const COLUMNS = [
+      'TrackingNumber', 'Submittedby', 'DateofSubmission', 'Status', 'Type', 'CustomerName', 'DocumentDetails', 'GeneralComments', 'phoneno', 'PaymentMode', 'TotalAmount', 'UaeDeliveryCharges', 'AdvancePaid', 'Balance', 'PassportNumber', 'SubmittedDocument1', 'SubmittedDocument2', 'SubmittedDocument3', 'OtherDocs', 'UAEATTESTNUMBER', 'DateProcess', 'Delivered', 'Submitted', 'TYPE', 'COUNTRY'
+    ];
+    // readable labels
+    const LABELS = {
+      TrackingNumber: 'Tracking Number', Submittedby: 'Submitted By', DateofSubmission: 'Date of Submission', Status: 'Status', Type: 'Type', CustomerName: 'Customer Name', DocumentDetails: 'Document Details', GeneralComments: 'General Comments', phoneno: 'Phone No', PaymentMode: 'Payment Mode', TotalAmount: 'Total Amount', UaeDeliveryCharges: 'UAE Delivery Charges', AdvancePaid: 'Advance Paid', Balance: 'Balance', PassportNumber: 'Passport Number', SubmittedDocument1: 'Submitted Document 1', SubmittedDocument2: 'Submitted Document 2', SubmittedDocument3: 'Submitted Document 3', OtherDocs: 'Other Docs', UAEATTESTNUMBER: 'UAE Attestation Number', DateProcess: 'Date Process', Delivered: 'Delivered', Submitted: 'Submitted', TYPE: 'TYPE', COUNTRY: 'COUNTRY'
+    };
 
-let rawData = [];
-let filteredData = [];
-let currentPage = 1; let pageSize = 10; let sortField = null; let sortDir = 1; // 1 asc, -1 desc
-let filters = {}; // { field: { method:'contains', value:'abc' } }
+    let rawData = [];
+    let filteredData = [];
+    let currentPage = 1; let pageSize = 10; let sortField = null; let sortDir = 1; // 1 asc, -1 desc
+    let filters = {}; // { field: { method:'contains', value:'abc' } }
 
-// build header row with filter icons
-function buildHeader() {
-  const header = document.getElementById('headerRow');
-  header.innerHTML = '';
-  COLUMNS.forEach(col => {
-    const th = document.createElement('th');
-    th.dataset.field = col;
-    th.className = 'text-start';
-    th.innerHTML = `<div class="header-cell"><div style="flex:1">${LABELS[col]}</div>
+    // build header row with filter icons
+    function buildHeader() {
+      const header = document.getElementById('headerRow');
+      header.innerHTML = '';
+      COLUMNS.forEach(col => {
+        const th = document.createElement('th');
+        th.dataset.field = col;
+        th.className = 'text-start';
+        th.innerHTML = `<div class="header-cell"><div style="flex:1">${LABELS[col]}</div>
       <div class="filter-icon" title="Filter" data-field="${col}">
         <!-- funnel icon (Option A) -->
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -481,41 +647,41 @@ function buildHeader() {
       </div>
     </div>`;
 
-    // sorting on header click
-    th.addEventListener('click', (e)=>{
-      if (e.target.closest('.filter-icon')) return; // ignore clicks on icon
-      const field = th.dataset.field;
-      if (sortField === field) sortDir *= -1; else { sortField = field; sortDir = 1; }
-      applyAll();
-    });
+        // sorting on header click
+        th.addEventListener('click', (e) => {
+          if (e.target.closest('.filter-icon')) return; // ignore clicks on icon
+          const field = th.dataset.field;
+          if (sortField === field) sortDir *= -1; else { sortField = field; sortDir = 1; }
+          applyAll();
+        });
 
-    // filter icon click
-    th.querySelector('.filter-icon').addEventListener('click', (ev)=>{
-      ev.stopPropagation(); openFilterPopup(ev.currentTarget, col);
-    });
+        // filter icon click
+        th.querySelector('.filter-icon').addEventListener('click', (ev) => {
+          ev.stopPropagation(); openFilterPopup(ev.currentTarget, col);
+        });
 
-    header.appendChild(th);
-  });
-}
+        header.appendChild(th);
+      });
+    }
 
-// open popup next to the icon
-function openFilterPopup(iconEl, field) {
-  closeFilterPopup();
-  const rect = iconEl.getBoundingClientRect();
+    // open popup next to the icon
+    function openFilterPopup(iconEl, field) {
+      closeFilterPopup();
+      const rect = iconEl.getBoundingClientRect();
 
-  const popup = document.createElement('div');
-  popup.className = 'filter-popup';
-  popup.style.top = (window.scrollY + rect.bottom + 6) + 'px';
-// prevent off-screen right
-let left = rect.left;
-const popupWidth = 240; // width of filter popup
+      const popup = document.createElement('div');
+      popup.className = 'filter-popup';
+      popup.style.top = (window.scrollY + rect.bottom + 6) + 'px';
+      // prevent off-screen right
+      let left = rect.left;
+      const popupWidth = 240; // width of filter popup
 
-if (left + popupWidth > window.innerWidth) {
-    left = window.innerWidth - popupWidth - 10;  // push left by 10px margin
-}
+      if (left + popupWidth > window.innerWidth) {
+        left = window.innerWidth - popupWidth - 10;  // push left by 10px margin
+      }
 
-popup.style.left = left + "px";
-  popup.innerHTML = `
+      popup.style.left = left + "px";
+      popup.innerHTML = `
     <div class="small-muted">Filter by condition</div>
     <div style="margin-top:8px">
       <select id="f_method" class="form-select form-select-sm">
@@ -531,473 +697,475 @@ popup.style.left = left + "px";
       <button id="f_cancel" class="btn-cancel">Cancel</button>
     </div>
   `;
-  document.body.appendChild(popup);
+      document.body.appendChild(popup);
 
-  // set existing values if present
-  const existing = filters[field];
-  if (existing) {
-    popup.querySelector('#f_method').value = existing.method;
-    popup.querySelector('#f_value').value = existing.value;
-  }
+      // set existing values if present
+      const existing = filters[field];
+      if (existing) {
+        popup.querySelector('#f_method').value = existing.method;
+        popup.querySelector('#f_value').value = existing.value;
+      }
 
-  popup.querySelector('#f_apply').addEventListener('click', ()=>{
-    const method = popup.querySelector('#f_method').value;
-    const value = popup.querySelector('#f_value').value.trim();
-    if (value === '') { delete filters[field]; } else { filters[field] = { method, value }; }
-    closeFilterPopup(); applyAll();
-  });
-  popup.querySelector('#f_cancel').addEventListener('click', ()=>{ closeFilterPopup(); });
+      popup.querySelector('#f_apply').addEventListener('click', () => {
+        const method = popup.querySelector('#f_method').value;
+        const value = popup.querySelector('#f_value').value.trim();
+        if (value === '') { delete filters[field]; } else { filters[field] = { method, value }; }
+        closeFilterPopup(); applyAll();
+      });
+      popup.querySelector('#f_cancel').addEventListener('click', () => { closeFilterPopup(); });
 
-  // close on outside click
-  setTimeout(()=>{ window.addEventListener('click', outsideClick); }, 50);
-  function outsideClick(e){ if (!popup.contains(e.target) && !iconEl.contains(e.target)) { closeFilterPopup(); } }
-  popup._outside = outsideClick;
-  popup._field = field;
-}
-function closeFilterPopup(){ const p = document.querySelector('.filter-popup'); if (p){ window.removeEventListener('click', p._outside); p.remove(); } }
-
-function showLoader(show){ document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
-
-async function loadGridData(){
-  showLoader(true);
-    try {
-const response = await fetch(
-  "https://script.google.com/macros/s/AKfycbyke5S8QoMyHEBhrxu1zR-b7OgnM6M-4sKEo5z6q2nODuf_gzfIY-JYPDH-ExT8hjww/exec?action=getData"
-);
-
-
-    if (!response.ok)
-      throw new Error("Network error: " + response.status);
-
-    const json = await response.json(); // GET → Safe JSON
-
-    rawData = json;
-    currentPage = 1;
-    applyAll();
-  }catch(err){
-    console.error('Error loading data', err);
-    rawData = [];
-    applyAll();
-  }finally{ showLoader(false); }
-}
-
-function applyAll(){
-  // filter
-  filteredData = rawData.filter(r => {
-    for (const f in filters){
-      const val = (r[f] ?? '').toString();
-      const method = filters[f].method; const target = filters[f].value.toString();
-      if (method === 'contains' && !val.toLowerCase().includes(target.toLowerCase())) return false;
-      if (method === 'equals' && val.toLowerCase() !== target.toLowerCase()) return false;
-      if (method === 'starts' && !val.toLowerCase().startsWith(target.toLowerCase())) return false;
-      if (method === 'ends' && !val.toLowerCase().endsWith(target.toLowerCase())) return false;
+      // close on outside click
+      setTimeout(() => { window.addEventListener('click', outsideClick); }, 50);
+      function outsideClick(e) { if (!popup.contains(e.target) && !iconEl.contains(e.target)) { closeFilterPopup(); } }
+      popup._outside = outsideClick;
+      popup._field = field;
     }
-    return true;
-  });
+    function closeFilterPopup() { const p = document.querySelector('.filter-popup'); if (p) { window.removeEventListener('click', p._outside); p.remove(); } }
 
-  // sort
-  if (sortField){ filteredData.sort((a,b)=>{
-    const A = (a[sortField] ?? '').toString(); const B = (b[sortField] ?? '').toString();
-    return A.localeCompare(B, undefined, {numeric:true}) * sortDir;
-  }); }
+    function showLoader(show) { document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
 
-  renderTable();
-}
+    async function loadGridData() {
+      showLoader(true);
+      try {
+        const response = await fetch(
+          "https://script.google.com/macros/s/AKfycbyke5S8QoMyHEBhrxu1zR-b7OgnM6M-4sKEo5z6q2nODuf_gzfIY-JYPDH-ExT8hjww/exec?action=getData"
+        );
 
-// --- Add these helpers near top of your script ---
 
-function formatDateDisplay(value) {
-  if (value == null || value === "") return "";
-  const s = String(value).trim();
+        if (!response.ok)
+          throw new Error("Network error: " + response.status);
 
-  // already formatted like dd/mm/yyyy -> return as-is
-  if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(s)) return s;
+        const json = await response.json(); // GET → Safe JSON
 
-  // ISO style with 'T' (e.g. 2025-04-01T18:30:00.000Z)
-  if (s.includes("T")) {
-    const dt = new Date(s);
-    if (isNaN(dt.getTime())) return s; // fallback if parsing fails
-    const dd = String(dt.getDate()).padStart(2, "0");
-    const mm = String(dt.getMonth() + 1).padStart(2, "0");
-    const yyyy = dt.getFullYear();
-    return `${dd}/${mm}/${yyyy}`;
-  }
-
-  // try Date parsing as a fallback (covers other formats)
-  const maybeDt = new Date(s);
-  if (!isNaN(maybeDt.getTime())) {
-    const dd = String(maybeDt.getDate()).padStart(2, "0");
-    const mm = String(maybeDt.getMonth() + 1).padStart(2, "0");
-    const yyyy = maybeDt.getFullYear();
-    return `${dd}/${mm}/${yyyy}`;
-  }
-
-  // otherwise return original value
-  return s;
-}
-
-function isDateColumn(colName){
-  if (!colName) return false;
-  const key = String(colName).toLowerCase().replace(/\s+/g,'');
-  // tweak list below to exactly match your real column key(s)
-  const dateKeys = [
-    'DateofSubmission',
-    'DateProcess'
-   
-  ];
-  // if you only want the single 'Date of Submission' column, remove others and keep only 'dateofsubmission'
-  if (dateKeys.includes(key)) return true;
-  // also treat generic names containing 'date' as date columns
-  if (key.includes('date')) return true;
-  return false;
-}
-
-function renderTable(){
-  const tbody = document.querySelector('#dataTable tbody'); tbody.innerHTML = '';
-  pageSize = parseInt(document.getElementById('pageSize').value || '10');
-  const total = filteredData.length;
-  const pages = Math.max(1, Math.ceil(total / pageSize));
-  if (currentPage > pages) currentPage = pages;
-  const start = (currentPage-1)*pageSize; const end = start + pageSize;
-  const pageRows = filteredData.slice(start,end);
-
-  if (pageRows.length === 0){ document.getElementById('noRecords').style.display = 'block'; document.getElementById('dataTable').style.display='none'; }
-  else { document.getElementById('noRecords').style.display = 'none'; document.getElementById('dataTable').style.display='table'; }
-
-pageRows.forEach((row, rowIdx) => {
-  const tr = document.createElement('tr');
-
-  COLUMNS.forEach(col => {
-    const td = document.createElement('td');
-    td.className = 'grid-cell';
-    td.dataset.field = col;
-
-    // ← ADD THIS PART
-    let cellVal = row[col] ?? '';
-    if (isDateColumn(col)) {
-      cellVal = formatDateDisplay(cellVal);
+        rawData = json;
+        currentPage = 1;
+        applyAll();
+      } catch (err) {
+        console.error('Error loading data', err);
+        rawData = [];
+        applyAll();
+      } finally { showLoader(false); }
     }
-    // ← END
 
-    td.innerHTML = escapeHtml(cellVal);
-    tr.appendChild(td);
-  });
+    function applyAll() {
+      // filter
+      filteredData = rawData.filter(r => {
+        for (const f in filters) {
+          const val = (r[f] ?? '').toString();
+          const method = filters[f].method; const target = filters[f].value.toString();
+          if (method === 'contains' && !val.toLowerCase().includes(target.toLowerCase())) return false;
+          if (method === 'equals' && val.toLowerCase() !== target.toLowerCase()) return false;
+          if (method === 'starts' && !val.toLowerCase().startsWith(target.toLowerCase())) return false;
+          if (method === 'ends' && !val.toLowerCase().endsWith(target.toLowerCase())) return false;
+        }
+        return true;
+      });
 
-    // action cell (last cell) - keep same visual style: two-pill buttons like your image
-    const actionTd = document.createElement('td');
-    actionTd.style.width = '140px';
-    actionTd.style.whiteSpace = 'nowrap';
-    actionTd.innerHTML = `
+      // sort
+      if (sortField) {
+        filteredData.sort((a, b) => {
+          const A = (a[sortField] ?? '').toString(); const B = (b[sortField] ?? '').toString();
+          return A.localeCompare(B, undefined, { numeric: true }) * sortDir;
+        });
+      }
+
+      renderTable();
+    }
+
+    // --- Add these helpers near top of your script ---
+
+    function formatDateDisplay(value) {
+      if (value == null || value === "") return "";
+      const s = String(value).trim();
+
+      // already formatted like dd/mm/yyyy -> return as-is
+      if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(s)) return s;
+
+      // ISO style with 'T' (e.g. 2025-04-01T18:30:00.000Z)
+      if (s.includes("T")) {
+        const dt = new Date(s);
+        if (isNaN(dt.getTime())) return s; // fallback if parsing fails
+        const dd = String(dt.getDate()).padStart(2, "0");
+        const mm = String(dt.getMonth() + 1).padStart(2, "0");
+        const yyyy = dt.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+      }
+
+      // try Date parsing as a fallback (covers other formats)
+      const maybeDt = new Date(s);
+      if (!isNaN(maybeDt.getTime())) {
+        const dd = String(maybeDt.getDate()).padStart(2, "0");
+        const mm = String(maybeDt.getMonth() + 1).padStart(2, "0");
+        const yyyy = maybeDt.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+      }
+
+      // otherwise return original value
+      return s;
+    }
+
+    function isDateColumn(colName) {
+      if (!colName) return false;
+      const key = String(colName).toLowerCase().replace(/\s+/g, '');
+      // tweak list below to exactly match your real column key(s)
+      const dateKeys = [
+        'DateofSubmission',
+        'DateProcess'
+
+      ];
+      // if you only want the single 'Date of Submission' column, remove others and keep only 'dateofsubmission'
+      if (dateKeys.includes(key)) return true;
+      // also treat generic names containing 'date' as date columns
+      if (key.includes('date')) return true;
+      return false;
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector('#dataTable tbody'); tbody.innerHTML = '';
+      pageSize = parseInt(document.getElementById('pageSize').value || '10');
+      const total = filteredData.length;
+      const pages = Math.max(1, Math.ceil(total / pageSize));
+      if (currentPage > pages) currentPage = pages;
+      const start = (currentPage - 1) * pageSize; const end = start + pageSize;
+      const pageRows = filteredData.slice(start, end);
+
+      if (pageRows.length === 0) { document.getElementById('noRecords').style.display = 'block'; document.getElementById('dataTable').style.display = 'none'; }
+      else { document.getElementById('noRecords').style.display = 'none'; document.getElementById('dataTable').style.display = 'table'; }
+
+      pageRows.forEach((row, rowIdx) => {
+        const tr = document.createElement('tr');
+
+        COLUMNS.forEach(col => {
+          const td = document.createElement('td');
+          td.className = 'grid-cell';
+          td.dataset.field = col;
+
+          // ← ADD THIS PART
+          let cellVal = row[col] ?? '';
+          if (isDateColumn(col)) {
+            cellVal = formatDateDisplay(cellVal);
+          }
+          // ← END
+
+          td.innerHTML = escapeHtml(cellVal);
+          tr.appendChild(td);
+        });
+
+        // action cell (last cell) - keep same visual style: two-pill buttons like your image
+        const actionTd = document.createElement('td');
+        actionTd.style.width = '140px';
+        actionTd.style.whiteSpace = 'nowrap';
+        actionTd.innerHTML = `
       <div style="display:flex; gap:8px; align-items:center">
         <button class="btn-edit page-btn" style="padding:6px 12px">Edit</button>
       </div>
     `;
-    tr.appendChild(actionTd);
+        tr.appendChild(actionTd);
 
-    // store a reference to the rawData object (we render references from rawData)
-    // We will find the global index when editing by using rawData.indexOf(row)
-    tbody.appendChild(tr);
+        // store a reference to the rawData object (we render references from rawData)
+        // We will find the global index when editing by using rawData.indexOf(row)
+        tbody.appendChild(tr);
 
-    // wire edit event
-    actionTd.querySelector('.btn-edit').addEventListener('click', ()=> enterEditMode(tr, row));
-  });
+        // wire edit event
+        actionTd.querySelector('.btn-edit').addEventListener('click', () => enterEditMode(tr, row));
+      });
 
-  document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${pages} — ${total} records`;
-  renderPageNumbers(pages);
-  document.getElementById('prevPage').classList.toggle('disabled', currentPage===1);
-  document.getElementById('nextPage').classList.toggle('disabled', currentPage===pages);
-}
-
-function enterEditMode(tr, rowRef){
-  // Save original values on the tr for cancel
-  const original = {};
-  tr.querySelectorAll('td[data-field]').forEach(td => {
-    original[td.dataset.field] = td.innerHTML;
-
-    // prefer actual raw value (from rowRef), fallback to td.dataset.raw, fallback to innerText
-    let rawVal = (rowRef[td.dataset.field] ?? td.dataset.raw ?? td.innerText ?? '');
-    if (String(rawVal).toLowerCase().trim() === 'dd-mm-yyyy') rawVal = '';
-
-     const fieldName = String(td.dataset.field || '').toLowerCase();
-    if (fieldName === 'trackingnumber') {
-      // show a disabled input that matches the other inputs styling
-      const inp = document.createElement('input');
-      inp.type = 'text';
-      inp.className = 'form-control form-control-sm';
-      inp.value = rawVal;
-      inp.disabled = true; // non-editable
-      // optionally make it visually obvious it's readonly (you can remove this if you don't want style change)
-      inp.style.backgroundColor = '#f5f5f5';
-      td.innerHTML = '';
-      td.appendChild(inp);
-      return;
+      document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${pages} — ${total} records`;
+      renderPageNumbers(pages);
+      document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
+      document.getElementById('nextPage').classList.toggle('disabled', currentPage === pages);
     }
 
-    // create input (use textarea for long fields)
-    if (String(rawVal).length > 80 || td.dataset.field.toLowerCase().includes('comments') || td.dataset.field.toLowerCase().includes('details')) {
-      const ta = document.createElement('textarea');
-      ta.className = 'form-control form-control-sm';
-      ta.style.minWidth = '220px';
-      ta.style.minHeight = '48px';
-      ta.value = rawVal;
-      td.innerHTML = '';
-      td.appendChild(ta);
-      return;
-    }
+    function enterEditMode(tr, rowRef) {
+      // Save original values on the tr for cancel
+      const original = {};
+      tr.querySelectorAll('td[data-field]').forEach(td => {
+        original[td.dataset.field] = td.innerHTML;
 
-    const inp = document.createElement('input');
+        // prefer actual raw value (from rowRef), fallback to td.dataset.raw, fallback to innerText
+        let rawVal = (rowRef[td.dataset.field] ?? td.dataset.raw ?? td.innerText ?? '');
+        if (String(rawVal).toLowerCase().trim() === 'dd-mm-yyyy') rawVal = '';
 
-    // Allow date picker for all *other* date fields except uaenumberreleasingdate
-    if (
-      td.dataset.field.toLowerCase().includes('date') &&
-      td.dataset.field.toLowerCase() !== 'uaenumberreleasingdate'
-    ) {
-      inp.type = 'date';
-    } else {
-      inp.type = 'text';
-    }
-    inp.className = 'form-control form-control-sm';
-
-    // helper: convert various date formats (dd/mm/yyyy, d/m/yyyy, dd-mm-yyyy, yyyy-mm-dd, JS Date, Excel serial) to yyyy-mm-dd
-    function toISOForDateInput(v){
-      if (v === null || v === undefined || v === '') return '';
-      v = String(v).trim();
-
-      // already yyyy-mm-dd?
-      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
-
-      // dd/mm/yyyy or d/m/yyyy
-      const dm = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-      if (dm) {
-        const d = String(dm[1]).padStart(2,'0');
-        const m = String(dm[2]).padStart(2,'0');
-        const y = dm[3];
-        return `${y}-${m}-${d}`;
-      }
-
-      // dd-mm-yyyy or d-m-yyyy
-      const dm2 = v.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-      if (dm2) {
-        const d = String(dm2[1]).padStart(2,'0');
-        const m = String(dm2[2]).padStart(2,'0');
-        const y = dm2[3];
-        return `${y}-${m}-${d}`;
-      }
-
-      // Excel serial (like 45993 or 45993.00011574074)
-      if (!isNaN(v) && Number.isFinite(Number(v))) {
-        const serial = Number(v);
-        // Excel -> JS date (offset 25569). Round to nearest day for date input.
-        const jsDate = new Date(Math.round((serial - 25569) * 86400 * 1000));
-        if (!isNaN(jsDate.getTime())) {
-          const yyyy = jsDate.getFullYear();
-          const mm = String(jsDate.getMonth() + 1).padStart(2,'0');
-          const dd = String(jsDate.getDate()).padStart(2,'0');
-          return `${yyyy}-${mm}-${dd}`;
+        const fieldName = String(td.dataset.field || '').toLowerCase();
+        if (fieldName === 'trackingnumber') {
+          // show a disabled input that matches the other inputs styling
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'form-control form-control-sm';
+          inp.value = rawVal;
+          inp.disabled = true; // non-editable
+          // optionally make it visually obvious it's readonly (you can remove this if you don't want style change)
+          inp.style.backgroundColor = '#f5f5f5';
+          td.innerHTML = '';
+          td.appendChild(inp);
+          return;
         }
-      }
 
-      // try parse as JS Date string
-      const maybe = new Date(v);
-      if (!isNaN(maybe.getTime())) {
-        const yyyy = maybe.getFullYear();
-        const mm = String(maybe.getMonth() + 1).padStart(2,'0');
-        const dd = String(maybe.getDate()).padStart(2,'0');
-        return `${yyyy}-${mm}-${dd}`;
-      }
+        // create input (use textarea for long fields)
+        if (String(rawVal).length > 80 || td.dataset.field.toLowerCase().includes('comments') || td.dataset.field.toLowerCase().includes('details')) {
+          const ta = document.createElement('textarea');
+          ta.className = 'form-control form-control-sm';
+          ta.style.minWidth = '220px';
+          ta.style.minHeight = '48px';
+          ta.value = rawVal;
+          td.innerHTML = '';
+          td.appendChild(ta);
+          return;
+        }
 
-      return '';
-    }
+        const inp = document.createElement('input');
 
-    // set value robustly for date inputs, otherwise use rawVal as-is
-    if (inp.type === 'date') {
-      inp.value = toISOForDateInput(rawVal);
-    } else {
-      inp.value = rawVal;
-    }
+        // Allow date picker for all *other* date fields except uaenumberreleasingdate
+        if (
+          td.dataset.field.toLowerCase().includes('date') &&
+          td.dataset.field.toLowerCase() !== 'uaenumberreleasingdate'
+        ) {
+          inp.type = 'date';
+        } else {
+          inp.type = 'text';
+        }
+        inp.className = 'form-control form-control-sm';
 
-    td.innerHTML = '';
-    td.appendChild(inp);
-  });
+        // helper: convert various date formats (dd/mm/yyyy, d/m/yyyy, dd-mm-yyyy, yyyy-mm-dd, JS Date, Excel serial) to yyyy-mm-dd
+        function toISOForDateInput(v) {
+          if (v === null || v === undefined || v === '') return '';
+          v = String(v).trim();
 
-  // replace action buttons
-  const actionTd = tr.querySelector('td:last-child');
-  actionTd.innerHTML = `
+          // already yyyy-mm-dd?
+          if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+
+          // dd/mm/yyyy or d/m/yyyy
+          const dm = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+          if (dm) {
+            const d = String(dm[1]).padStart(2, '0');
+            const m = String(dm[2]).padStart(2, '0');
+            const y = dm[3];
+            return `${y}-${m}-${d}`;
+          }
+
+          // dd-mm-yyyy or d-m-yyyy
+          const dm2 = v.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+          if (dm2) {
+            const d = String(dm2[1]).padStart(2, '0');
+            const m = String(dm2[2]).padStart(2, '0');
+            const y = dm2[3];
+            return `${y}-${m}-${d}`;
+          }
+
+          // Excel serial (like 45993 or 45993.00011574074)
+          if (!isNaN(v) && Number.isFinite(Number(v))) {
+            const serial = Number(v);
+            // Excel -> JS date (offset 25569). Round to nearest day for date input.
+            const jsDate = new Date(Math.round((serial - 25569) * 86400 * 1000));
+            if (!isNaN(jsDate.getTime())) {
+              const yyyy = jsDate.getFullYear();
+              const mm = String(jsDate.getMonth() + 1).padStart(2, '0');
+              const dd = String(jsDate.getDate()).padStart(2, '0');
+              return `${yyyy}-${mm}-${dd}`;
+            }
+          }
+
+          // try parse as JS Date string
+          const maybe = new Date(v);
+          if (!isNaN(maybe.getTime())) {
+            const yyyy = maybe.getFullYear();
+            const mm = String(maybe.getMonth() + 1).padStart(2, '0');
+            const dd = String(maybe.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+          }
+
+          return '';
+        }
+
+        // set value robustly for date inputs, otherwise use rawVal as-is
+        if (inp.type === 'date') {
+          inp.value = toISOForDateInput(rawVal);
+        } else {
+          inp.value = rawVal;
+        }
+
+        td.innerHTML = '';
+        td.appendChild(inp);
+      });
+
+      // replace action buttons
+      const actionTd = tr.querySelector('td:last-child');
+      actionTd.innerHTML = `
     <div style="display:flex; gap:8px; align-items:center">
       <button class="btn-update pdf-btn-fixed" style="padding:6px 12px">Update</button>
       <button class="btn-cancel page-btn" style="padding:6px 12px;">Cancel</button>
     </div>
   `;
 
-  // wire update/cancel
-  const btnCancel = actionTd.querySelector('.btn-cancel');
-  const btnUpdate = actionTd.querySelector('.btn-update');
+      // wire update/cancel
+      const btnCancel = actionTd.querySelector('.btn-cancel');
+      const btnUpdate = actionTd.querySelector('.btn-update');
 
-// --- NEW: Show tracking number on hover of Update button ---
-if (btnUpdate) {
-  const trackingNumber = rowRef['trackingnumber'] || rowRef['TrackingNumber'] || '';
+      // --- NEW: Show tracking number on hover of Update button ---
+      if (btnUpdate) {
+        const trackingNumber = rowRef['trackingnumber'] || rowRef['TrackingNumber'] || '';
 
-  btnUpdate.addEventListener('mouseover', (e) => {
-    if (!trackingNumber) return;
+        btnUpdate.addEventListener('mouseover', (e) => {
+          if (!trackingNumber) return;
 
-    const tip = document.createElement('div');
-    tip.id = 'updateTooltip';
-    tip.textContent = "Tracking Number: " + trackingNumber;
-    tip.style.position = 'absolute';
-    tip.style.background = '#333';
-    tip.style.color = '#fff';
-    tip.style.padding = '6px 10px';
-    tip.style.borderRadius = '4px';
-    tip.style.fontSize = '12px';
-    tip.style.whiteSpace = 'nowrap';
-    tip.style.zIndex = 9999;
-    tip.style.top = (e.pageY + 10) + 'px';
-    tip.style.left = (e.pageX + 10) + 'px';
-    document.body.appendChild(tip);
-  });
+          const tip = document.createElement('div');
+          tip.id = 'updateTooltip';
+          tip.textContent = "Tracking Number: " + trackingNumber;
+          tip.style.position = 'absolute';
+          tip.style.background = '#333';
+          tip.style.color = '#fff';
+          tip.style.padding = '6px 10px';
+          tip.style.borderRadius = '4px';
+          tip.style.fontSize = '12px';
+          tip.style.whiteSpace = 'nowrap';
+          tip.style.zIndex = 9999;
+          tip.style.top = (e.pageY + 10) + 'px';
+          tip.style.left = (e.pageX + 10) + 'px';
+          document.body.appendChild(tip);
+        });
 
-  btnUpdate.addEventListener('mousemove', (e) => {
-    const tip = document.getElementById('updateTooltip');
-    if (tip) {
-      tip.style.top = (e.pageY + 10) + 'px';
-      tip.style.left = (e.pageX + 10) + 'px';
+        btnUpdate.addEventListener('mousemove', (e) => {
+          const tip = document.getElementById('updateTooltip');
+          if (tip) {
+            tip.style.top = (e.pageY + 10) + 'px';
+            tip.style.left = (e.pageX + 10) + 'px';
+          }
+        });
+
+        btnUpdate.addEventListener('mouseout', () => {
+          const tip = document.getElementById('updateTooltip');
+          if (tip) tip.remove();
+        });
+      }
+      // --- END NEW ---
+
+
+      if (btnCancel) btnCancel.addEventListener('click', () => cancelEdit(tr, original));
+      if (btnUpdate) btnUpdate.addEventListener('click', () => saveUpdate(tr, rowRef));
     }
-  });
-
-  btnUpdate.addEventListener('mouseout', () => {
-    const tip = document.getElementById('updateTooltip');
-    if (tip) tip.remove();
-  });
-}
-// --- END NEW ---
 
 
-  if (btnCancel) btnCancel.addEventListener('click', ()=> cancelEdit(tr, original));
-  if (btnUpdate) btnUpdate.addEventListener('click', ()=> saveUpdate(tr, rowRef));
-}
+    // ----- Helper: cancel and restore original HTML ----- //
+    function cancelEdit(tr, original) {
+      // restore cells
+      tr.querySelectorAll('td[data-field]').forEach(td => {
+        td.innerHTML = original[td.dataset.field] ?? '';
+      });
 
-
-// ----- Helper: cancel and restore original HTML ----- //
-function cancelEdit(tr, original){
-  // restore cells
-  tr.querySelectorAll('td[data-field]').forEach(td => {
-    td.innerHTML = original[td.dataset.field] ?? '';
-  });
-
-  // restore action cell to Edit button
-  const actionTd = tr.querySelector('td:last-child');
-  actionTd.innerHTML = `<div style="display:flex; gap:8px; align-items:center"><button class="btn-edit page-btn" style="padding:6px 12px">Edit</button></div>`;
-  actionTd.querySelector('.btn-edit').addEventListener('click', ()=> {
-    // find rowRef by matching a unique key (we rely on object reference by looking up rawData)
-    const rowRef = findRowRefFromTr(tr);
-    enterEditMode(tr, rowRef);
-  });
-}
-
-
-// ----- Helper: save changes back to rawData and re-render ----- //
-async function saveUpdate(tr, rowRef){
-  // collect inputs (same as your current code)
-  const updated = {};
-  tr.querySelectorAll('td[data-field]').forEach(td => {
-    const field = td.dataset.field;
-    const inp = td.querySelector('input, textarea');
-    const val = inp ? inp.value : td.innerText;
-    updated[field] = val;
-  });
-
-  // 1) update local rawData as before
-  const idx = rawData.indexOf(rowRef);
-  if (idx !== -1) {
-    COLUMNS.forEach(col => rawData[idx][col] = updated[col] ?? '');
-  }
-
-  // 2) Send the update to Google Apps Script web app
-  try {
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz-p_TIfR_yeK0OsaI7GJ8TD0p2nj_x1AA9CKmc3k5JtiEXwDUDCVWnyJhj4j5Yxylx/exec'; // <- REPLACE with your web app URL
-    const payload = {
-      action: 'updateRow',            // tells Apps Script what to do
-      keyName: 'TrackingNumber',      // which column is your unique key
-      keyValue: updated.TrackingNumber,
-      updatedFields: updated          // full row object (you may send only changed fields)
-    };
-
-showLoadersubmit();
-
-const resp = await fetch(WEBAPP_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'text/plain' }, 
-  body: JSON.stringify(payload)
-});
-  
-    const json = await resp.json();
-    if (json && json.status === 'success') {
-      //alert("Data updated successfully!");
-        hideLoadersubmit();
-
-      showSuccess('Saved!', 'Data submitted successfully!');
-
-      applyAll(); 
-       const grid = document.querySelector(".grid-wrapper");
-        grid.classList.add("grid-reset-flash");
-       
-    } else {
-      //alert('Save failed: ' + (json.message || 'server error'));
-        hideLoadersubmit();
-        showError('Save failed:', json.message || 'server error', { autoCloseMs: 5000 });
-
+      // restore action cell to Edit button
+      const actionTd = tr.querySelector('td:last-child');
+      actionTd.innerHTML = `<div style="display:flex; gap:8px; align-items:center"><button class="btn-edit page-btn" style="padding:6px 12px">Edit</button></div>`;
+      actionTd.querySelector('.btn-edit').addEventListener('click', () => {
+        // find rowRef by matching a unique key (we rely on object reference by looking up rawData)
+        const rowRef = findRowRefFromTr(tr);
+        enterEditMode(tr, rowRef);
+      });
     }
-  } catch (err) {
-    //alert('Could not save: ' + err.message);
-      hideLoadersubmit();
-      showError('Could not save: ', err.message, { autoCloseMs: 5000 });
-
-  }
-}
-
-// ----- Utility: find rowRef (object) from table row by matching cell values to rawData entry ----- //
-function findRowRefFromTr(tr){
-  // find a candidate by comparing the TrackingNumber cell value (if present)
-  const tnTd = tr.querySelector('td[data-field="TrackingNumber"]');
-  if (tnTd){
-    const tn = tnTd.querySelector('input,textarea') ? tnTd.querySelector('input,textarea').value : tnTd.innerText;
-    const found = rawData.find(r => String(r.TrackingNumber) === String(tn));
-    if (found) return found;
-  }
-  // fallback: match by all cells
-  const cells = {};
-  tr.querySelectorAll('td[data-field]').forEach(td => cells[td.dataset.field] = td.innerText.trim());
-  return rawData.find(r => {
-    return COLUMNS.every(c => String(r[c] ?? '').trim() === String(cells[c] ?? '').trim());
-  }) || null;
-}
-
-function goToInsert() {
-    window.location.href = "Insert_Admin.html";
-}
-
-document.getElementById("firstPage").addEventListener("click", () => {
-    currentPage = 1;
-    renderTable();
-});
-
-document.getElementById("lastPage").addEventListener("click", () => {
-    const total = filteredData.length;
-    const pages = Math.max(1, Math.ceil(total / pageSize));
-    currentPage = pages;
-    renderTable();
-});
 
 
-function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+    // ----- Helper: save changes back to rawData and re-render ----- //
+    async function saveUpdate(tr, rowRef) {
+      // collect inputs (same as your current code)
+      const updated = {};
+      tr.querySelectorAll('td[data-field]').forEach(td => {
+        const field = td.dataset.field;
+        const inp = td.querySelector('input, textarea');
+        const val = inp ? inp.value : td.innerText;
+        updated[field] = val;
+      });
 
-// pagination handlers
-document.getElementById('prevPage').addEventListener('click', ()=>{ if (currentPage>1){ currentPage--; renderTable(); } });
-document.getElementById('nextPage').addEventListener('click', ()=>{ const total = filteredData.length; const pages = Math.max(1, Math.ceil(total/pageSize)); if (currentPage<pages){ currentPage++; renderTable(); } });
-document.getElementById('pageSize').addEventListener('change', ()=>{ currentPage=1; renderTable(); });
+      // 1) update local rawData as before
+      const idx = rawData.indexOf(rowRef);
+      if (idx !== -1) {
+        COLUMNS.forEach(col => rawData[idx][col] = updated[col] ?? '');
+      }
 
-document.getElementById("resetFiltersToggle").addEventListener("change", function () {
-    if (this.checked) {
+      // 2) Send the update to Google Apps Script web app
+      try {
+        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzTID4szACCVCmPrWWDkMLIc1LPKZVTf6mcBd8BjPPXaOX936KVrqBhcOWFBhYMdDYH/exec'; // <- REPLACE with your web app URL
+        const payload = {
+          action: 'updateRow',            // tells Apps Script what to do
+          keyName: 'TrackingNumber',      // which column is your unique key
+          keyValue: updated.TrackingNumber,
+          updatedFields: updated          // full row object (you may send only changed fields)
+        };
+
+        showLoadersubmit();
+
+        const resp = await fetch(WEBAPP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await resp.json();
+        if (json && json.status === 'success') {
+          //alert("Data updated successfully!");
+          hideLoadersubmit();
+
+          showSuccess('Saved!', 'Data submitted successfully!');
+
+          applyAll();
+          const grid = document.querySelector(".grid-wrapper");
+          grid.classList.add("grid-reset-flash");
+
+        } else {
+          //alert('Save failed: ' + (json.message || 'server error'));
+          hideLoadersubmit();
+          showError('Save failed:', json.message || 'server error', { autoCloseMs: 5000 });
+
+        }
+      } catch (err) {
+        //alert('Could not save: ' + err.message);
+        hideLoadersubmit();
+        showError('Could not save: ', err.message, { autoCloseMs: 5000 });
+
+      }
+    }
+
+    // ----- Utility: find rowRef (object) from table row by matching cell values to rawData entry ----- //
+    function findRowRefFromTr(tr) {
+      // find a candidate by comparing the TrackingNumber cell value (if present)
+      const tnTd = tr.querySelector('td[data-field="TrackingNumber"]');
+      if (tnTd) {
+        const tn = tnTd.querySelector('input,textarea') ? tnTd.querySelector('input,textarea').value : tnTd.innerText;
+        const found = rawData.find(r => String(r.TrackingNumber) === String(tn));
+        if (found) return found;
+      }
+      // fallback: match by all cells
+      const cells = {};
+      tr.querySelectorAll('td[data-field]').forEach(td => cells[td.dataset.field] = td.innerText.trim());
+      return rawData.find(r => {
+        return COLUMNS.every(c => String(r[c] ?? '').trim() === String(cells[c] ?? '').trim());
+      }) || null;
+    }
+
+    function goToInsert() {
+      window.location.href = "Insert_Admin.html";
+    }
+
+    document.getElementById("firstPage").addEventListener("click", () => {
+      currentPage = 1;
+      renderTable();
+    });
+
+    document.getElementById("lastPage").addEventListener("click", () => {
+      const total = filteredData.length;
+      const pages = Math.max(1, Math.ceil(total / pageSize));
+      currentPage = pages;
+      renderTable();
+    });
+
+
+    function escapeHtml(s) { return String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'); }
+
+    // pagination handlers
+    document.getElementById('prevPage').addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderTable(); } });
+    document.getElementById('nextPage').addEventListener('click', () => { const total = filteredData.length; const pages = Math.max(1, Math.ceil(total / pageSize)); if (currentPage < pages) { currentPage++; renderTable(); } });
+    document.getElementById('pageSize').addEventListener('change', () => { currentPage = 1; renderTable(); });
+
+    document.getElementById("resetFiltersToggle").addEventListener("change", function () {
+      if (this.checked) {
 
         // CLEAR FILTERS
         filters = {};
@@ -1017,89 +1185,90 @@ document.getElementById("resetFiltersToggle").addEventListener("change", functio
         grid.classList.add("grid-reset-flash");
 
         setTimeout(() => {
-            grid.classList.remove("grid-reset-flash");
+          grid.classList.remove("grid-reset-flash");
         }, 500);
 
         // delay before turning OFF toggle (so user sees switch ON)
         setTimeout(() => {
-            this.checked = false;
+          this.checked = false;
         }, 400);
-    }
-});
+      }
+    });
 
 
 
-function renderPageNumbers(totalPages) {
-    const container = document.getElementById("pageNumbers");
-    container.innerHTML = "";
+    function renderPageNumbers(totalPages) {
+      const container = document.getElementById("pageNumbers");
+      container.innerHTML = "";
 
-    function makeBtn(num, active = false) {
+      function makeBtn(num, active = false) {
         const btn = document.createElement("button");
         btn.textContent = num;
         if (active) btn.classList.add("active");
         btn.addEventListener("click", () => {
-            currentPage = num;
-            renderTable();
+          currentPage = num;
+          renderTable();
         });
         container.appendChild(btn);
-    }
+      }
 
-    const maxVisible = 5;
+      const maxVisible = 5;
 
-    if (totalPages <= maxVisible) {
+      if (totalPages <= maxVisible) {
         // small number of pages → show all
         for (let i = 1; i <= totalPages; i++) {
-            makeBtn(i, i === currentPage);
+          makeBtn(i, i === currentPage);
         }
-    } else {
+      } else {
         // many pages → add ellipsis
         let start = Math.max(1, currentPage - 2);
         let end = Math.min(totalPages, currentPage + 2);
 
         if (start > 1) {
-            makeBtn(1, currentPage === 1);
-            container.appendChild(makeEllipsis());
+          makeBtn(1, currentPage === 1);
+          container.appendChild(makeEllipsis());
         }
 
         for (let i = start; i <= end; i++) {
-            makeBtn(i, i === currentPage);
+          makeBtn(i, i === currentPage);
         }
 
         if (end < totalPages) {
-            container.appendChild(makeEllipsis());
-            makeBtn(totalPages, currentPage === totalPages);
+          container.appendChild(makeEllipsis());
+          makeBtn(totalPages, currentPage === totalPages);
         }
+      }
     }
-}
 
 
 
-function makeEllipsis() {
-    const span = document.createElement("span");
-    span.className = "page-ellipsis";
-    span.textContent = "...";
-    return span;
-}
+    function makeEllipsis() {
+      const span = document.createElement("span");
+      span.className = "page-ellipsis";
+      span.textContent = "...";
+      return span;
+    }
 
-function goBack(){ window.location.href = 'Dashboard_Admin.html'; }
-
-
-
-
-buildHeader(); loadGridData();
+    function goBack() { window.location.href = 'Dashboard_Admin.html'; }
 
 
 
-function showLoadersubmit() {
-    document.getElementById("loadersubmit").style.display = "flex";
-}
 
-function hideLoadersubmit() {
-    document.getElementById("loadersubmit").style.display = "none";
-}
+    buildHeader(); loadGridData();
 
-</script>
+
+
+    function showLoadersubmit() {
+      document.getElementById("loadersubmit").style.display = "flex";
+    }
+
+    function hideLoadersubmit() {
+      document.getElementById("loadersubmit").style.display = "none";
+    }
+
+  </script>
 
 
 </body>
+
 </html>
