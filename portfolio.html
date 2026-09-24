@@ -23,7 +23,7 @@
   <!-- Basic Page Needs
   ================================================== -->
   <meta charset="utf-8">
-  <title>Airspace | Creative Agency Bootstrap Template</title>
+  <title>Gallery | PICS</title>
 
   <!-- Mobile Specific Metas
   ================================================== -->
@@ -33,7 +33,7 @@
   <meta name="author" content="Themefisher">
   <meta name="generator" content="Themefisher Airspace Template v1.0">
   <!-- Favicon -->
-  <link rel="shortcut icon" type="image/x-icon" href="images/favicon.png" />
+  <link rel="shortcut icon" type="image/x-icon" href="images/company/pics_logo.jpg" />
 
 
   <!-- bootstrap.min css -->
@@ -49,6 +49,7 @@
 
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/theme.css">
 
 </head>
 
@@ -60,9 +61,12 @@
       <div class="row">
         <div class="col-lg-12">
           <nav class="navbar navbar-expand-lg p-0">
-            <a class="navbar-brand" href="index.html">
-              <img src="images/company/pics_logo.jpg" alt="Logo">
-              PICS.
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+              <img src="images/company/pics_logo.jpg" class="brand-logo" alt="PICS Logo">
+              <div class="brand-text d-flex flex-column">
+                <span class="brand-title">PICS</span>
+                <span class="brand-subtitle">Document Attestation, Medical, Visa Stamping</span>
+              </div>
             </a>
 
             <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
@@ -216,18 +220,13 @@
 
               <li class="nav-item @@contact"><a class="nav-link" href="contact.html">Contact</a></li>
               <li class="nav-item">
-                <a class="nav-link" href="https://wa.me/+918369820334" target="_blank">
-                  <img src="https://img.icons8.com/ios/50/whatsapp.png" alt="WhatsApp"
-                    style="width: 30px; height: 30px;">
-                </a>
+                <a class="nav-link nav-icon is-whatsapp" href="https://wa.me/+918369820334" target="_blank" rel="noopener" data-label="WhatsApp" aria-label="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="https://mail.google.com/mail/?view=cm&fs=1&to=skpradhas@gmail.com"
-                  target="_blank">
-                  <img src="https://img.icons8.com/ios/50/gmail.png" alt="Email" style="width: 30px; height: 30px;">
-                </a>
+                <a class="nav-link nav-icon is-mail" href="https://mail.google.com/mail/?view=cm&fs=1&to=skpradhas@gmail.com" target="_blank" rel="noopener" data-label="Email" aria-label="Email"><i class="bi bi-envelope" aria-hidden="true"></i></a>
               </li>
               </ul>
+              <a class="btn-main btn-track" href="statusreport.html"><span class="dot" aria-hidden="true"></span>Track status</a>
             </div>
           </nav>
         </div>
@@ -367,6 +366,7 @@
   </script>
 
 
+<script src="js/theme.js"></script>
 </body>
 
 </html>
