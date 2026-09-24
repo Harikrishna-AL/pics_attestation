@@ -10,20 +10,23 @@
 <html lang="en">
 
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VLBZ70LB11">
-</script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VLBZ70LB11">
+  </script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-  gtag('config', 'G-VLBZ70LB11');
-</script>
+    gtag('config', 'G-VLBZ70LB11');
+  </script>
   <!-- Basic Page Needs
   ================================================== -->
   <meta charset="utf-8">
-  <title>PICS Certificate Attestation</title>
+  <title>PICS - Certificate Attestation, Medical &amp; Visa Stamping</title>
+  <meta name="description"
+    content="PICS handles certificate attestation, apostille, PCC, medical and visa stamping for UAE, Saudi Arabia, Kuwait, Oman, Qatar, Bahrain, UK and USA. Offices in Kochi, Kottayam, Alappuzha and Mumbai.">
+  <meta name="theme-color" content="#13213c">
 
   <!-- Mobile Specific Metas
   ================================================== -->
@@ -40,7 +43,7 @@
   <link rel="stylesheet" href="plugins/bootstrap/bootstrap.min.css">
   <!-- Ionic Icon Css -->
   <link rel="stylesheet" href="plugins/Ionicons/css/ionicons.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 
   <!-- animate.css -->
   <link rel="stylesheet" href="plugins/animate-css/animate.css">
@@ -51,6 +54,7 @@
 
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/theme.css">
 
 </head>
 
@@ -61,9 +65,12 @@
       <div class="row">
         <div class="col-lg-12">
           <nav class="navbar navbar-expand-lg p-0">
-            <!-- <a class="navbar-brand" href="index.html">
-              <img src="images/company/pics_logo.jpg" alt="Logo">
-              PICS
+            <!-- <a class="navbar-brand d-flex align-items-center" href="index.html">
+              <img src="images/company/pics_logo.jpg" class="brand-logo" alt="PICS Logo">
+              <div class="brand-text d-flex flex-column">
+                <span class="brand-title">PICS</span>
+                <span class="brand-subtitle">Document Attestation, Medical, Visa Stamping</span>
+              </div>
             </a> -->
             <a class="navbar-brand d-flex align-items-center" href="index.html">
               <img src="images/company/pics_logo.jpg" class="brand-logo" alt="PICS Logo">
@@ -77,7 +84,7 @@
             <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
               data-target="#navbarsExample09" aria-controls="navbarsExample09" aria-expanded="false"
               aria-label="Toggle navigation">
-              <span class="ion-android-menu"></span>
+              <span class="ion-android-menu" aria-hidden="true"></span>
             </button>
 
             <div class="collapse navbar-collapse ml-auto" id="navbarsExample09">
@@ -225,53 +232,126 @@
 
               <li class="nav-item @@contact"><a class="nav-link" href="contact.html">Contact</a></li>
               <li class="nav-item">
-                <a class="nav-link" href="https://wa.me/+918369820334" target="_blank">
-                  <img src="https://img.icons8.com/ios/50/whatsapp.png" alt="WhatsApp"
-                    style="width: 30px; height: 30px;">
-                </a>
+                <a class="nav-link nav-icon is-whatsapp" href="https://wa.me/+918369820334" target="_blank"
+                  rel="noopener" data-label="WhatsApp" aria-label="WhatsApp"><i class="bi bi-whatsapp"
+                    aria-hidden="true"></i></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="https://mail.google.com/mail/?view=cm&fs=1&to=skpradhas@gmail.com"
-                  target="_blank">
-                  <img src="https://img.icons8.com/ios/50/gmail.png" alt="Email" style="width: 30px; height: 30px;">
-                </a>
-              </li>        
+                <a class="nav-link nav-icon is-mail"
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=skpradhas@gmail.com" target="_blank"
+                  rel="noopener" data-label="Email" aria-label="Email"><i class="bi bi-envelope"
+                    aria-hidden="true"></i></a>
+              </li>
               </ul>
-  
-              <button class="btn btn-main" onclick="window.location.href='./statusreport.html'" style="margin-left: 2%;">Check your Status</button>
 
-              
+              <a class="btn-main btn-track" href="statusreport.html"><span class="dot" aria-hidden="true"></span>Track
+                status</a>
+
+
             </div>
           </nav>
         </div>
       </div>
     </div>
   </header>
-  <!-- Slider Start -->
-  <section class="slider">
+  <!-- Hero -->
+  <section class="hero slider-hero">
+    <!-- rough-ink filter used by the stamp -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <filter id="ink-rough">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" />
+      </filter>
+    </svg>
     <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="block">
-            <h1 class="animated fadeInUp">A Certificate <b>Attestation, Medical</b> <br> &#38; <b>Visa Stamping</b> Agency</h1>
-            <p class="animated fadeInUp">We love the work we do.We work closely with our clients to deliver
-              </br> the best possible solutions for their needs</p>
-            <a href="#service-list" class="btn btn-main animated fadeInUp">Why Choose Us?</a>
+      <div class="row align-items-center">
+        <div class="col-lg-7">
+          <span class="eyebrow">Kochi · Kottayam · Alappuzha · Mumbai</span>
+          <h1 class="hero-title">Certificates <em>attested,</em> stamped and ready to travel.</h1>
+          <p class="hero-lede">A certificate attestation, medical &amp; visa stamping agency. We work closely with
+            every client to take their documents through each ministry and embassy, and back to them.</p>
+          <div class="hero-actions">
+            <a href="https://wa.me/+918369820334" target="_blank" rel="noopener" class="btn-main"><i
+                class="bi bi-whatsapp" aria-hidden="true"></i>Start on WhatsApp</a>
+            <a href="#service-list" class="btn-ghost">Why choose us?</a>
+          </div>
+          <div class="hero-proof">
+            <div><strong>4 offices</strong>across Kerala &amp; Mumbai</div>
+            <div><strong>MEA → MOFA</strong>the full attestation chain</div>
+            <div><strong>Scan first</strong>copy shared before courier</div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="doc-stage" aria-hidden="true">
+            <div class="doc-back"></div>
+            <div class="doc">
+              <div class="doc-band"></div>
+              <div class="doc-kicker">Republic of India</div>
+              <div class="doc-title">Degree Certificate</div>
+              <div class="doc-line w-90"></div>
+              <div class="doc-line"></div>
+              <div class="doc-line w-80"></div>
+              <div class="doc-line w-60"></div>
+              <div class="doc-chain">
+                <div><i class="bi bi-check2-circle"></i><span>MEA · New Delhi</span></div>
+                <div><i class="bi bi-check2-circle"></i><span>UAE Embassy</span></div>
+                <div><i class="bi bi-check2-circle"></i><span>MOFA · UAE</span></div>
+              </div>
+              <div class="doc-ref">REF · PICS / KOCHI</div>
+            </div>
+            <div class="stamp-shadow"></div>
+            <div class="stamp">
+              <svg viewBox="0 0 200 200">
+                <defs>
+                  <path id="stamp-ring" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
+                </defs>
+                <circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="5" />
+                <circle cx="100" cy="100" r="84" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <circle cx="100" cy="100" r="54" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <text font-family="IBM Plex Mono, monospace" font-size="14.5" font-weight="500" letter-spacing="3.2"
+                  fill="currentColor">
+                  <textPath href="#stamp-ring">PICS ATTESTATION ★ KOCHI ★ KERALA ★</textPath>
+                </text>
+                <text x="100" y="97" text-anchor="middle" font-family="Newsreader, Georgia, serif" font-style="italic"
+                  font-size="30" fill="currentColor">Attested</text>
+                <line x1="62" y1="108" x2="138" y2="108" stroke="currentColor" stroke-width="1.5" />
+                <text x="100" y="126" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11"
+                  letter-spacing="2" fill="currentColor">VERIFIED</text>
+              </svg>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Wrapper Start -->
+  <!-- Destinations -->
+  <section class="destinations" aria-label="Countries we attest for">
+    <div class="container">
+      <span class="label">Attestation for</span>
+      <ul>
+        <li>UAE</li>
+        <li>Saudi Arabia</li>
+        <li>Kuwait</li>
+        <li>Oman</li>
+        <li>Qatar</li>
+        <li>Bahrain</li>
+        <li>UK</li>
+        <li>USA</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- About -->
   <section class="about section">
     <div class="container">
-      <div class="row">
-        <div class="col-md-7">
+      <div class="row align-items-center">
+        <div class="col-lg-7 reveal">
           <div class="block">
             <div class="section-title">
-              <h2>About Us</h2>
-              <p>PICS Attestation is professionally managed reputed and expert authentication consultant in Kerala.We
+              <span class="eyebrow">About us</span>
+              <h2>Attestation specialists, based in Kerala.</h2>
+              <p>PICS Attestation is professionally managed reputed and expert authentication consultant in Kerala. We
                 are prominent as the prime provider of all kind of certificates and documents attestation and
                 legalization services. We have a qualified and skilled team of professional who provides qualitative
                 services to our existing customers and general public.</p>
@@ -284,323 +364,440 @@
               organizations of all over the world, in coming years. We are focusing to enlarge our business strength and
               widen our reliable and quality services all around. </p>
           </div>
-        </div><!-- .col-md-7 close -->
-        <div class="col-md-5">
-          <div class="block">
-            <img src="images/landing-page/bg1.png" alt="Img">
-          </div>
-        </div><!-- .col-md-5 close -->
+        </div>
+        <div class="col-lg-5 reveal">
+          <figure class="about-figure block">
+            <img src="images/landing-page/bg1.png" alt="A rubber stamp resting on an official document">
+            <figcaption>Every document, checked before it is stamped</figcaption>
+          </figure>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- How attestation works -->
+  <section class="route section">
+    <div class="container">
+      <div class="section-title reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>The attestation route, step by step.</h2>
+        <p>Using UAE as an example: every country has its own chain, and we handle each stop for you.</p>
+      </div>
+      <ol class="route-steps reveal">
+        <li class="route-step">
+          <span class="seal" aria-hidden="true"></span>
+          <span class="where">India</span>
+          <h3>MEA / MOFA</h3>
+          <p>Ministry of External Affairs attestation in your home country.</p>
+        </li>
+        <li class="route-step">
+          <span class="seal" aria-hidden="true"></span>
+          <span class="where">India</span>
+          <h3>Embassy</h3>
+          <p>Attestation by the destination country's embassy in India.</p>
+        </li>
+        <li class="route-step">
+          <span class="seal" aria-hidden="true"></span>
+          <span class="where">Destination</span>
+          <h3>MOFA</h3>
+          <p>Final attestation by the Ministry of Foreign Affairs abroad.</p>
+        </li>
+        <li class="route-step">
+          <span class="seal" aria-hidden="true"></span>
+          <span class="where">Your door</span>
+          <h3>Scan &amp; courier</h3>
+          <p>A scanned copy is shared first, then the originals are couriered back.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Services directory -->
+  <section class="services-dir section">
+    <div class="container">
+      <div class="section-title reveal">
+        <span class="eyebrow">Services</span>
+        <h2>What we can attest for you.</h2>
+      </div>
+      <div class="svc-grid">
+        <article class="svc reveal">
+          <span class="svc-icon"><i class="bi bi-mortarboard" aria-hidden="true"></i></span>
+          <h3><a href="pages/attestation/educational_certificate.html">Educational certificates</a></h3>
+          <p>For employment and higher studies abroad.</p>
+          <div class="chips">
+            <a href="pages/attestation/degree_certificate.html">Degree</a>
+            <a href="pages/attestation/diploma_certificate.html">Diploma</a>
+            <a href="pages/attestation/hsc_certificate.html">HSC</a>
+            <a href="pages/attestation/sslc_certificate.html">SSLC</a>
+          </div>
+        </article>
+        <article class="svc reveal">
+          <span class="svc-icon"><i class="bi bi-file-earmark-person" aria-hidden="true"></i></span>
+          <h3><a href="pages/attestation/non_educational_certificate.html">Personal documents</a></h3>
+          <p>Non-educational certificates for family visas and residency.</p>
+          <div class="chips">
+            <a href="pages/attestation/birth.html">Birth</a>
+            <a href="pages/attestation/marriage.html">Marriage</a>
+            <a href="pages/attestation/divorce.html">Divorce</a>
+            <a href="pages/attestation/death.html">Death</a>
+            <a href="pages/attestation/medical.html">Medical</a>
+          </div>
+        </article>
+        <article class="svc reveal">
+          <span class="svc-icon"><i class="bi bi-briefcase" aria-hidden="true"></i></span>
+          <h3><a href="pages/attestation/exp.html">Employment documents</a></h3>
+          <p>Proof of work history and salary for your next role.</p>
+          <div class="chips">
+            <a href="pages/attestation/exp.html">Experience</a>
+            <a href="pages/attestation/salary.html">Salary</a>
+            <a href="pages/attestation/transfer.html">Transfer</a>
+          </div>
+        </article>
+        <article class="svc reveal">
+          <span class="svc-icon"><i class="bi bi-building" aria-hidden="true"></i></span>
+          <h3><a href="pages/attestation/commercial_certificate.html">Commercial documents</a></h3>
+          <p>Incorporation, memorandum and articles of association for business abroad.</p>
+          <div class="chips">
+            <a href="pages/attestation/mea_attestation.html">MEA</a>
+            <a href="pages/attestation/mofa_attestaion.html">MOFA</a>
+            <a href="pages/attestation/certificate_equivalency.html">Equivalency</a>
+          </div>
+        </article>
+        <article class="svc reveal">
+          <span class="svc-icon"><i class="bi bi-patch-check" aria-hidden="true"></i></span>
+          <h3><a href="pages/apostile/certificate_apostile.html">Apostille</a></h3>
+          <p>For Hague Convention countries: one stamp instead of an embassy chain.</p>
+          <div class="chips">
+            <a href="pages/apostile/certificate_apostile.html">Certificate apostille</a>
+          </div>
+        </article>
+        <article class="svc reveal">
+          <span class="svc-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
+          <h3><a href="pages/attestation/pcc.html">Police clearance (PCC)</a></h3>
+          <p>PCC attestation and applications for Gulf countries.</p>
+          <div class="chips">
+            <a href="pages/pcc/uae-pcc.html">UAE</a>
+            <a href="pages/pcc/saudi-pcc.html">Saudi</a>
+            <a href="pages/pcc/kuwait-pcc.html">Kuwait</a>
+            <a href="pages/pcc/oman_pcc.html">Oman</a>
+            <a href="pages/pcc/quatar-pcc.html">Qatar</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quality assurance -->
   <section class="feature bg-2">
     <div class="container">
-      <div class="row justify-content-end">
-        <div class="col-md-6">
-          <h2 class="section-subtitle">Our Quality Assurance</h2>
+      <div class="row align-items-center">
+        <div class="col-lg-5 mb-5 mb-lg-0 reveal">
+          <blockquote class="quote-mark">“Very quick and top quality service. Trustworthy!”
+            <cite>From a PICS client review</cite>
+          </blockquote>
+        </div>
+        <div class="col-lg-6 offset-lg-1 reveal">
+          <span class="eyebrow">Our quality assurance</span>
+          <h2 class="section-subtitle">Handled with precision, at every counter.</h2>
           <p> Rendered by us are unparalleled Attestation Apostille Consultancy services that are provided to the
             clients, catering their exact needs and expectations. Each service is rendered in a manner to resolve the
             attestation related issues of the clients. Well-planned services are rendered to the clients with utmost
             precision and perfection by our highly knowledgeable professionals. Backed by effectiveness and proper
-            implementation, these services get in-tune with the clients expectations and preferred choices. Thus, we
-            render each service with complete dedication and make sure that clients are facilitated with unparalleled
-            solutions in accordance with the laid industry norms and guidelines
+            implementation, these services get in-tune with the clients expectations and preferred choices.
           </p>
-          <a href="portfolio.html" class="btn btn-view-works">View Works</a>
+          <a href="portfolio.html" class="btn btn-view-works">View our office <i class="bi bi-arrow-right"
+              aria-hidden="true"></i></a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Service Start -->
+  <!-- Why choose us -->
   <section class="service" id="service-list">
     <div class="container">
-      <div class="row">
-        <div class="col-12 text-center">
-          <div class="section-title">
-            <h2>Why choose our service?</h2>
-            <p>" I had found PICS really experienced and helpful. The process was completed with in a short time and
-              reasonable charge. <br>Very quick and top quality service. Trustworthy! "</p>
-          </div>
-        </div>
+      <div class="section-title reveal">
+        <span class="eyebrow">Why PICS</span>
+        <h2>Why choose our service?</h2>
+        <p>" I had found PICS really experienced and helpful. The process was completed with in a short time and
+          reasonable charge. Very quick and top quality service. Trustworthy! "</p>
       </div>
-      <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="service-item">
-            <i class="bi-gem"></i>
-            <h4>Customer Satisfaction</h4>
-            <p>All our customers are satisfied with our service and we have earned their trust.</p>
-          </div>
+      <div class="why-grid reveal">
+        <div class="service-item">
+          <i class="bi-gem"></i>
+          <h4>Customer Satisfaction</h4>
+          <p>All our customers are satisfied with our service and we have earned their trust.</p>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="service-item">
-            <i class="ion-android-alarm-clock"></i>
-            <h4>Timely Attested</h4>
-            <p>We have always attested and delivered certificates on time as promised.</p>
-          </div>
+        <div class="service-item">
+          <i class="ion-android-alarm-clock"></i>
+          <h4>Timely Attested</h4>
+          <p>We have always attested and delivered certificates on time as promised.</p>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="service-item">
-            <i class="bi-cash-coin"></i>
-            <h4>Reasonable Price</h4>
-            <p>The prices that we offer for attestation are the best you can find in this country.</p>
-          </div>
+        <div class="service-item">
+          <i class="bi-cash-coin"></i>
+          <h4>Reasonable Price</h4>
+          <p>The prices that we offer for attestation are the best you can find in this country.</p>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="service-item">
-            <i class="bi-shield-check"></i>
-            <h4>Trustable</h4>
-            <p>We are completely trustable according to the reviews from our previous customers</p>
-          </div>
+        <div class="service-item">
+          <i class="bi-shield-check"></i>
+          <h4>Trustable</h4>
+          <p>We are completely trustable according to the reviews from our previous customers</p>
         </div>
       </div>
     </div>
   </section>
 
-
-
-  <!-- Call to action Start -->
-
-  <!-- <section class="call-to-action bg-1 section-sm overly">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="block">
-            <h2 class="mb-3">We design delightful digital experiences.</h2>
-            <p>Read more about what we do and our philosophy of design. Judge for yourself The work and results <br>
-              we’ve
-              achieved for other clients, and meet our highly experienced Team who just love to design.</p>
-            <a class="btn btn-main btn-solid-border" href="contact.html">Tell Us Your Story</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section> -->
-
-  <!-- Content Start -->
+  <!-- Testimonials -->
   <section class="testimonial">
     <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <div class="section-title text-center">
-            <h2>Check out some of our Google Reviews</h2>
-          </div>
-        </div>
+      <div class="section-title text-center reveal">
+        <span class="eyebrow">Google reviews</span>
+        <h2>In our clients' words.</h2>
       </div>
-      <div class="row align-items-center">
-        <!-- <div class="col-md-6"> -->
-        <!-- <div class="block">
-            <ul class="counter-box clearfix">
-              <li>
-                <div class="counter-item">
-                  <i class="ion-ios-chatboxes-outline"></i>
-                  <h4 class="count" data-count="99">0</h4>
-                  <span>Cups Of Coffee</span>
-                </div>
-              </li>
-              <li>
-                <div class="counter-item">
-                  <i class="ion-ios-glasses-outline"></i>
-                  <h4 class="count" data-count="45">0</h4>
-                  <span>Article Written</span>
-                </div>
-              </li>
-              <li>
-                <div class="counter-item">
-                  <i class="ion-ios-compose-outline"></i>
-                  <h4 class="count" data-count="125">0</h4>
-                  <span>Projects Completed</span>
-                </div>
-              </li>
-              <li>
-                <div class="counter-item">
-                  <i class="ion-ios-timer-outline"></i>
-                  <h4 class="count" data-count="200">0</h4>
-                  <span>Combined Projects</span>
-                </div>
-              </li>
-            </ul>
+      <div class="testimonial-carousel">
+        <div class="testimonial-slider owl-carousel">
+          <div>
+            <i class="ion-quote"></i>
+            <p>"Just wanted to say thank you for your exceptional service. Turning around the attestation of my
+              documents within a day is incredible. You make a complex process very very simple. I will definitely
+              be recommending you."</p>
+            <div class="user">
+              <img src="images/profile.jpg" alt="">
+              <p><span>PICS User</span></p>
+            </div>
           </div>
-        </div> -->
-        <div class="col-md-12 col-md-offset-1">
-          <div class="testimonial-carousel text-center">
-            <div class="testimonial-slider owl-carousel">
-              <div>
-                <i class="ion-quote"></i>
-                <p>"Just wanted to say thank you for your exceptional service. Turning around the attestation of my
-                  documents within a day is incredible. You make a complex process very very simple. I will definitely
-                  be recommending you."</p>
-                <div class="user">
-                  <img src="images/profile.jpg" alt="Pepole">
-                  <p><span>PICS User</span></p>
-                </div>
-              </div>
-              <div>
-                <i class="ion-quote"></i>
-                <p>"Excellent service. Got my attested certificate from UAE within 2 weeks and even before that they
-                  have given a scanned copy of my attested certificate which helped me to move my visa proceedings
-                  faster. Thankyou So much PICS"</p>
-                <div class="user">
-                  <img src="images/profile.jpg" alt="Pepole">
-                  <p><span>PICS User</span></p>
-                </div>
-              </div>
-              <div>
-                <i class="ion-quote"></i>
-                <p>"The guy has some serious experience in this field and it is evident from the kind of service he is
-                  providing. He is very clear about the procedures and the time it would take to clear. Very much
-                  satisfied with the service. I hope you will maintain this quality of service throughout."</p>
-                <div class="user">
-                  <img src="images/profile.jpg" alt="Pepole">
-                  <p><span>PICS User</span></p>
-                </div>
-              </div>
-              <div>
-                <i class="ion-quote"></i>
-                <p>"Got in touch with Satheesh Pillai from PICS, and from the very start he knew exactly what he was
-                  doing. I was constantly updated and kept informed about where my documents were. The documents were
-                  very quickly attested and couriered back me. Before they were sent back, they were scanned to me which
-                  was great as I could get things moving quicker. If you’re looking for top quality look no further!"
-                </p>
-                <div class="user">
-                  <img src="images/profile.jpg" alt="Pepole">
-                  <p><span>PICS User</span></p>
-                </div>
-              </div>
+          <div>
+            <i class="ion-quote"></i>
+            <p>"Excellent service. Got my attested certificate from UAE within 2 weeks and even before that they
+              have given a scanned copy of my attested certificate which helped me to move my visa proceedings
+              faster. Thankyou So much PICS"</p>
+            <div class="user">
+              <img src="images/profile.jpg" alt="">
+              <p><span>PICS User</span></p>
+            </div>
+          </div>
+          <div>
+            <i class="ion-quote"></i>
+            <p>"The guy has some serious experience in this field and it is evident from the kind of service he is
+              providing. He is very clear about the procedures and the time it would take to clear. Very much
+              satisfied with the service. I hope you will maintain this quality of service throughout."</p>
+            <div class="user">
+              <img src="images/profile.jpg" alt="">
+              <p><span>PICS User</span></p>
+            </div>
+          </div>
+          <div>
+            <i class="ion-quote"></i>
+            <p>"Got in touch with Satheesh Pillai from PICS, and from the very start he knew exactly what he was
+              doing. I was constantly updated and kept informed about where my documents were. The documents were
+              very quickly attested and couriered back me. Before they were sent back, they were scanned to me which
+              was great as I could get things moving quicker. If you’re looking for top quality look no further!"
+            </p>
+            <div class="user">
+              <img src="images/profile.jpg" alt="">
+              <p><span>PICS User</span></p>
             </div>
           </div>
         </div>
       </div>
+
+      <div class="reviews-cta">
+        <div>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <span>Read what clients say about each of our offices.</span>
+        </div>
+        <button type="button" class="btn-ink" onclick="redirectToLink()">View Google Reviews <i
+            class="bi bi-arrow-up-right" aria-hidden="true"></i></button>
+      </div>
     </div>
-  </section>
 
-
-  <section>
-    <div style="text-align: center; margin-top: 10px;"> <!-- Add margin-top for vertical adjustment -->
-      <button onclick="redirectToLink()" style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #1D7AD1; color: white; border: none; border-radius: 5px;">
-          View Google Reviews
-      </button>
-  </div>
-  <style>
-    section {
-        margin-bottom: 40px; /* Add some spacing above the footer */
-    }
-</style>
-
-<script>
-    function redirectToLink() {
-      const links = [
-            'https://g.co/kgs/uSkvqh1',
-            'https://g.co/kgs/r9hD9e9',
-            'https://g.co/kgs/J6UkjPJ'  
+    <script>
+      function redirectToLink() {
+        const links = [
+          'https://g.co/kgs/uSkvqh1',
+          'https://g.co/kgs/r9hD9e9',
+          'https://g.co/kgs/J6UkjPJ'
         ];
         const randomIndex = Math.floor(Math.random() * links.length); // Random index to choose a link
         window.location.href = links[randomIndex]; // Redirect to the randomly chosen link
-    }
-</script>
+      }
+    </script>
   </section>
 
-<section>
-  <div class="chatbot-container">
-    <button class="chatbot-button" onclick="toggleChat()">Chat with us</button>
+  <!-- Offices -->
+  <section class="offices section">
+    <div class="container">
+      <div class="section-title reveal">
+        <span class="eyebrow">Visit us</span>
+        <h2>Four offices, one team.</h2>
+      </div>
+      <div class="office-grid">
+        <div class="office-card reveal">
+          <span class="tag">Head office</span>
+          <h3>Kochi</h3>
+          <address>Willow Centre, 2nd Floor, Alinchuvadu, Vennala P.O., Palarivattom, Kochi, Kerala 682028</address>
+          <div class="links">
+            <a href="tel:+918369820334"><i class="bi bi-telephone" aria-hidden="true"></i>+91 83698 20334</a>
+            <a href="https://www.google.com/maps/place/UAE+Attestation,+Medical+%26+Visa+Stamping+(PICS)/@10.0023655,76.3139744,17z/data=!3m2!4b1!5s0x3b080d1c014e3d15:0xf65f9f2ec501874f!4m6!3m5!1s0x3b087290940007ef:0x51c5cc0f759e85b!8m2!3d10.0023655!4d76.3165547!16s%2Fg%2F1hjh4_l23!5m1!1e1?hl=en&amp;authuser=0&amp;entry=ttu&amp;g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank" rel="noopener"><i class="bi bi-geo-alt" aria-hidden="true"></i>Map</a>
+          </div>
+        </div>
+        <div class="office-card reveal">
+          <span class="tag">Branch</span>
+          <h3>Kottayam</h3>
+          <address>Mulla Building Office Complex D.No.7, Taj Mosque Lane, TB Road, Kottayam, Kerala 686001</address>
+          <div class="links">
+            <a href="tel:+916238875626"><i class="bi bi-telephone" aria-hidden="true"></i>+91 62388 75626</a>
+            <a href="https://www.google.com/maps/place/UAE+Attestation,+Medical+and+Visa+Stamping+(PICS)/@9.5865583,76.5235887,17z/data=!3m1!4b1!4m6!3m5!1s0x3b062b55dd288879:0xfe68360c39e4479a!8m2!3d9.5865583!4d76.5235887!16s%2Fg%2F11wr29y7ys!5m1!1e1?hl=en&amp;entry=ttu&amp;g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank" rel="noopener"><i class="bi bi-geo-alt" aria-hidden="true"></i>Map</a>
+          </div>
+        </div>
+        <div class="office-card reveal">
+          <span class="tag">Branch</span>
+          <h3>Alappuzha</h3>
+          <address>St. Thomas Evanchalikkal Church Road, Ward Rd, near InterPharma Stadium, Alappuzha, Kerala 688001
+          </address>
+          <div class="links">
+            <a href="tel:+918591870410"><i class="bi bi-telephone" aria-hidden="true"></i>+91 85918 70410</a>
+            <a href="https://www.google.com/maps/place/UAE+Attestation,+Medical+%26+Visa+Stamping+(PICS)/@9.4879447,76.3347874,17z/data=!3m1!4b1!4m6!3m5!1s0x3b088566acceb205:0x9f322f7f0ef2d321!8m2!3d9.4879447!4d76.3373677!16s%2Fg%2F11l6hmhn1q!5m1!1e1?hl=en&amp;authuser=0&amp;entry=ttu&amp;g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank" rel="noopener"><i class="bi bi-geo-alt" aria-hidden="true"></i>Map</a>
+          </div>
+        </div>
+        <div class="office-card reveal">
+          <span class="tag">Branch</span>
+          <h3>Mumbai</h3>
+          <address>104, Jai Balaji Darshan, near Om Shanti Chowk, Mira Road East, Mira Bhayandar, Maharashtra 401105
+          </address>
+          <div class="links">
+            <a href="tel:+919869303751"><i class="bi bi-telephone" aria-hidden="true"></i>+91 98693 03751</a>
+            <a href="https://www.google.com/maps/place/UAE+Attestation,+Medical+%26+Visa+Stamping+(PICS)/@19.3023638,72.8646607,17z/data=!3m1!4b1!4m6!3m5!1s0x3be7b1fac792ff9b:0xcb502c65cb5c28f8!8m2!3d19.3023638!4d72.867241!16s%2Fg%2F11vf1gnng_!5m1!1e1?hl=en&amp;authuser=0&amp;entry=ttu&amp;g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank" rel="noopener"><i class="bi bi-geo-alt" aria-hidden="true"></i>Map</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <div class="chat-window" id="chatWindow">
+  <section>
+    <div class="chatbot-container">
+      <button class="chatbot-button" onclick="toggleChat()">Chat with us</button>
+
+      <div class="chat-window" id="chatWindow">
         <div class="chat-header">
-            Bot
-            <button class="close-button" onclick="toggleChat()">✖</button>
+          PICS assistant
+          <button class="close-button" onclick="toggleChat()" aria-label="Close chat">✖</button>
         </div>
         <div class="chat-messages" id="chatMessages">
-            <p>👋 Hi! How can I help you today?</p>
+          <p>👋 Hi! How can I help you today?</p>
         </div>
         <div class="chat-faq">
-            <button onclick="addFAQ('What are your working hours?')">Working Hours</button>
-            <button onclick="addFAQ('Where are you located?')">Location</button>
-            <button onclick="addFAQ('What services do you offer?')">Services</button>
-            <button onclick="addFAQ('What is your contact number?')">Contact No</button>
+          <button onclick="addFAQ('What are your working hours?')">Working Hours</button>
+          <button onclick="addFAQ('Where are you located?')">Location</button>
+          <button onclick="addFAQ('What services do you offer?')">Services</button>
+          <button onclick="addFAQ('What is your contact number?')">Contact No</button>
         </div>
         <div class="chat-input">
-            <input type="text" id="userInput" placeholder="Type your message...">
-            <button onclick="sendMessage()">Send</button>
+          <input type="text" id="userInput" placeholder="Type your message...">
+          <button onclick="sendMessage()">Send</button>
         </div>
+      </div>
     </div>
-</div>
 
 
 
 
-<script>
-// Object to store FAQs and their predefined answers
-const predefinedAnswers = {
-    "What are your working hours?": "Our working hours are 9:00 AM to 6:00 PM, Monday to Friday.",
-    "Where are you located?": "We are located at Willow Centre, 2nd Floor Alinchuvadu Vennala, P O, Palarivattom, Kochi, Kerala 682028.",
-    "What services do you offer?": "We offer a variety of services, including certificate attestation for UAE, Kuwait, Oman, Bahrain, Saudi, UK, USA and Medical and Visa stamping for UAE and Kuwait. Commercial attestation for incorp, memorandum, article of association and ticket booking etc.",
-    "What is your contact number?": "8369820334,9869303751.",
+    <script>
+      // Object to store FAQs and their predefined answers
+      const predefinedAnswers = {
+        "What are your working hours?": "Our working hours are 9:00 AM to 6:00 PM, Monday to Friday.",
+        "Where are you located?": "We are located at Willow Centre, 2nd Floor Alinchuvadu Vennala, P O, Palarivattom, Kochi, Kerala 682028.",
+        "What services do you offer?": "We offer a variety of services, including certificate attestation for UAE, Kuwait, Oman, Bahrain, Saudi, UK, USA and Medical and Visa stamping for UAE and Kuwait. Commercial attestation for incorp, memorandum, article of association and ticket booking etc.",
+        "What is your contact number?": "8369820334,9869303751.",
 
-};
+      };
 
-// Function to toggle the chat window
-function toggleChat() {
-    var chatWindow = document.getElementById('chatWindow');
-    chatWindow.style.display = (chatWindow.style.display === 'none' || chatWindow.style.display === '') ? 'flex' : 'none';
-}
+      // Function to toggle the chat window
+      function toggleChat() {
+        var chatWindow = document.getElementById('chatWindow');
+        chatWindow.style.display = (chatWindow.style.display === 'none' || chatWindow.style.display === '') ? 'flex' : 'none';
+      }
 
-// Function to close the chat window when clicking outside
-function closeChatOnClickOutside(event) {
-    var chatWindow = document.getElementById('chatWindow');
-    var chatbotButton = document.querySelector('.chatbot-button');
-    
-    // Close the chat window if the click is outside the chatbot button and chat window
-    if (!chatWindow.contains(event.target) && !chatbotButton.contains(event.target)) {
-        chatWindow.style.display = 'none';
-    }
-}
+      // Function to close the chat window when clicking outside
+      function closeChatOnClickOutside(event) {
+        var chatWindow = document.getElementById('chatWindow');
+        var chatbotButton = document.querySelector('.chatbot-button');
 
-// Add event listener to detect clicks outside the chatbot
-document.addEventListener('click', closeChatOnClickOutside);
-
-
-function sendMessage() {
-    const userInput = document.getElementById('userInput');
-    const chatMessages = document.getElementById('chatMessages');
-
-    if (userInput.value.trim() !== "") {
-        // Add user message to chat
-        const userMessage = document.createElement('p');
-        userMessage.textContent = `You: ${userInput.value}`;
-        chatMessages.appendChild(userMessage);
-
-        // Add bot response to chat
-        const botMessage = document.createElement('p');
-        if (predefinedAnswers[userInput.value]) {
-            botMessage.textContent = `Bot: ${predefinedAnswers[userInput.value]}`;
-        } else {
-            botMessage.textContent = "Bot: I'm here to help!";
+        // Close the chat window if the click is outside the chatbot button and chat window
+        if (!chatWindow.contains(event.target) && !chatbotButton.contains(event.target)) {
+          chatWindow.style.display = 'none';
         }
-        chatMessages.appendChild(botMessage);
+      }
 
-        // Scroll to the bottom of the chat messages
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-
-        // Clear the input field
-        userInput.value = '';
-    }
-}
-
-function addFAQ(question) {
-    const userInput = document.getElementById('userInput');
-    userInput.value = question; // Fill the input field with the FAQ
-    sendMessage(); // Automatically send the question
-}
+      // Add event listener to detect clicks outside the chatbot
+      document.addEventListener('click', closeChatOnClickOutside);
 
 
-</script>
-</section>
+      function sendMessage() {
+        const userInput = document.getElementById('userInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        if (userInput.value.trim() !== "") {
+          // Add user message to chat
+          const userMessage = document.createElement('p');
+          userMessage.textContent = `You: ${userInput.value}`;
+          chatMessages.appendChild(userMessage);
+
+          // Add bot response to chat
+          const botMessage = document.createElement('p');
+          if (predefinedAnswers[userInput.value]) {
+            botMessage.textContent = `Bot: ${predefinedAnswers[userInput.value]}`;
+          } else {
+            botMessage.textContent = "Bot: I'm here to help!";
+          }
+          chatMessages.appendChild(botMessage);
+
+          // Scroll to the bottom of the chat messages
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+
+          // Clear the input field
+          userInput.value = '';
+        }
+      }
+
+      function addFAQ(question) {
+        const userInput = document.getElementById('userInput');
+        userInput.value = question; // Fill the input field with the FAQ
+        sendMessage(); // Automatically send the question
+      }
+
+
+    </script>
+  </section>
 
 
   <!-- footer Start -->
   <footer class="footer">
     <div class="container">
+      <div class="footer-top">
+        <div>
+          <p class="f-brand">Certificate attestation, medical &amp; visa stamping.</p>
+        </div>
+        <div>
+          <h4>Talk to us</h4>
+          <ul>
+            <li><a href="tel:+918369820334">+91 83698 20334</a></li>
+            <li><a href="https://wa.me/+918369820334" target="_blank" rel="noopener">WhatsApp</a></li>
+            <li><a href="mailto:picscochin@gmail.com">picscochin@gmail.com</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Useful links</h4>
+          <ul>
+            <li><a href="statusreport.html">Track your documents</a></li>
+            <li><a href="portfolio.html">Gallery</a></li>
+            <li><a href="contact.html">All offices</a></li>
+          </ul>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-12">
           <div class="footer-manu">
@@ -611,8 +808,8 @@ function addFAQ(question) {
           </div>
           <p class="copyright mb-0">Copyright
             <script>document.write(new Date().getFullYear())</script> &copy; Designed & Developed by
-              <a href="http://github.com/Harikrishna-AL/">Harikrishna</a> & 
-              <a href="https://github.com/surya492001">Suryanarayan</a>.All rights reserved.
+            <a href="http://github.com/Harikrishna-AL/">Harikrishna</a> &amp;
+            <a href="https://github.com/surya492001">Suryanarayan</a>. All rights reserved.
           </p>
         </div>
       </div>
@@ -645,11 +842,12 @@ function addFAQ(question) {
   <script src="plugins/google-map/map.js"></script>
 
   <script src="js/script.js"></script>
-<script src="js/QuickEnquiry.js"></script>
+  <script src="js/QuickEnquiry.js?v=2"></script>
 
 
 
 
+  <script src="js/theme.js"></script>
 </body>
 
 </html>

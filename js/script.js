@@ -81,7 +81,7 @@ $(document).ready(function () {
 
 	// CountDown JS
 	var countDownEl = $('.count-down');
-	if (countDownEl) {
+	if (countDownEl.length && $.fn.syotimer) {
 		$('.count-down').syotimer({
 			year: 2021,
 			month: 5,

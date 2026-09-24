@@ -26,10 +26,12 @@ function initQuickEnquiry() {
     closeBtn.onclick = function () {
         modal.style.display = "none";
     };
-    // Auto open on page load
-setTimeout(() => {
-    modal.style.display = "block";
-}, 500);
+    // Auto open on page load — disabled: was popping the Quick Enquiry
+    // modal open on every page load, which was disruptive. Now it only
+    // opens when the user clicks the "Quick Enquiry" tab.
+    // setTimeout(() => {
+    //     modal.style.display = "block";
+    // }, 500);
 
 
   sendBtn.onclick = async  function () {
