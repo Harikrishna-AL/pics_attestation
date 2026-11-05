@@ -353,7 +353,7 @@
       <div class="section_status">
         <h3>Date of submission</h3>
         <div class="row_status">
-          <span class="label">Date Of Submission</span>
+          <span class="label">Date Of Submission (MM/DD/YYYY)</span>
           <span id="dateofsubmission">--</span>
         </div>
       </div>
@@ -390,27 +390,55 @@
 
 
     function excelDateToJSDate(value) {
-      if (!value) return "--";
+      if (value === null || value === undefined || value === "") return "--";
 
-      // If it's already a date string
-      if (typeof value === "string") {
-        const d = new Date(value);
-        if (!isNaN(d.getTime())) {
-          return d.toLocaleDateString("en-GB");
+      const rawValue = String(value).trim();
+      const pad = (n) => String(n).padStart(2, '0');
+
+      // Excel serial like 46092 or 46092.0
+      if (!isNaN(Number(rawValue))) {
+        const serial = Number(rawValue);
+        const parsed = XLSX.SSF && XLSX.SSF.parse_date_code ? XLSX.SSF.parse_date_code(serial) : null;
+        if (parsed && parsed.y) {
+          return `${pad(parsed.d)}/${pad(parsed.m)}/${parsed.y}`;
         }
-        return value; // show original value instead of NaN
+
+        const fallback = new Date((serial - 25569) * 86400000);
+        if (!isNaN(fallback.getTime())) {
+          return `${pad(fallback.getDate())}/${pad(fallback.getMonth() + 1)}/${fallback.getFullYear()}`;
+        }
       }
 
-      // Excel serial number
-      if (!isNaN(value)) {
-        const date = XLSX.SSF.parse_date_code(value);
-
-        if (!date) return "--";
-
-        return `${String(date.d).padStart(2, '0')}/${String(date.m).padStart(2, '0')}/${date.y}`;
+      // Explicit dd/mm/yyyy or d/m/yyyy parsing to avoid browser ambiguity.
+      const dayFirstMatch = rawValue.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+      if (dayFirstMatch) {
+        const [, day, month, year] = dayFirstMatch;
+        return `${pad(Number(day))}/${pad(Number(month))}/${year}`;
       }
 
-      return "--";
+      // Explicit yyyy-mm-dd or yyyy/mm/dd parsing.
+      const isoMatch = rawValue.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+      if (isoMatch) {
+        const [, year, month, day] = isoMatch;
+        return `${pad(Number(day))}/${pad(Number(month))}/${year}`;
+      }
+
+      // Month-year like 08/2024 or 2024-08 (default to first day of month)
+      const monthYearMatch = rawValue.match(/^(\d{1,2})[\/\-](\d{4})$/) || rawValue.match(/^(\d{4})[\/\-](\d{1,2})$/);
+      if (monthYearMatch) {
+        const parts = monthYearMatch.slice(1);
+        const year = parts[0].length === 4 ? parts[0] : parts[1];
+        const month = parts[0].length === 4 ? parts[1] : parts[0];
+        return `01/${pad(Number(month))}/${year}`;
+      }
+
+      // Avoid new Date(rawValue) for slash dates because JS can assume month/day/year.
+      const d = new Date(rawValue);
+      if (!isNaN(d.getTime()) && !rawValue.includes('/')) {
+        return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+      }
+
+      return rawValue;
     }
 
     function formatExcelDate(excelSerial) {
@@ -461,7 +489,6 @@
         document.getElementById("currentStatus").textContent = userData["Status"] || "--";
         document.getElementById("dateofsubmission").textContent =
           excelDateToJSDate(userData["DateofSubmission"]);
-        document.getElementById("dateofsubmission").textContent = userData["DateofSubmission"] || "--";
         document.getElementById("docType").textContent = userData["Type"] || "--";
         document.getElementById("docName").textContent = userData["CustomerName"] || "--";
         document.getElementById("docDetails").textContent = userData["DocumentDetails"];
@@ -621,7 +648,7 @@
           const img = new Image();
           img.onload = () => resolve(img);
           img.onerror = reject;
-          img.src = "images/newqr.png";
+          img.src = "images/qr.jpg";
         });
 
         const w = qr.naturalWidth, h = qr.naturalHeight;
@@ -682,7 +709,7 @@
         // const qrDrawH = qrAspectRatio >= 1 ? qrBoxW / qrAspectRatio : qrBoxH;
         // const qrX = qrBoxX + (qrBoxW - qrDrawW) / 2;
         // const qrY = qrBoxY + (qrBoxH - qrDrawH) / 2;
-        doc.addImage(header, "JPEG", 20, 20, 170, 40); // Logo placeholder
+        // doc.addImage(header, "JPEG", 20, 20, 170, 40); // Logo placeholder
 
         // Add header content
         // doc.setFontSize(11);
@@ -763,8 +790,8 @@
 
         doc.rect(160, 215, 35, 30); // Bank details placeholder
         doc.setFontSize(6);
-        doc.text("617301010050483", 177.5, 220, { align: "center" });
-        doc.text("Satheesh K", 177.5, 225, { align: "center" });
+        doc.text("617301010050573", 177.5, 220, { align: "center" });
+        doc.text("PICS", 177.5, 225, { align: "center" });
         doc.text("IFSC: UBIN0561738", 177.5, 230, { align: "center" });
         doc.text("Account type: CC", 177.5, 235, { align: "center" });
         doc.text("Union Bank of India", 177.5, 240, { align: "center" });
