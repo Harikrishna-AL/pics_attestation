@@ -48,7 +48,7 @@
 			'</div>' +
 			'<div class="actions">' +
 				'<a class="btn-main" href="https://wa.me/+918369820334?text=' + waText + '" target="_blank" rel="noopener"><i class="bi bi-whatsapp" aria-hidden="true"></i>WhatsApp us</a>' +
-				'<a class="btn-ghost" href="' + base + 'statusreport.html">Track status</a>' +
+				'<a class="btn-ghost" href="' + base + 'statusreport.html">Track Status</a>' +
 			'</div>';
 		article.appendChild(cta);
 	}

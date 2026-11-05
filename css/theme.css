@@ -148,6 +148,22 @@ a:hover { color: var(--stamp); }
 }
 .btn-ghost:hover { border-color: var(--ink); color: var(--ink); background: var(--card); }
 .btn-main i, .btn-ink i, .btn-ghost i { font-size: 1.1em; }
+.btn-track {
+  white-space: nowrap;
+  margin-left: 12px;
+  background: var(--ink);
+  color: #fff !important;
+  padding: 12px 22px;
+  font-size: 15px;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+.btn-track:hover { background: var(--stamp); color: #fff !important; }
+.btn-track .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #7ee2b0;
+  box-shadow: 0 0 0 3px rgba(126, 226, 176, .25);
+}
 
 /* ---------- Header / navigation ---------- */
 .navigation {
