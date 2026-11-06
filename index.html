@@ -52,6 +52,8 @@
   <!-- Slick CSS -->
   <link rel="stylesheet" href="plugins/slick/slick.css">
 
+  <link rel="preload" href="css/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="css/fonts/atkinson-next-latin.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/theme.css">
@@ -255,71 +257,49 @@
     </div>
   </header>
   <!-- Hero -->
-  <section class="hero slider-hero">
-    <!-- rough-ink filter used by the stamp -->
-    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-      <filter id="ink-rough">
-        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise" />
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" />
-      </filter>
-    </svg>
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-7">
-          <span class="eyebrow">Kochi · Kottayam · Alappuzha · Mumbai</span>
-          <h1 class="hero-title">Certificates <em>attested,</em> stamped and ready to travel.</h1>
-          <p class="hero-lede">A certificate attestation, medical &amp; visa stamping agency. We work closely with
-            every client to take their documents through each ministry and embassy, and back to them.</p>
-          <div class="hero-actions">
-            <a href="https://wa.me/+918369820334" target="_blank" rel="noopener" class="btn-main"><i
-                class="bi bi-whatsapp" aria-hidden="true"></i>Start on WhatsApp</a>
-            <a href="#service-list" class="btn-ghost">Why choose us?</a>
-          </div>
-          <div class="hero-proof">
-            <div><strong>4 offices</strong>across Kerala &amp; Mumbai</div>
-            <div><strong>MEA → MOFA</strong>the full attestation chain</div>
-            <div><strong>Scan first</strong>copy shared before courier</div>
-          </div>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Kochi · Kottayam · Alappuzha · Mumbai</span>
+        <h1 class="hero-title">Certificates <em>attested,</em> stamped and ready to travel.</h1>
+        <p class="hero-lede">A certificate attestation, medical &amp; visa stamping agency. We work closely with
+          every client to take their documents through each ministry and embassy, and back to them.</p>
+        <div class="hero-actions">
+          <a href="https://wa.me/+918369820334" target="_blank" rel="noopener" class="btn-main"><i
+              class="bi bi-whatsapp" aria-hidden="true"></i>Start on WhatsApp</a>
+          <a href="#service-list" class="link-arrow">Why choose us?</a>
         </div>
-        <div class="col-lg-5">
-          <div class="doc-stage" aria-hidden="true">
-            <div class="doc-back"></div>
-            <div class="doc">
-              <div class="doc-band"></div>
-              <div class="doc-kicker">Republic of India</div>
-              <div class="doc-title">Degree Certificate</div>
-              <div class="doc-line w-90"></div>
-              <div class="doc-line"></div>
-              <div class="doc-line w-80"></div>
-              <div class="doc-line w-60"></div>
-              <div class="doc-chain">
-                <div><i class="bi bi-check2-circle"></i><span>MEA · New Delhi</span></div>
-                <div><i class="bi bi-check2-circle"></i><span>UAE Embassy</span></div>
-                <div><i class="bi bi-check2-circle"></i><span>MOFA · UAE</span></div>
-              </div>
-              <div class="doc-ref">REF · PICS / KOCHI</div>
-            </div>
-            <div class="stamp-shadow"></div>
-            <div class="stamp">
-              <svg viewBox="0 0 200 200">
-                <defs>
-                  <path id="stamp-ring" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
-                </defs>
-                <circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="5" />
-                <circle cx="100" cy="100" r="84" fill="none" stroke="currentColor" stroke-width="1.5" />
-                <circle cx="100" cy="100" r="54" fill="none" stroke="currentColor" stroke-width="1.5" />
-                <text font-family="IBM Plex Mono, monospace" font-size="14.5" font-weight="500" letter-spacing="3.2"
-                  fill="currentColor">
-                  <textPath href="#stamp-ring">PICS ATTESTATION ★ KOCHI ★ KERALA ★</textPath>
-                </text>
-                <text x="100" y="97" text-anchor="middle" font-family="Newsreader, Georgia, serif" font-style="italic"
-                  font-size="30" fill="currentColor">Attested</text>
-                <line x1="62" y1="108" x2="138" y2="108" stroke="currentColor" stroke-width="1.5" />
-                <text x="100" y="126" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11"
-                  letter-spacing="2" fill="currentColor">VERIFIED</text>
-              </svg>
-            </div>
-          </div>
+        <div class="hero-proof">
+          <div><strong>4 offices</strong>across Kerala &amp; Mumbai</div>
+          <div><strong>MEA → MOFA</strong>the full attestation chain</div>
+          <div><strong>Scan first</strong>copy shared before courier</div>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <!-- The PICS sun from the logo: a disc with water lines cut through it -->
+        <svg class="hero-sun" viewBox="0 0 600 600" focusable="false">
+          <defs>
+            <mask id="sun-water">
+              <rect width="600" height="600" fill="#fff" />
+              <g fill="#000">
+                <path d="M-20 307 Q300 333 620 307 L620 329 Q300 335 -20 329Z" />
+                <path d="M-20 363 Q300 383 620 363 L620 381 Q300 385 -20 381Z" />
+                <path d="M-20 416 Q300 433 620 416 L620 432 Q300 435 -20 432Z" />
+                <path d="M-20 467 Q300 481 620 467 L620 481 Q300 483 -20 481Z" />
+              </g>
+            </mask>
+          </defs>
+          <circle cx="300" cy="300" r="300" fill="currentColor" mask="url(#sun-water)" />
+        </svg>
+        <div class="hero-tag">
+          <div class="tag-kicker">Republic of India</div>
+          <div class="tag-title">Degree Certificate</div>
+          <ul>
+            <li><i class="bi bi-check2-circle"></i>MEA · New Delhi</li>
+            <li><i class="bi bi-check2-circle"></i>UAE Embassy</li>
+            <li><i class="bi bi-check2-circle"></i>MOFA · UAE</li>
+          </ul>
+          <div class="tag-ref">REF · PICS / KOCHI</div>
         </div>
       </div>
     </div>
@@ -419,9 +399,9 @@
         <span class="eyebrow">Services</span>
         <h2>What we can attest for you.</h2>
       </div>
-      <div class="svc-grid">
+      <div class="svc-list">
         <article class="svc reveal">
-          <span class="svc-icon"><i class="bi bi-mortarboard" aria-hidden="true"></i></span>
+          <i class="bi bi-arrow-right svc-go" aria-hidden="true"></i>
           <h3><a href="pages/attestation/educational_certificate.html">Educational certificates</a></h3>
           <p>For employment and higher studies abroad.</p>
           <div class="chips">
@@ -432,7 +412,7 @@
           </div>
         </article>
         <article class="svc reveal">
-          <span class="svc-icon"><i class="bi bi-file-earmark-person" aria-hidden="true"></i></span>
+          <i class="bi bi-arrow-right svc-go" aria-hidden="true"></i>
           <h3><a href="pages/attestation/non_educational_certificate.html">Personal documents</a></h3>
           <p>Non-educational certificates for family visas and residency.</p>
           <div class="chips">
@@ -444,7 +424,7 @@
           </div>
         </article>
         <article class="svc reveal">
-          <span class="svc-icon"><i class="bi bi-briefcase" aria-hidden="true"></i></span>
+          <i class="bi bi-arrow-right svc-go" aria-hidden="true"></i>
           <h3><a href="pages/attestation/exp.html">Employment documents</a></h3>
           <p>Proof of work history and salary for your next role.</p>
           <div class="chips">
@@ -454,7 +434,7 @@
           </div>
         </article>
         <article class="svc reveal">
-          <span class="svc-icon"><i class="bi bi-building" aria-hidden="true"></i></span>
+          <i class="bi bi-arrow-right svc-go" aria-hidden="true"></i>
           <h3><a href="pages/attestation/commercial_certificate.html">Commercial documents</a></h3>
           <p>Incorporation, memorandum and articles of association for business abroad.</p>
           <div class="chips">
@@ -464,7 +444,7 @@
           </div>
         </article>
         <article class="svc reveal">
-          <span class="svc-icon"><i class="bi bi-patch-check" aria-hidden="true"></i></span>
+          <i class="bi bi-arrow-right svc-go" aria-hidden="true"></i>
           <h3><a href="pages/apostile/certificate_apostile.html">Apostille</a></h3>
           <p>For Hague Convention countries: one stamp instead of an embassy chain.</p>
           <div class="chips">
@@ -472,7 +452,7 @@
           </div>
         </article>
         <article class="svc reveal">
-          <span class="svc-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
+          <i class="bi bi-arrow-right svc-go" aria-hidden="true"></i>
           <h3><a href="pages/attestation/pcc.html">Police clearance (PCC)</a></h3>
           <p>PCC attestation and applications for Gulf countries.</p>
           <div class="chips">
