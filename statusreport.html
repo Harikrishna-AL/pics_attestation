@@ -51,8 +51,43 @@
     }
 
     .section_status .row_status {
+      display: grid;
+      grid-template-columns: minmax(140px, 1.3fr) minmax(120px, 1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 5px 0;
+      border-bottom: 1px solid #f9dcdc;
+    }
+
+    .section_status .row_status:last-child {
+      border-bottom: none;
+    }
+
+    .row_status .label {
+      display: block;
+      min-width: 0;
+      font-size: 14px;
+      font-weight: bold;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+
+    .row_status .date-format {
+      display: inline-block;
+      margin-left: 4px;
+      font-size: 11px;
+      font-weight: normal;
+      color: #555;
+      white-space: nowrap;
+    }
+
+    .section_status .row_status {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
       padding: 5px 0;
       border-bottom: 1px solid #f9dcdc
     }
@@ -64,7 +99,10 @@
     .row_status .label {
       display: block;
       width: 45%;
+      min-width: 140px;
       font-size: 14px;
+      white-space: normal;
+      word-break: break-word;
     }
 
     .row_status .label {
@@ -353,7 +391,7 @@
       <div class="section_status">
         <h3>Date of submission</h3>
         <div class="row_status">
-          <span class="label">Date Of Submission (MM/DD/YYYY)</span>
+          <span class="label">Date Of Submission <span class="date-format">(MM/DD/YYYY)</span></span>
           <span id="dateofsubmission">--</span>
         </div>
       </div>
