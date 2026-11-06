@@ -6,6 +6,15 @@
   <script src="Assets/js/supabaseConfig.js"></script>
     <link rel="stylesheet" href="Assets/css/Admin_common.css">
 <script src="Assets/js/message.js" defer></script>
+<link rel="stylesheet" href="Assets/css/pics_theme.css">
+<style>
+/* ===== PICS blue theme - page specific (visual only) ===== */
+body { margin: 0 !important; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--pics-font) !important; color: #fff; background: radial-gradient(circle at 15% 20%, rgba(0, 198, 255, .35), transparent 45%), radial-gradient(circle at 85% 80%, rgba(30, 123, 255, .45), transparent 45%), linear-gradient(135deg, #0a1f44 0%, #0b3a8f 50%, #0057d9 100%); }
+h2 { margin: 0 0 6px; font-weight: 600; font-size: 24px; letter-spacing: .3px; }
+h2::before { content: ""; display: block; width: 52px; height: 52px; margin: 0 auto 22px; border-radius: 50%; border: 4px solid rgba(255, 255, 255, .2); border-top-color: #7dd3fc; animation: pics-spin 1s linear infinite; }
+p { margin: 0; color: rgba(255, 255, 255, .75); font-size: 14px; }
+@keyframes pics-spin { to { transform: rotate(360deg); } }
+</style>
 </head>
 <body style="font-family: Arial; text-align:center; margin-top:100px;">
 

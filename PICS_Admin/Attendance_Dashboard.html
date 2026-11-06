@@ -15,6 +15,7 @@
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="Assets/js/pics_chart_theme.js"></script>
 
 <style>
 body{
@@ -158,6 +159,38 @@ body{
   color: #4f46e5;
 }
 
+</style>
+<link rel="stylesheet" href="Assets/css/pics_theme.css">
+<style>
+/* ===== PICS blue theme - page specific (visual only) ===== */
+body { background: var(--pics-page-bg); font-family: var(--pics-font); color: var(--pics-ink); min-height: 100vh; }
+.page-title { color: var(--pics-blue-900); font-size: 28px; letter-spacing: -.3px; margin-bottom: 2px; }
+.page-title + .text-muted { color: var(--pics-muted) !important; font-size: 14px; }
+.card { border-radius: 20px; border: 1px solid var(--pics-line); box-shadow: var(--pics-shadow); position: relative; overflow: hidden; transition: box-shadow .25s, transform .25s; }
+.card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--pics-blue-700), var(--pics-sky), transparent); }
+.card:hover { box-shadow: var(--pics-shadow-lg); }
+.section-title { color: var(--pics-blue-900); font-size: 15px; letter-spacing: .2px; }
+.circle span { color: var(--pics-blue-800); font-size: 22px; font-weight: 700; }
+.timesheet-circle-progress { stroke: var(--pics-blue-600); filter: drop-shadow(0 4px 6px rgba(37, 99, 235, .35)); }
+.circle svg circle:first-child { stroke: var(--pics-blue-50); }
+.stat-header { color: var(--pics-ink); font-size: 13.5px; }
+.stat-header span:last-child { color: var(--pics-muted); font-weight: 500; }
+.progress { height: 10px; border-radius: 999px; background-color: var(--pics-blue-50); }
+.progress-bar { border-radius: 999px; transition: width .8s ease; }
+.bg-today { background: linear-gradient(90deg, #60a5fa, #2563eb); }
+.bg-week { background: linear-gradient(90deg, #38bdf8, #0369a1); }
+.bg-month { background: linear-gradient(90deg, #3b82f6, #1e40af); }
+.bg-remaining { background: linear-gradient(90deg, #93c5fd, #1d4ed8); }
+.activity-item { padding: 10px 12px; background: var(--pics-blue-50); border-radius: 12px; border: 1px solid var(--pics-blue-100); }
+.activity-dot { background: var(--pics-blue-600); box-shadow: 0 0 0 4px rgba(37, 99, 235, .18); }
+.table { font-size: 13.5px; }
+.table thead th { background: var(--pics-blue-50); color: var(--pics-blue-900); font-weight: 600; font-size: 12px; letter-spacing: .5px; border-bottom: 2px solid var(--pics-blue-100); padding: 10px 12px; }
+.table tbody td { padding: 10px 12px; border-color: #eef3fb; }
+.table tbody tr:hover > * { background: #f2f7ff; }
+.status-present, .status-half, .status-absent { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; }
+.status-present { background: #e7f8ef; }
+.status-half { background: #fff5e0; }
+.status-absent { background: #fdecec; }
 </style>
 </head>
 

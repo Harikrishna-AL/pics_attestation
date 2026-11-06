@@ -14,6 +14,7 @@
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="Assets/js/pics_chart_theme.js"></script>
 
   <style>
     :root {
@@ -63,6 +64,30 @@ body {
     .debug { margin-top:12px; font-family:monospace; font-size:12px; color:#111; background:#fff; padding:10px; border-radius:8px; border:1px solid #eee; overflow:auto; max-height:160px;}
     @media (max-width:780px) { .cards { flex-direction:column; } }
   </style>
+<link rel="stylesheet" href="Assets/css/pics_theme.css">
+<style>
+/* ===== PICS blue theme - page specific (visual only) ===== */
+body { background: var(--pics-page-bg); font-family: var(--pics-font); color: var(--pics-ink); min-height: 100vh; }
+.topbar h3 { color: var(--pics-blue-900); font-weight: 700; font-size: 26px; letter-spacing: -.3px; }
+.muted { color: var(--pics-muted); }
+.form-container { border-radius: 20px; border: 1px solid var(--pics-line); box-shadow: var(--pics-shadow); padding: 24px; }
+.cards { gap: 16px; margin-bottom: 18px; }
+.stat-card { border: 0; border-radius: 18px; padding: 18px 20px; color: #fff; position: relative; overflow: hidden; box-shadow: 0 14px 30px rgba(15, 45, 110, .22); transition: transform .25s, box-shadow .25s; }
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 38px rgba(15, 45, 110, .30); }
+.stat-card::after { content: ""; position: absolute; width: 130px; height: 130px; right: -40px; top: -50px; border-radius: 50%; background: rgba(255, 255, 255, .10); pointer-events: none; }
+.stat-card:nth-child(1) { background: linear-gradient(135deg, #1e3a8a, #2563eb); }
+.stat-card:nth-child(2) { background: linear-gradient(135deg, #0369a1, #0ea5e9); }
+.stat-card:nth-child(3) { background: linear-gradient(135deg, #0a1f44, #1e40af); }
+.stat-card h6 { color: rgba(255, 255, 255, .85); text-transform: uppercase; font-size: 12px; font-weight: 600; letter-spacing: .8px; }
+.stat-card .stat { color: #fff; font-size: 28px; letter-spacing: -.3px; }
+.stat-card .muted { color: rgba(255, 255, 255, .78); font-size: 12px; }
+.chart-box { border-radius: 18px; border: 1px solid var(--pics-line); box-shadow: var(--pics-shadow); padding: 20px; overflow: hidden; }
+.chart-box::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--pics-blue-700), var(--pics-sky), transparent); }
+.chart-box strong { color: var(--pics-ink); font-weight: 600; font-size: 15px; }
+#summarySmall { background: var(--pics-blue-50); color: var(--pics-blue-700); padding: 4px 12px; border-radius: 999px; font-weight: 500; font-size: 12px; }
+.debug { background: #f7faff; border: 1px dashed var(--pics-blue-200); border-radius: 12px; color: #334155; }
+.debug strong { color: var(--pics-blue-900); }
+</style>
 </head>
 <body>
   <div class="page-wrap">
