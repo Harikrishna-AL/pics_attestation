@@ -1,0 +1,223 @@
+/* =========================================================
+   PICS Blue Theme – shared components (visual only)
+   Linked after each page's own <style>, so it wins on equal
+   specificity. No layout logic / text depends on this file.
+   ========================================================= */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+  --pics-navy: #0a1f44;
+  --pics-blue-900: #0b3a8f;
+  --pics-blue-800: #1e40af;
+  --pics-blue-700: #1d4ed8;
+  --pics-blue-600: #2563eb;
+  --pics-blue-500: #3b82f6;
+  --pics-blue-400: #60a5fa;
+  --pics-blue-200: #bfdbfe;
+  --pics-blue-100: #dbeafe;
+  --pics-blue-50: #eff6ff;
+  --pics-sky: #0ea5e9;
+  --pics-cyan: #00c6ff;
+  --pics-ink: #14213d;
+  --pics-muted: #6b7a99;
+  --pics-line: #e2eaf7;
+  --pics-shadow: 0 10px 30px rgba(15, 45, 110, 0.10);
+  --pics-shadow-lg: 0 18px 40px rgba(15, 45, 110, 0.16);
+  --pics-font: "Poppins", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --pics-page-bg:
+    radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.10), transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.10), transparent 40%),
+    #f2f6fd;
+}
+
+/* ---------- Logout ---------- */
+.logout-btn {
+  background: #fff;
+  color: var(--pics-blue-700);
+  border: 1.5px solid var(--pics-blue-200);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-family: var(--pics-font);
+  font-size: 13.5px;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.12);
+  transition: background .2s, color .2s, border-color .2s, transform .2s;
+}
+.logout-btn:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ---------- Back button ---------- */
+.back-circle {
+  background: linear-gradient(135deg, var(--pics-blue-500), var(--pics-blue-800));
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(30, 64, 175, 0.30);
+  transition: transform .2s, box-shadow .2s, background .2s;
+}
+.back-circle:hover {
+  background: linear-gradient(135deg, var(--pics-sky), var(--pics-blue-700));
+  box-shadow: 0 12px 24px rgba(30, 64, 175, 0.38);
+}
+
+/* ---------- Home button ---------- */
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  background: linear-gradient(135deg, var(--pics-blue-500), var(--pics-blue-800));
+  font-family: var(--pics-font);
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(30, 64, 175, 0.30);
+  transition: transform .2s, box-shadow .2s;
+}
+.home-btn:hover {
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(30, 64, 175, 0.38);
+}
+
+/* ---------- Link chips (insert / modify) ---------- */
+.insert-link,
+.modify-link {
+  color: var(--pics-blue-700);
+  background: var(--pics-blue-50);
+  border: 1px solid var(--pics-blue-200);
+  border-radius: 999px;
+  font-family: var(--pics-font);
+}
+.insert-link:hover,
+.modify-link:hover {
+  background: var(--pics-blue-100);
+  color: var(--pics-blue-900);
+  border-color: var(--pics-blue-400);
+}
+
+/* ---------- Primary buttons ---------- */
+.submit-btn,
+.pdf-btn,
+.pdf-btn-fixed {
+  background: linear-gradient(135deg, var(--pics-blue-500), var(--pics-blue-800));
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--pics-font);
+  font-weight: 600;
+  box-shadow: 0 10px 22px rgba(30, 64, 175, 0.28);
+  transition: transform .2s, box-shadow .2s;
+}
+.submit-btn:hover,
+.pdf-btn:hover,
+.pdf-btn-fixed:hover {
+  background: linear-gradient(135deg, var(--pics-sky), var(--pics-blue-700));
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(30, 64, 175, 0.36);
+}
+
+/* ---------- Bootstrap form controls ---------- */
+.form-control,
+.form-select {
+  border: 1.5px solid var(--pics-line);
+  border-radius: 10px;
+  background-color: #f7faff;
+  font-family: var(--pics-font);
+  color: var(--pics-ink);
+  transition: border-color .2s, box-shadow .2s, background-color .2s;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--pics-blue-500);
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+.form-control::placeholder { color: #9aa8c3; }
+
+/* ---------- Data grids (View / Modify) ---------- */
+.grid-wrapper {
+  border: 1px solid var(--pics-line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--pics-shadow);
+}
+.grid-wrapper .table { font-size: 13.5px; }
+.grid-wrapper .table thead th {
+  background: linear-gradient(180deg, var(--pics-blue-50), #e6f0ff);
+  color: var(--pics-blue-900);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: .3px;
+  border-bottom: 2px solid var(--pics-blue-200);
+  white-space: nowrap;
+}
+.grid-wrapper .table tbody td { border-color: #eef3fb; color: #334155; }
+.grid-wrapper .table tbody tr:hover > * { background: #f2f7ff; }
+
+.grid-wrapper::-webkit-scrollbar { width: 10px; height: 10px; }
+.grid-wrapper::-webkit-scrollbar-thumb { background: var(--pics-blue-200); border-radius: 10px; border: 2px solid #fff; }
+.grid-wrapper::-webkit-scrollbar-track { background: transparent; }
+
+/* filter popup */
+.filter-popup {
+  border: 1px solid var(--pics-line);
+  border-radius: 14px;
+  box-shadow: var(--pics-shadow-lg);
+  font-family: var(--pics-font);
+}
+.filter-popup .btn-apply {
+  background: linear-gradient(135deg, var(--pics-blue-500), var(--pics-blue-800));
+  border-radius: 8px;
+  font-weight: 600;
+}
+.filter-popup .btn-cancel {
+  border: 1px solid var(--pics-blue-200);
+  color: var(--pics-blue-700);
+  border-radius: 8px;
+}
+
+/* ---------- Pagination ---------- */
+.page-btn {
+  background: var(--pics-blue-50);
+  border: 1px solid var(--pics-blue-200);
+  color: var(--pics-blue-700);
+  border-radius: 10px;
+}
+.page-btn:hover:not(.disabled) { background: var(--pics-blue-100); }
+.page-numbers button {
+  border: 1px solid var(--pics-blue-200);
+  color: var(--pics-blue-700);
+  border-radius: 10px;
+  font-family: var(--pics-font);
+}
+.page-numbers button:hover:not(.active) { background: var(--pics-blue-50); }
+.page-numbers .active {
+  background: linear-gradient(135deg, var(--pics-blue-500), var(--pics-blue-800)) !important;
+  border-color: var(--pics-blue-700) !important;
+  box-shadow: 0 6px 14px rgba(30, 64, 175, 0.28);
+}
+
+/* ---------- Toggle switch ---------- */
+.switch input:checked + .slider {
+  background: linear-gradient(135deg, var(--pics-blue-500), var(--pics-blue-800));
+}
+.slider { box-shadow: inset 0 1px 3px rgba(15, 45, 110, .15); }
+
+/* ---------- Loaders ---------- */
+.loader-submit { background: rgba(10, 31, 68, 0.45); backdrop-filter: blur(3px); }
+.loadersubmit-box {
+  border-radius: 18px;
+  padding: 26px 34px;
+  box-shadow: var(--pics-shadow-lg);
+  font-family: var(--pics-font);
+  color: var(--pics-ink);
+}
+.spinnersubmit {
+  border: 4px solid var(--pics-blue-100);
+  border-top-color: var(--pics-blue-600);
+}
+.loader { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(2px); }

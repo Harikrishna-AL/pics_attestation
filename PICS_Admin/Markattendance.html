@@ -241,6 +241,29 @@ body {
 
 
 </style>
+<link rel="stylesheet" href="Assets/css/pics_theme.css">
+<style>
+/* ===== PICS blue theme - page specific (visual only) ===== */
+body { background: radial-gradient(circle at 10% 10%, rgba(59, 130, 246, .10), transparent 40%), radial-gradient(circle at 90% 90%, rgba(14, 165, 233, .10), transparent 40%), #f7faff; font-family: var(--pics-font); color: var(--pics-ink); }
+.topbar { background: rgba(255, 255, 255, .85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--pics-line); box-shadow: 0 4px 16px rgba(15, 45, 110, .06); }
+.card { border-radius: 24px; border: 1px solid var(--pics-line); box-shadow: 0 24px 50px rgba(15, 45, 110, .14); padding: 38px 34px 32px; position: relative; overflow: hidden; }
+.card::before { content: ""; position: absolute; top: 0; left: 24px; right: 24px; height: 4px; border-radius: 0 0 6px 6px; background: linear-gradient(90deg, var(--pics-cyan), var(--pics-blue-500), var(--pics-blue-900)); }
+h1 { color: var(--pics-blue-900); font-weight: 700; font-size: 28px; letter-spacing: -.3px; }
+.btn { font-family: var(--pics-font); letter-spacing: .6px; padding: 14px 30px; transition: transform .15s, box-shadow .2s, filter .2s; }
+.btn:hover { filter: brightness(1.05); transform: translateY(-2px); }
+.btn.in { background: linear-gradient(135deg, #34d399, #059669); box-shadow: 0 12px 26px rgba(5, 150, 105, .28); }
+.btn.out { background: linear-gradient(135deg, #f87171, #dc2626); box-shadow: 0 12px 26px rgba(220, 38, 38, .25); }
+label, .small-label { color: var(--pics-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+input[type="text"], .display-box, .small-box { border: 1.5px solid var(--pics-line); border-radius: 12px; background: #f4f8ff; color: var(--pics-ink); font-family: var(--pics-font); }
+.small-box { padding: 12px 14px; font-weight: 500; color: var(--pics-blue-900); }
+.mark-btn { background: linear-gradient(135deg, var(--pics-blue-500) 0%, var(--pics-blue-700) 60%, var(--pics-blue-900) 100%); box-shadow: 0 14px 28px rgba(29, 78, 216, .35); font-family: var(--pics-font); letter-spacing: 1px; padding: 14px 18px; transition: transform .15s, box-shadow .2s; }
+.mark-btn:hover { transform: translateY(-2px); box-shadow: 0 18px 32px rgba(29, 78, 216, .42); }
+.note { color: var(--pics-blue-700); font-weight: 500; }
+.saving-modal__backdrop { background: rgba(10, 31, 68, .45); }
+.saving-modal__content { border-radius: 18px; font-family: var(--pics-font); }
+.saving-modal__spinner { border-color: var(--pics-blue-100); border-top-color: var(--pics-blue-600); }
+.saving-modal__title { color: var(--pics-blue-900); }
+</style>
 </head>
 <body>
   
