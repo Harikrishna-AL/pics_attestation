@@ -42,19 +42,20 @@
 		'</div>';
 	header.parentNode.insertBefore(bar, header);
 
-	// ---------- Popup: shown once per visitor every 24 hours ----------
+	// ---------- Popup: shown once each time someone opens the website ----------
 	var waLink = 'https://wa.me/918369820334?text=' + encodeURIComponent(waText);
 	var learnMore = scriptSrc ? new URL('../pages/attestation/certificate_equivalency.html', scriptSrc).href
 		: '/pages/attestation/certificate_equivalency.html';
 	var POP_KEY = 'picsEquivPopupSeen';
-	var POP_EVERY = 24 * 60 * 60 * 1000;
 
-	function popSeenRecently() {
-		try { return Date.now() - Number(localStorage.getItem(POP_KEY) || 0) < POP_EVERY; }
+	// Remembered only for this visit (until the browser tab is closed),
+	// so it shows when the site is opened but not again on every page click.
+	function popSeenThisVisit() {
+		try { return sessionStorage.getItem(POP_KEY) === '1'; }
 		catch (e) { return false; }
 	}
 	function markPopSeen() {
-		try { localStorage.setItem(POP_KEY, String(Date.now())); } catch (e) {}
+		try { sessionStorage.setItem(POP_KEY, '1'); } catch (e) {}
 	}
 
 	var pop = document.createElement('div');
@@ -64,6 +65,7 @@
 	pop.setAttribute('aria-labelledby', 'announcePopTitle');
 	pop.innerHTML =
 		'<div class="announce-pop-card">' +
+			'<span class="announce-pop-timer" aria-hidden="true"></span>' +
 			'<button type="button" class="announce-pop-close" aria-label="Close">&times;</button>' +
 			'<div class="announce-pop-head">' +
 				'<span class="announce-tag"><span class="announce-dot" aria-hidden="true"></span>New service</span>' +
@@ -86,14 +88,27 @@
 	document.body.appendChild(pop);
 
 	var lastFocus = null;
-	function openPop() {
+	var POP_AUTO_CLOSE = 10 * 1000; // first-visit popup closes itself after 10 seconds
+	var autoTimer = null;
+	function stopAutoClose() {
+		clearTimeout(autoTimer);
+		autoTimer = null;
+		pop.classList.remove('is-timing');
+	}
+	function openPop(auto) {
 		lastFocus = document.activeElement;
+		pop.style.setProperty('--pop-auto', POP_AUTO_CLOSE + 'ms');
 		pop.classList.add('is-open');
+		if (auto === true) {
+			pop.classList.add('is-timing');
+			autoTimer = setTimeout(closePop, POP_AUTO_CLOSE);
+		}
 		document.body.classList.add('announce-pop-lock');
 		markPopSeen();
-		pop.querySelector('.announce-pop-close').focus();
+		try { pop.querySelector('.announce-pop-close').focus({ preventScroll: true }); } catch (e) {}
 	}
 	function closePop() {
+		stopAutoClose();
 		pop.classList.remove('is-open');
 		document.body.classList.remove('announce-pop-lock');
 		if (lastFocus && lastFocus.focus) lastFocus.focus();
@@ -110,9 +125,9 @@
 	// Clicking the banner text opens the popup again any time
 	var barText = bar.querySelector('.announce-text');
 	barText.style.cursor = 'pointer';
-	barText.addEventListener('click', openPop);
+	barText.addEventListener('click', function () { openPop(false); });
 
-	if (!popSeenRecently()) setTimeout(openPop, 2500);
+	if (!popSeenThisVisit()) setTimeout(function () { openPop(true); }, 2500);
 
 	// Keep the menu stuck directly under the banner while scrolling
 	function syncHeight() {

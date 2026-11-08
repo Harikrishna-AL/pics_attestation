@@ -436,7 +436,6 @@ img { max-width: 100%; }
   font-style: normal;
   padding: 0 .04em;
   margin: 0 -.04em;
-  background: linear-gradient(transparent 58%, var(--mark) 58%, var(--mark) 90%, transparent 90%);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -1988,6 +1987,17 @@ img { max-width: 100%; }
 }
 .announce-pop-close:hover, .announce-pop-close:focus { background: rgba(255,255,255,.35); outline: none; }
 body.announce-pop-lock { overflow: hidden; }
+.announce-pop-timer {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+  height: 4px; border-radius: 18px 18px 0 0;
+  background: var(--mark);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+.announce-pop.is-timing .announce-pop-timer {
+  animation: announce-countdown var(--pop-auto, 10s) linear forwards;
+}
+@keyframes announce-countdown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 @media (max-width: 480px) {
   .announce-pop-head { padding: 24px 20px 20px; }
   .announce-pop-title { font-size: 24px; }
@@ -1995,4 +2005,114 @@ body.announce-pop-lock { overflow: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   .announce-pop, .announce-pop-card { transition: none; }
+}
+
+/* =====================================================================
+   DARK MODE — follows the visitor's phone / laptop setting automatically
+   ===================================================================== */
+:root { color-scheme: light dark; }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #ece9f4;          /* main text */
+    --ink-2: #c4bfd3;        /* secondary text */
+    --ink-3: #9d97b0;        /* captions */
+    --paper: #13101c;        /* page background */
+    --white: #1e1a2b;        /* cards, panels, inputs */
+    --sky: #17273a;
+    --blue: #2aa3e0;
+    --blue-deep: #2b8fd1;
+    --violet: #a58ae0;
+    --rule: #332d45;
+    --rule-strong: #ece9f4;
+    --danger: #f07167;
+  }
+
+  html, body, body#body { background: var(--paper); color: var(--ink); }
+
+  /* Sections that are designed dark-with-white-text keep their original
+     light-theme colours so their white text stays readable */
+  .destinations,
+  .service-cta,
+  .related-projects.bg-gray,
+  .footer,
+  #footer,
+  .chat-header,
+  .chatbot-button,
+  .feature,
+  .status-grid .section_status.is-status,
+  .announce-bar,
+  .announce-pop-head {
+    --ink: #1b1431;
+    --ink-2: #4a4360;
+    --ink-3: #6e6884;
+    --white: #ffffff;
+    --paper: #faf9f6;
+    --violet: #5b3a96;
+    --blue-deep: #0a6aa3;
+    --rule: #dcd8e4;
+  }
+  .destinations, .service-cta, .footer, #footer, .related-projects.bg-gray {
+    background-color: #0c0a13 !important;
+    border-top: 1px solid #2a2438;
+  }
+  .feature, .feature.bg-2 { background-color: #0a5d8f; }
+
+  /* Logo has a white background: give it a soft rounded tile */
+  .brand-logo, .navigation .navbar-brand img { background: #fff; border-radius: 8px; padding: 2px; mix-blend-mode: normal; }
+  [style*="mix-blend-mode"], .mix-multiply { mix-blend-mode: normal !important; }
+  .about-figure img, .testimonial .testimonial-carousel .user img { mix-blend-mode: normal; border-radius: var(--r-lg); }
+
+  /* Header */
+  .navigation { background: rgba(19, 16, 28, .96); }
+  .navigation .navbar .dropdown-menu { background: var(--white); border-color: var(--rule); }
+  .nav-item .nav-icon.is-whatsapp:hover { background-color: rgba(37, 211, 102, .15) !important; color: #4ade80 !important; }
+
+  /* Bootstrap / template pieces that are hard-coded white */
+  #preloader, .bg-shadow, .tabCommon .nav-tabs a, header,
+  .service-list .block, .pricing-table .pricing-item, .single-blog, .post,
+  .office, .chat-window, .chat-input, .chat-faq, .chat-faq button,
+  .quick-enquiry-modal, .quick-enquiry-content,
+  .card, .modal-content, .list-group-item, .dropdown-menu, .popover, .toast,
+  .bg-white, .bg-light {
+    background-color: var(--white) !important;
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+  .bg-gray, .chat-messages { background: var(--paper) !important; }
+  .chat-messages p:nth-child(odd) { background: var(--white); color: var(--ink); }
+  .table, .table th, .table td { color: var(--ink); border-color: var(--rule); }
+
+  /* Forms */
+  input, select, textarea, .form-control, .custom-select {
+    background-color: #191524 !important;
+    color: var(--ink) !important;
+    border-color: #3a3350 !important;
+  }
+  input::placeholder, textarea::placeholder { color: #8a83a0 !important; }
+  .quick-enquiry-content textarea { border-color: #3a3350; }
+  .input-error { background: rgba(240, 113, 103, .12) !important; }
+
+  /* Text that pages colour inline as black / blue */
+  [style*="color: black"], [style*="color:black"], [style*="color: #000"] { color: var(--ink) !important; }
+  [style*="color: blue"], [style*="color:blue"] { color: #6cb8ff !important; }
+  h1, h2, h3, h4, h5, h6 { color: var(--ink); }
+  a { color: inherit; }
+
+  /* Images with white backgrounds look less harsh */
+  img:not(.brand-logo):not([src$=".svg"]) { filter: brightness(.92); }
+
+  /* Buttons whose background is the (now light) ink colour get dark text */
+  #qeSendBtn, .chat-input button, .input-section button, .button-container button { color: var(--white) !important; }
+
+  /* Contact page: black WhatsApp / Email icons turn white */
+  .contact-form .office .whatsapp-link img, .contact-form .office .email-link img,
+  .whatsapp-link img, .email-link img, img[src*="icons8.com/ios/"] { filter: invert(1) brightness(.95) !important; }
+
+  /* Popup body */
+  .announce-pop-card { background: var(--white); box-shadow: 0 30px 80px rgba(0, 0, 0, .6); }
+  .announce-pop-btn.is-call { background: #17273a; color: #6cb8ff; }
+  .announce-pop-btn.is-call:hover, .announce-pop-btn.is-call:focus { color: #6cb8ff; }
+  .announce-pop-more { color: #6cb8ff; }
+  .announce-pop { background: rgba(0, 0, 0, .7); }
 }
