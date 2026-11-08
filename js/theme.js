@@ -30,6 +30,23 @@
 		reveals.forEach(function (el) { io.observe(el); });
 	}
 
+	// Office columns tilt toward the pointer (fine pointers only)
+	if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+		document.querySelectorAll('.office-card').forEach(function (card) {
+			card.addEventListener('pointermove', function (e) {
+				var r = card.getBoundingClientRect();
+				var x = (e.clientX - r.left) / r.width - 0.5;
+				var y = (e.clientY - r.top) / r.height - 0.5;
+				card.style.setProperty('--ry', (x * 10).toFixed(2) + 'deg');
+				card.style.setProperty('--rx', (y * -8).toFixed(2) + 'deg');
+			});
+			card.addEventListener('pointerleave', function () {
+				card.style.removeProperty('--ry');
+				card.style.removeProperty('--rx');
+			});
+		});
+	}
+
 	// Service pages: close each article with a way to act on it
 	var article = document.querySelector('.portfolio-single-page .project-content');
 	if (article && !article.querySelector('.service-cta')) {
