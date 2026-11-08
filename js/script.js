@@ -1,3 +1,128 @@
+/* ---------- Announcement bar (shown on every page with the main menu) ---------- */
+(function () {
+	'use strict';
+	var scriptSrc = document.currentScript && document.currentScript.src;
+	var header = document.querySelector('header.navigation');
+	if (!header || document.querySelector('.announce-bar')) return;
+
+	// Icons used in the banner/popup (some pages don't load this font)
+	if (!document.querySelector('link[href*="bootstrap-icons"]')) {
+		var icons = document.createElement('link');
+		icons.rel = 'stylesheet';
+		icons.href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css';
+		document.head.appendChild(icons);
+	}
+
+	var waText = [
+		'PICS',
+		'',
+		'Hi, I want to apply for UAE Equivalency Certificate',
+		'',
+		'------------------------',
+		'PICS Attestation Services',
+		'Email : picscochin@gmail.com',
+		'Phone : +91 8369820334',
+		'Website : https://picsattestation.in',
+		'------------------------'
+	].join('\n');
+
+	var bar = document.createElement('div');
+	bar.className = 'announce-bar';
+	bar.setAttribute('role', 'region');
+	bar.setAttribute('aria-label', 'Latest update');
+	bar.innerHTML =
+		'<div class="container announce-inner">' +
+			'<span class="announce-tag"><span class="announce-dot" aria-hidden="true"></span>New</span>' +
+			'<p class="announce-text">' +
+				'<strong>UAE Equivalency Certificate for Indian Degrees</strong> ' +
+				'<span class="announce-sub">- now processed end-to-end by our experts.</span>' +
+			'</p>' +
+			'<a class="announce-cta" target="_blank" rel="noopener" href="https://wa.me/918369820334?text=' +
+				encodeURIComponent(waText) + '">Apply now <i class="bi bi-arrow-right" aria-hidden="true"></i></a>' +
+		'</div>';
+	header.parentNode.insertBefore(bar, header);
+
+	// ---------- Popup: shown once per visitor every 24 hours ----------
+	var waLink = 'https://wa.me/918369820334?text=' + encodeURIComponent(waText);
+	var learnMore = scriptSrc ? new URL('../pages/attestation/certificate_equivalency.html', scriptSrc).href
+		: '/pages/attestation/certificate_equivalency.html';
+	var POP_KEY = 'picsEquivPopupSeen';
+	var POP_EVERY = 24 * 60 * 60 * 1000;
+
+	function popSeenRecently() {
+		try { return Date.now() - Number(localStorage.getItem(POP_KEY) || 0) < POP_EVERY; }
+		catch (e) { return false; }
+	}
+	function markPopSeen() {
+		try { localStorage.setItem(POP_KEY, String(Date.now())); } catch (e) {}
+	}
+
+	var pop = document.createElement('div');
+	pop.className = 'announce-pop';
+	pop.setAttribute('role', 'dialog');
+	pop.setAttribute('aria-modal', 'true');
+	pop.setAttribute('aria-labelledby', 'announcePopTitle');
+	pop.innerHTML =
+		'<div class="announce-pop-card">' +
+			'<button type="button" class="announce-pop-close" aria-label="Close">&times;</button>' +
+			'<div class="announce-pop-head">' +
+				'<span class="announce-tag"><span class="announce-dot" aria-hidden="true"></span>New service</span>' +
+				'<h2 class="announce-pop-title" id="announcePopTitle">UAE Equivalency Certificate for Indian Degrees</h2>' +
+			'</div>' +
+			'<div class="announce-pop-body">' +
+				'<p>Planning to work or study in the UAE? Get your Indian degree officially recognised. We handle the whole process for you.</p>' +
+				'<ul class="announce-pop-list">' +
+					'<li><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Attestation of your degree certificates</li>' +
+					'<li><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Equivalency application filed for you</li>' +
+					'<li><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Updates at every step on WhatsApp</li>' +
+				'</ul>' +
+				'<div class="announce-pop-actions">' +
+					'<a class="announce-pop-btn is-wa" target="_blank" rel="noopener" href="' + waLink + '"><i class="bi bi-whatsapp" aria-hidden="true"></i>Apply on WhatsApp</a>' +
+					'<a class="announce-pop-btn is-call" href="tel:+918369820334"><i class="bi bi-telephone" aria-hidden="true"></i>Call +91 83698 20334</a>' +
+				'</div>' +
+				'<a class="announce-pop-more" href="' + learnMore + '">Learn more about equivalency &rarr;</a>' +
+			'</div>' +
+		'</div>';
+	document.body.appendChild(pop);
+
+	var lastFocus = null;
+	function openPop() {
+		lastFocus = document.activeElement;
+		pop.classList.add('is-open');
+		document.body.classList.add('announce-pop-lock');
+		markPopSeen();
+		pop.querySelector('.announce-pop-close').focus();
+	}
+	function closePop() {
+		pop.classList.remove('is-open');
+		document.body.classList.remove('announce-pop-lock');
+		if (lastFocus && lastFocus.focus) lastFocus.focus();
+	}
+	pop.addEventListener('click', function (e) {
+		if (e.target === pop || e.target.closest('.announce-pop-close')) closePop();
+	});
+	pop.querySelectorAll('.announce-pop-btn, .announce-pop-more').forEach(function (a) {
+		a.addEventListener('click', closePop);
+	});
+	document.addEventListener('keydown', function (e) {
+		if (e.key === 'Escape' && pop.classList.contains('is-open')) closePop();
+	});
+	// Clicking the banner text opens the popup again any time
+	var barText = bar.querySelector('.announce-text');
+	barText.style.cursor = 'pointer';
+	barText.addEventListener('click', openPop);
+
+	if (!popSeenRecently()) setTimeout(openPop, 2500);
+
+	// Keep the menu stuck directly under the banner while scrolling
+	function syncHeight() {
+		document.documentElement.style.setProperty('--announce-h', bar.offsetHeight + 'px');
+	}
+	syncHeight();
+	window.addEventListener('resize', syncHeight);
+	window.addEventListener('load', syncHeight);
+})();
+
 /**
  * WEBSITE: https://themefisher.com
  * TWITTER: https://twitter.com/themefisher
