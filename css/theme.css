@@ -1701,3 +1701,115 @@ img { max-width: 100%; }
   }
   .js-reveal .reveal { opacity: 1; transform: none; }
 }
+
+/* ==========================================================================
+   DEPTH (v3)
+   The hero certificate is real 3D (js/hero3d.js, WebGL). Everything else
+   borrows a little of that depth: sections tip up into place as they reveal,
+   and the attestation route stamps itself in order. All of it is skipped for
+   prefers-reduced-motion; without WebGL the flat SVG hero stays.
+   ========================================================================== */
+
+/* ---------- Hero: 3D stage ---------- */
+.hero-3d {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity .8s var(--ease);
+  cursor: grab;
+  touch-action: pan-y;      /* vertical swipes still scroll the page */
+}
+.hero-3d.is-grabbing { cursor: grabbing; }
+.hero-3d canvas { display: block; width: 100% !important; height: 100% !important; }
+.hero.has-3d .hero-3d { opacity: 1; }
+.hero.has-3d .hero-art { pointer-events: auto; }
+.hero.has-3d .hero-sun,
+.hero.has-3d .hero-tag { opacity: 0; transition: opacity .5s var(--ease); }
+
+.hero-3d-hint {
+  position: absolute;
+  z-index: 3;
+  left: var(--gutter);
+  bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  font-family: var(--f-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .5s var(--ease), transform .5s var(--ease);
+  pointer-events: none;
+}
+.hero-3d-hint.is-on { opacity: 1; transform: none; }
+.hero-3d-hint i { font-size: 14px; color: var(--blue-deep); }
+
+@media (min-width: 992px) {
+  /* Let the scene spill left over the gutter and right past the edge,
+     so the certificate can turn without clipping */
+  .hero-3d { inset: -6% -38% -4% -22%; }
+  .hero-3d-hint { left: 0; bottom: 34px; }
+}
+
+/* ---------- Reveal with depth ---------- */
+.js-reveal .reveal {
+  transform: perspective(1000px) translateY(26px) rotateX(9deg);
+  transform-origin: 50% 100%;
+  transition: opacity .7s var(--ease), transform .9s var(--ease);
+}
+.js-reveal .reveal.is-in { transform: perspective(1000px) translateY(0) rotateX(0); }
+
+/* ---------- Route: each stop is stamped, in order ---------- */
+.js-reveal .route-steps::before {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 1.6s cubic-bezier(.6, 0, .2, 1) .15s;
+}
+.js-reveal .route-steps.is-in::before { transform: scaleX(1); }
+@media (max-width: 575.98px) {
+  .js-reveal .route-steps::before { transform: scaleY(0); transform-origin: 50% 0; }
+  .js-reveal .route-steps.is-in::before { transform: scaleY(1); }
+}
+.js-reveal .route-step .seal { opacity: 0; }
+.js-reveal .route-steps.is-in .route-step .seal {
+  animation: pics-stamp .5s cubic-bezier(.3, 1.4, .5, 1) both;
+}
+.js-reveal .route-steps.is-in .route-step:nth-child(1) .seal { animation-delay: .25s; }
+.js-reveal .route-steps.is-in .route-step:nth-child(2) .seal { animation-delay: .65s; }
+.js-reveal .route-steps.is-in .route-step:nth-child(3) .seal { animation-delay: 1.05s; }
+.js-reveal .route-steps.is-in .route-step:nth-child(4) .seal { animation-delay: 1.45s; }
+@keyframes pics-stamp {
+  0%   { opacity: 0; transform: perspective(300px) translateZ(140px) rotateX(35deg); }
+  70%  { opacity: 1; transform: perspective(300px) translateZ(-10px) rotateX(0); }
+  100% { opacity: 1; transform: none; }
+}
+.route-step h3,
+.route-step .where { transition: color .3s var(--ease); }
+
+/* ---------- Offices: a column lifts toward you on hover ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .office-card {
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+    transition: transform .4s var(--ease), border-color .3s var(--ease);
+  }
+  .office-card:hover { border-top-color: var(--blue); }
+  .office-card h3 { transform: translateZ(28px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal .reveal,
+  .js-reveal .reveal.is-in { transform: none; }
+  .js-reveal .route-steps::before { transform: none; }
+  .js-reveal .route-step .seal { opacity: 1; animation: none !important; }
+  .office-card { transform: none !important; }
+}
