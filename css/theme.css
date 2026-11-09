@@ -1161,6 +1161,8 @@ img { max-width: 100%; }
   background: var(--ink) !important;
   padding: 64px 0;
 }
+/* Gallery detail page uses the same class as a light card section */
+section.related-projects.bg-gray { background: var(--sky) !important; }
 #footer.bg-one h3 { font-size: 22px; color: var(--white); }
 #footer.bg-one p { color: rgba(255, 255, 255, .72); text-align: left; hyphens: manual; }
 #footer.bg-one a { color: var(--white); }
@@ -1373,7 +1375,7 @@ img { max-width: 100%; }
   color: var(--ink);
 }
 .status-grid .section_status.is-status { background: var(--blue-deep); border-color: var(--blue-deep); }
-.status-grid .section_status.is-status h3 { color: rgba(255, 255, 255, .78); }
+.status-grid .section_status.is-status h3 { color: rgba(255, 255, 255, .9); }
 .status-grid .section_status.is-status span:not(.label) { color: var(--white); }
 .row_status .label { width: auto; font-size: 15px; font-weight: 500; color: var(--ink-3); }
 .row_status span:not(.label) { font-size: 16px; color: var(--ink); word-break: break-word; }
@@ -2007,6 +2009,14 @@ body.announce-pop-lock { overflow: hidden; }
   .announce-pop, .announce-pop-card { transition: none; }
 }
 
+/* Template pages: dark band on About, and faint grey metadata */
+.about-feature.bg-dark h1, .about-feature.bg-dark h2, .about-feature.bg-dark h3,
+.about-feature.bg-dark h4, .dark-service h2, .dark-service h4 { color: #fff; }
+.about-feature.bg-dark p, .dark-service p { color: rgba(255, 255, 255, .78); }
+.post .post-meta ul li, .post .post-meta ul li a, .widget a, .widget p, .widget ul li a,
+.widget.widget-latest-post .media p, .post-comments time,
+.portfolio-single-page .project-details span, .comment time, time { color: var(--ink-3) !important; }
+
 /* =====================================================================
    DARK MODE — follows the visitor's phone / laptop setting automatically
    ===================================================================== */
@@ -2034,7 +2044,7 @@ body.announce-pop-lock { overflow: hidden; }
      light-theme colours so their white text stays readable */
   .destinations,
   .service-cta,
-  .related-projects.bg-gray,
+  div.related-projects.bg-gray,
   .footer,
   #footer,
   .chat-header,
@@ -2052,7 +2062,7 @@ body.announce-pop-lock { overflow: hidden; }
     --blue-deep: #0a6aa3;
     --rule: #dcd8e4;
   }
-  .destinations, .service-cta, .footer, #footer, .related-projects.bg-gray {
+  .destinations, .service-cta, .footer, #footer, div.related-projects.bg-gray {
     background-color: #0c0a13 !important;
     border-top: 1px solid #2a2438;
   }
@@ -2108,6 +2118,28 @@ body.announce-pop-lock { overflow: hidden; }
   /* Contact page: black WhatsApp / Email icons turn white */
   .contact-form .office .whatsapp-link img, .contact-form .office .email-link img,
   .whatsapp-link img, .email-link img, img[src*="icons8.com/ios/"] { filter: invert(1) brightness(.95) !important; }
+
+  /* Quick Enquiry side tab: keep the deeper blue so white text stays readable */
+  .quick-enquiry-btn { background: #0a6aa3; }
+  .quick-enquiry-btn:hover { background: #0a5d8f; }
+
+  /* Leftover template pages (blog, pricing, about, gallery detail):
+     their fixed black / grey / purple text becomes light */
+  .widget .widget-title, .widget a, .widget li, .widget.widget-latest-post .media .media-heading a,
+  .post a:not(.btn), .post-title a, .post blockquote, .post blockquote p, .post-excerpt h3 a, .post .post-meta, .post .post-meta a, .post .post-meta .post-author,
+  .post-comments a, .comment-button, .comment-author a, time,
+  .pricing-table .pricing-item li, .pricing-item .value, .pricing-item .price,
+  .counter-box span, .counter-item span, .counters span,
+  .portfolio-single-page .project-details strong, .portfolio-single-page .project-details span,
+  .section-title p, .heading h2, .contact-box .block h2, .next-prev a,
+  .post-pagination > li > a, .social-media-icons ul li a, .tag-list a, .tags a,
+  section.related-projects h2, section.related-projects h4, section.related-projects p {
+    color: var(--ink-2) !important;
+  }
+  .page-link { background-color: var(--white) !important; color: var(--ink) !important; border-color: var(--rule) !important; }
+  .widget .widget-title, .post-title a, .post-excerpt h3 a, .pricing-item .value,
+  section.related-projects h2, section.related-projects h4, .heading h2, .contact-box .block h2 { color: var(--ink) !important; }
+  section.related-projects.bg-gray { background: var(--white) !important; }
 
   /* Popup body */
   .announce-pop-card { background: var(--white); box-shadow: 0 30px 80px rgba(0, 0, 0, .6); }
