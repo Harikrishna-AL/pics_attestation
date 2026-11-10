@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Data Upload Dashboard</title>
+    <link rel="stylesheet" href="Assets/css/Admin_common.css">
+    <link rel="stylesheet" href="Assets/css/pics_theme.css">
+    <style>
+        body {
+            margin: 0;
+            background: var(--pics-page-bg);
+            font-family: var(--pics-font);
+            color: var(--pics-ink);
+            min-height: 100vh;
+            transition: background .3s, color .3s;
+        }
+
+        /* Top bar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            padding: 18px 28px;
+            color: #fff;
+            position: relative;
+            background: linear-gradient(120deg, var(--pics-navy) 0%, var(--pics-blue-900) 45%, var(--pics-blue-600) 100%);
+            box-shadow: 0 8px 24px rgba(10, 31, 68, .30);
+        }
+
+        .topbar::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--pics-cyan), var(--pics-blue-400), transparent);
+        }
+
+        .topbar h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: .2px;
+        }
+
+        .topbar .home-btn {
+            background: rgba(255, 255, 255, .14);
+            border: 1px solid rgba(255, 255, 255, .3);
+            box-shadow: none;
+            text-decoration: none;
+        }
+
+        .topbar .home-btn:hover {
+            background: rgba(255, 255, 255, .24);
+        }
+
+        .topbar .logout-btn {
+            position: static;
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, .35);
+            box-shadow: none;
+            cursor: pointer;
+        }
+
+        .topbar .logout-btn:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .top-actions button {
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .35);
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+            font-family: var(--pics-font);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+        }
+
+        .top-actions button:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, .24);
+        }
+
+        .top-actions .export-btn {
+            background: #fff;
+            color: var(--pics-blue-700);
+            border-color: #fff;
+        }
+
+        .top-actions button:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-circle {
+            margin: 14px 0 0 16px;
+        }
+
+        /* KPI cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 24px 20px 4px;
+        }
+
+        .kpi {
+            position: relative;
+            overflow: hidden;
+            padding: 20px 22px;
+            border-radius: 18px;
+            color: #fff;
+            box-shadow: 0 14px 30px rgba(15, 45, 110, .22);
+            transition: transform .25s, box-shadow .25s;
+        }
+
+        .kpi:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 38px rgba(15, 45, 110, .30);
+        }
+
+        .kpi::after {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            right: -40px;
+            top: -50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .10);
+        }
+
+        .kpi:nth-child(1) {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        }
+
+        .kpi:nth-child(2) {
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+        }
+
+        .kpi:nth-child(3) {
+            background: linear-gradient(135deg, #0369a1, #0ea5e9);
+        }
+
+        .kpi:nth-child(4) {
+            background: linear-gradient(135deg, #0a1f44, #1e40af);
+        }
+
+        .kpi h4 {
+            margin: 0;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            opacity: .85;
+        }
+
+        .kpi h2 {
+            margin: 8px 0 0;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .kpi small {
+            display: block;
+            margin-top: 2px;
+            font-size: 12px;
+            opacity: .8;
+        }
+
+        /* Card */
+        .card {
+            position: relative;
+            overflow: hidden;
+            margin: 20px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid var(--pics-line);
+            border-radius: 18px;
+            box-shadow: var(--pics-shadow);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--pics-blue-700), var(--pics-sky), transparent);
+        }
+
+        .card h3 {
+            margin: 0 0 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--pics-ink);
+        }
+
+        /* Filters */
+        .filter-container {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 18px;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
+
+        .filter-item label {
+            margin-bottom: 5px;
+            font-size: 11.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: var(--pics-muted);
+        }
+
+        .filter-item input {
+            min-width: 150px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1.5px solid var(--pics-line);
+            background: #f7faff;
+            font-family: var(--pics-font);
+            font-size: 13.5px;
+            color: var(--pics-ink);
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .filter-item input:focus {
+            border-color: var(--pics-blue-500);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, .15);
+        }
+
+        .filter-item.grow {
+            flex: 1 1 240px;
+        }
+
+        .filter-item.grow input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .clear-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1.5px solid var(--pics-line);
+            background: transparent;
+            color: var(--pics-blue-700);
+            font-family: var(--pics-font);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .clear-btn:hover {
+            background: var(--pics-blue-50);
+        }
+
+        /* Table */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 10px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid #eef3fb;
+        }
+
+        .styled-table th {
+            white-space: nowrap;
+            background: var(--pics-blue-50);
+            color: var(--pics-blue-900);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            border-bottom: 2px solid var(--pics-blue-100);
+        }
+
+        .styled-table tbody tr:hover {
+            background: #f2f7ff;
+        }
+
+        .styled-table .num {
+            text-align: center;
+        }
+
+        .styled-table .nowrap {
+            white-space: nowrap;
+        }
+
+        .styled-table .files-cell {
+            max-width: 280px;
+            word-break: break-word;
+        }
+
+        .ref {
+            font-weight: 600;
+            color: var(--pics-blue-800);
+            white-space: nowrap;
+        }
+
+        .badge {
+            display: inline-block;
+            min-width: 22px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: #e7f8ef;
+            color: #15803d;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .open-link {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--pics-blue-500), var(--pics-blue-800));
+            color: #fff;
+            font-weight: 600;
+            font-size: 12.5px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .open-link:hover {
+            color: #fff;
+            filter: brightness(1.1);
+        }
+
+        /* Messages */
+        .state {
+            padding: 34px 16px;
+            text-align: center;
+            color: var(--pics-muted);
+            font-size: 15px;
+        }
+
+        .state.error {
+            color: #b91c1c;
+        }
+
+        .state button {
+            margin-top: 12px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: 0;
+            background: var(--pics-blue-600);
+            color: #fff;
+            font-family: var(--pics-font);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .spinner {
+            width: 34px;
+            height: 34px;
+            margin: 0 auto 12px;
+            border: 4px solid var(--pics-blue-100);
+            border-top-color: var(--pics-blue-600);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+            font-size: 13.5px;
+            color: var(--pics-muted);
+        }
+
+        .more-btn {
+            padding: 8px 20px;
+            border-radius: 999px;
+            border: 1.5px solid var(--pics-blue-200);
+            background: #fff;
+            color: var(--pics-blue-700);
+            font-family: var(--pics-font);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .more-btn:hover {
+            background: var(--pics-blue-50);
+        }
+
+        /* Dark mode */
+        body.dark {
+            background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, .18), transparent 45%), #0a1428;
+            color: #e6eefc;
+        }
+
+        body.dark .card {
+            background: rgba(16, 32, 66, .85);
+            border-color: rgba(96, 165, 250, .18);
+        }
+
+        body.dark .card h3 {
+            color: #e6eefc;
+        }
+
+        body.dark .styled-table th {
+            background: #13284f;
+            color: #bfdbfe;
+            border-bottom-color: #1e3a6b;
+        }
+
+        body.dark .styled-table td {
+            border-bottom-color: #1e3a6b;
+        }
+
+        body.dark .styled-table tbody tr:hover {
+            background: rgba(59, 130, 246, .10);
+        }
+
+        body.dark .filter-item input {
+            background: #0f1f3d;
+            border-color: #1e3a6b;
+            color: #e6eefc;
+        }
+
+        body.dark .filter-item input:focus {
+            background: #0f1f3d;
+        }
+
+        body.dark .clear-btn,
+        body.dark .more-btn {
+            background: transparent;
+            border-color: #1e3a6b;
+            color: #93c5fd;
+        }
+
+        body.dark .ref {
+            color: #93c5fd;
+        }
+
+        body.dark .badge {
+            background: rgba(34, 197, 94, .15);
+            color: #86efac;
+        }
+
+        body.dark .state.error {
+            color: #fca5a5;
+        }
+
+        @media (max-width: 900px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 520px) {
+            .topbar {
+                padding: 16px;
+            }
+
+            .topbar h1 {
+                font-size: 20px;
+            }
+
+            .card {
+                margin: 14px 12px;
+                padding: 16px;
+            }
+
+            .kpi-grid {
+                gap: 12px;
+                padding: 16px 12px 0;
+            }
+
+            .kpi h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button id="backBtn" class="back-circle" onclick="goBack()" style="display:none;" aria-label="Back">&larr;</button>
+
+    <div class="topbar">
+        <h1>Data Upload Dashboard</h1>
+        <a href="Home.html" class="home-btn" id="home-btn">&#127968; Home</a>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+        <div class="top-actions">
+            <button id="exportBtn" type="button" class="export-btn" disabled>Export CSV</button>
+            <button id="darkBtn" type="button">Dark Mode</button>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="kpi-grid">
+        <div class="kpi">
+            <h4>Total uploads</h4>
+            <h2 id="kTotal">0</h2><small>submissions received</small>
+        </div>
+        <div class="kpi">
+            <h4>Unique users</h4>
+            <h2 id="kUsers">0</h2><small>different phone numbers</small>
+        </div>
+        <div class="kpi">
+            <h4>Files received</h4>
+            <h2 id="kFiles">0</h2><small>PDF / ZIP files in Drive</small>
+        </div>
+        <div class="kpi">
+            <h4>Uploaded today</h4>
+            <h2 id="kToday">0</h2><small>since midnight</small>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+        <h3>All uploads</h3>
+
+        <div class="filter-container">
+            <div class="filter-item"><label for="fromDate">From date</label><input type="date" id="fromDate"></div>
+            <div class="filter-item"><label for="toDate">To date</label><input type="date" id="toDate"></div>
+            <div class="filter-item grow"><label for="search">Search</label><input type="search" id="search"
+                    placeholder="Name, phone, email, file name or reference" autocomplete="off"></div>
+            <button type="button" class="clear-btn" id="clearBtn">Clear</button>
+        </div>
+
+        <div id="state" class="state" role="status" aria-live="polite"></div>
+
+        <div class="table-wrap" id="tableWrap" style="display:none;">
+            <table class="styled-table" id="uploadTable">
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Date &amp; time</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th class="num">Files</th>
+                        <th>File names</th>
+                        <th>Drive folder</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="foot" id="foot" style="display:none;">
+            <span id="countText"></span>
+            <button type="button" class="more-btn" id="moreBtn" style="display:none;">Show more</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="Assets/js/supabaseConfig.js"></script>
+    <script src="Assets/js/message.js"></script>
+    <script src="Assets/js/Logout.js"></script>
+    <script>
+
+
+
+        window.supabaseClient.auth
+            .getSession()
+            .then(({ data }) => {
+                if (!data.session) {
+                    window.location.href = "Login_Admin.html";
+                    return;
+                }
+            });
+
+        // Link of the Google Apps Script that stores the uploads (same one the website form uses)
+        const UPLOAD_API = "https://script.google.com/macros/s/AKfycbxz6DABGCUsPJAHAwwbW5HKlhjEHizEhX9r80-KDYj-CvrngRY5M0A42rhcQIcSIFcu/exec";
+        const PAGE_SIZE = 50;
+
+        let allRows = [];
+        let filtered = [];
+        let shown = 0;
+        let loading = false;
+
+        const $ = (id) => document.getElementById(id);
+        const MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+
+        /* ---------- login check + role (same rules as the other admin pages) ---------- */
+        window.supabaseClient.auth.getSession().then(({ data }) => {
+            if (!data.session) { window.location.href = "Login_Admin.html"; return; }
+            const role = data.session.user.user_metadata?.role;
+            if (role === "staff") {
+                $("backBtn").style.display = "none";
+            } else {
+                $("backBtn").style.display = "none";
+
+                $("home-btn").style.display = "none";
+            }
+            loadData();
+        });
+        $("logoutBtn")?.addEventListener("click", logoutUser);
+        function goBack() { window.location.href = "Dashboard_Admin.html"; }
+
+        /* ---------- helpers ---------- */
+        function parseTime(text) {   // "09-Nov-2026 14:32"  ->  milliseconds (0 if unreadable)
+            const m = /^(\d{1, 2})-([A-Za-z]{3})-(\d{4})(?:\s+(\d{1, 2}):(\d{2}))?/.exec(String(text || "").trim());
+            if (!m || MONTHS[m[2].toLowerCase()] === undefined) return 0;
+            return new Date(+m[3], MONTHS[m[2].toLowerCase()], +m[1], +(m[4] || 0), +(m[5] || 0)).getTime();
+        }
+        function startOfDay(ms) { const d = new Date(ms); d.setHours(0, 0, 0, 0); return d.getTime(); }
+        function safeDriveUrl(u) { return /^https:\/\/drive\.google\.com\//i.test(String(u || "")) ? String(u) : ""; }
+        function setState(kind, html, withRetry) {
+            const el = $("state");
+            el.className = "state" + (kind === "error" ? " error" : "");
+            el.textContent = "";
+            if (kind === "loading") { const s = document.createElement("div"); s.className = "spinner"; el.appendChild(s); }
+            const p = document.createElement("div"); p.textContent = html; el.appendChild(p);
+            if (withRetry) { const b = document.createElement("button"); b.type = "button"; b.textContent = "Try again"; b.onclick = loadData; el.appendChild(b); }
+            el.style.display = html ? "block" : "none";
+        }
+
+        /* ---------- load from the Google Sheet (through the Apps Script) ---------- */
+        async function loadData() {
+            if (loading) return;
+            loading = true;
+            $("tableWrap").style.display = "none";
+            $("foot").style.display = "none";
+            setState("loading", "Loading uploads...");
+            try {
+                if (!UPLOAD_API) throw new Error("The upload service link is not set on this page yet.");
+                const { data } = await window.supabaseClient.auth.getSession();
+                if (!data.session) { window.location.href = "Login_Admin.html"; return; }
+
+                const resp = await fetch(UPLOAD_API, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },   // keeps it a simple request (no CORS pre-check)
+                    body: JSON.stringify({ action: "list", token: data.session.access_token })
+                });
+                const json = await resp.json();
+                if (!json.ok) throw new Error(json.error || "Could not load the uploads.");
+
+                allRows = (json.rows || []).map((r, i) => ({
+                    ref: String(r.ref || ""),
+                    time: String(r.time || ""),
+                    ts: parseTime(r.time),
+                    order: i,
+                    name: String(r.name || ""),
+                    email: String(r.email || ""),
+                    phone: String(r.phone || ""),
+                    files: Number(r.files) || 0,
+                    fileNames: String(r.fileNames || ""),
+                    link: safeDriveUrl(r.link)
+                })).sort((a, b) => (b.ts - a.ts) || (b.order - a.order));   // newest first
+
+                renderStats();
+                applyFilters();
+            } catch (err) {
+                console.error(err);
+                allRows = []; filtered = [];
+                renderStats();
+                setState("error", "Could not load the uploads. " + (err && err.message ? err.message : ""), true);
+            } finally {
+                loading = false;
+            }
+        }
+
+        /* ---------- summary numbers ---------- */
+        function renderStats() {
+            const users = new Set(allRows.map(r => r.phone || r.email.toLowerCase()).filter(Boolean));
+            const today = startOfDay(Date.now());
+            $("kTotal").textContent = allRows.length;
+            $("kUsers").textContent = users.size;
+            $("kFiles").textContent = allRows.reduce((s, r) => s + r.files, 0);
+            $("kToday").textContent = allRows.filter(r => r.ts && startOfDay(r.ts) === today).length;
+        }
+
+        /* ---------- filters + table ---------- */
+        function applyFilters() {
+            const from = $("fromDate").value ? new Date($("fromDate").value + "T00:00:00").getTime() : null;
+            const to = $("toDate").value ? new Date($("toDate").value + "T23:59:59").getTime() : null;
+            const q = $("search").value.trim().toLowerCase();
+
+            filtered = allRows.filter(r => {
+                if (from !== null && (!r.ts || r.ts < from)) return false;
+                if (to !== null && (!r.ts || r.ts > to)) return false;
+                if (q && ![r.name, r.email, r.phone, r.fileNames, r.ref].some(v => v.toLowerCase().includes(q))) return false;
+                return true;
+            });
+            shown = 0;
+            $("uploadTable").tBodies[0].textContent = "";
+            showMore();
+        }
+
+        function cell(tr, text, cls) { const td = document.createElement("td"); if (cls) td.className = cls; td.textContent = text; tr.appendChild(td); return td; }
+
+        function showMore() {
+            const body = $("uploadTable").tBodies[0];
+            const slice = filtered.slice(shown, shown + PAGE_SIZE);
+            slice.forEach(r => {
+                const tr = document.createElement("tr");
+                cell(tr, r.ref, "ref");
+                cell(tr, r.time, "nowrap");
+                cell(tr, r.name);
+                cell(tr, r.email);
+                cell(tr, r.phone, "nowrap");
+                const f = cell(tr, "", "num"); const b = document.createElement("span"); b.className = "badge"; b.textContent = r.files; f.appendChild(b);
+                cell(tr, r.fileNames, "files-cell");
+                const l = cell(tr, "");
+                if (r.link) { const a = document.createElement("a"); a.className = "open-link"; a.href = r.link; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = "Open folder"; l.appendChild(a); }
+                else l.textContent = "-";
+                body.appendChild(tr);
+            });
+            shown += slice.length;
+
+            const has = filtered.length > 0;
+            $("tableWrap").style.display = has ? "block" : "none";
+            $("foot").style.display = has ? "flex" : "none";
+            $("moreBtn").style.display = shown < filtered.length ? "inline-block" : "none";
+            $("countText").textContent = "Showing " + shown + " of " + filtered.length + (filtered.length !== allRows.length ? " (filtered from " + allRows.length + ")" : "");
+            $("exportBtn").disabled = !has;
+
+            if (!has) setState("empty", allRows.length ? "No uploads match your filters." : "No uploads yet.");
+            else setState("", "");
+        }
+
+        ["fromDate", "toDate"].forEach(id => $(id).addEventListener("change", applyFilters));
+        $("search").addEventListener("input", applyFilters);
+        $("clearBtn").addEventListener("click", () => { $("fromDate").value = ""; $("toDate").value = ""; $("search").value = ""; applyFilters(); });
+        $("moreBtn").addEventListener("click", showMore);
+
+        /* ---------- export (what is currently filtered) ---------- */
+        function csvCell(v) {
+            let s = String(v == null ? "" : v);
+            if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;          // stops spreadsheet formulas from running
+            return '"' + s.replace(/"/g, '""') + '"';
+        }
+        $("exportBtn").addEventListener("click", () => {
+            const head = ["Reference ID", "Timestamp", "Name", "Email", "Phone", "No. of files", "File names", "Drive folder link"];
+            const lines = [head.map(csvCell).join(",")].concat(filtered.map(r =>
+                [r.ref, r.time, r.name, r.email, r.phone, r.files, r.fileNames, r.link].map(csvCell).join(",")));
+            const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "data-uploads-" + new Date().toISOString().slice(0, 10) + ".csv";
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        });
+
+        /* ---------- dark mode ---------- */
+        function applyDark(on) { document.body.classList.toggle("dark", on); $("darkBtn").textContent = on ? "Light Mode" : "Dark Mode"; }
+        try { applyDark(localStorage.getItem("picsUploadDash") === "dark"); } catch (e) { }
+        $("darkBtn").addEventListener("click", () => {
+            const on = !document.body.classList.contains("dark");
+            applyDark(on);
+            try { localStorage.setItem("picsUploadDash", on ? "dark" : "light"); } catch (e) { }
+        });
+
+        document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
+
+    </script>
+</body>
+
+</html>

@@ -1,514 +1,790 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Enquiry Dashboard</title>
-   
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="Assets/js/pics_chart_theme.js"></script>
-  <link rel="stylesheet" href="Assets/css/Admin_common.css">
-<script src="Assets/js/message.js" defer></script>
-<button id="backBtn"class="back-circle" onclick="goBack()" style="display: none;">←</button>
-<style>
-:root {
-    --bg-light: #f4f6f9;
-    --bg-dark: #121212;
-    --card-light: rgba(255,255,255,0.7);
-    --card-dark: rgba(30,30,30,0.8);
-    --text-light: #333;
-    --text-dark: #fff;
-}
+    <script src="Assets/js/pics_chart_theme.js"></script>
+    <link rel="stylesheet" href="Assets/css/Admin_common.css">
+    <script src="Assets/js/message.js" defer></script>
+    <button id="backBtn" class="back-circle" onclick="goBack()" style="display: none;">←</button>
+    <style>
+        :root {
+            --bg-light: #f4f6f9;
+            --bg-dark: #121212;
+            --card-light: rgba(255, 255, 255, 0.7);
+            --card-dark: rgba(30, 30, 30, 0.8);
+            --text-light: #333;
+            --text-dark: #fff;
+        }
 
-body {
-    margin:0;
-    font-family: Arial, sans-serif;
-    background: var(--bg-light);
-    color: var(--text-light);
-    transition: 0.3s;
-}
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: 0.3s;
+        }
 
-body.dark {
-    background: var(--bg-dark);
-    color: var(--text-dark);
-}
+        body.dark {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
 
-/* Topbar */
-.topbar {
-    display:flex;
-    justify-content: space-between;
-    align-items:center;
-    padding:20px;
-    background: linear-gradient(135deg,#6366f1,#4f46e5);
-    color:white;
-}
+        /* Topbar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+        }
 
-.topbar h1 {
-    margin:0;
-}
+        .topbar h1 {
+            margin: 0;
+        }
 
-.top-actions button {
-    margin-left:10px;
-    padding:6px 12px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-}
+        .top-actions button {
+            margin-left: 10px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
 
-.dark-toggle { background:#111; color:white; }
-.export-btn { background:#22c55e; color:white; }
+        .dark-toggle {
+            background: #111;
+            color: white;
+        }
 
-/* KPI */
-.kpi-grid {
-    display:grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap:20px;
-    padding:20px;
-}
+        .export-btn {
+            background: #22c55e;
+            color: white;
+        }
 
-.kpi {
-    padding:20px;
-    border-radius:15px;
-    background: linear-gradient(135deg,#6366f1,#4f46e5);
-    color:white;
-    box-shadow:0 8px 20px rgba(0,0,0,0.15);
-}
+        /* KPI */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
 
-.kpi h2 { margin:5px 0; }
+        .kpi {
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
 
-/* Cards */
-.card {
-    background: var(--card-light);
-    backdrop-filter: blur(10px);
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.05);
-    margin:20px;
-}
+        .kpi h2 {
+            margin: 5px 0;
+        }
 
-body.dark .card {
-    background: var(--card-dark);
-}
+        /* Cards */
+        .card {
+            background: var(--card-light);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            margin: 20px;
+        }
 
-/* Layout */
-.grid-2 {
-    display:grid;
-    grid-template-columns: 2fr 1fr;
-    gap:20px;
-}
+        body.dark .card {
+            background: var(--card-dark);
+        }
 
-/* Table */
-table {
-    width:100%;
-    border-collapse: collapse;
-}
+        /* Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
 
-th, td {
-    padding:10px;
-    border-bottom:1px solid #ddd;
-}
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-.badge {
-    padding:4px 10px;
-    border-radius:12px;
-    color:white;
-    font-size:12px;
-}
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
 
-.badge-green { background:#22c55e; }
-.badge-orange { background:#f59e0b; }
-.badge-red { background:#ef4444; }
-.filter-container {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    align-items: flex-end;
-}
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+        }
 
-.filter-item {
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
-}
+        .badge-green {
+            background: #22c55e;
+        }
 
-.filter-item label {
-    margin-bottom: 5px;
-    font-weight: 600;
-}
+        .badge-orange {
+            background: #f59e0b;
+        }
 
-.filter-item input,
-.filter-item select {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    min-width: 150px;
-}
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        .badge-red {
+            background: #ef4444;
+        }
 
-.styled-table th,
-.styled-table td {
-    padding: 12px 10px;
-    text-align: left;
-    border-bottom: 1px solid #e5e7eb;
-}
+        .filter-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
 
-.styled-table th {
-    background: #f3f4f6;
-    font-weight: 600;
-}
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
 
-.styled-table td:last-child {
-    text-align: center;
-}
+        .filter-item label {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
 
-body.dark .styled-table th {
-    background: #1f2937;
-}
+        .filter-item input,
+        .filter-item select {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            min-width: 150px;
+        }
 
-body.dark .styled-table td {
-    border-bottom: 1px solid #333;
-}
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-.styled-table th,
-.styled-table td {
-    padding: 12px 10px;
-    text-align: left;
-    border-bottom: 1px solid #e5e7eb;
-}
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-.styled-table th {
-    background: #f3f4f6;
-    font-weight: 600;
-}
+        .styled-table th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
 
-.styled-table td:last-child {
-    text-align: center;
-}
+        .styled-table td:last-child {
+            text-align: center;
+        }
 
-body.dark .styled-table th {
-    background: #1f2937;
-}
+        body.dark .styled-table th {
+            background: #1f2937;
+        }
 
-body.dark .styled-table td {
-    border-bottom: 1px solid #333;
-}
-.styled-table tbody tr:hover {
-    background-color: rgba(79,70,229,0.05);
-}
+        body.dark .styled-table td {
+            border-bottom: 1px solid #333;
+        }
 
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-  .logout-btn {
-    top: 15px;        /* place near top */
-    right: 20px;      /* place at right */
-    background: #ff4d4f;
-    border: none;
-    color: white;
-    padding: 8px 15px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 5px;
-    z-index: 9999;    /* ensure stays above content */
-}
-.back-circle {
-    background: #3a3a3a;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    margin-top: 10px; 
+        .styled-table th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
 
-    margin-left: 16px; 
-}
+        .styled-table td:last-child {
+            text-align: center;
+        }
+
+        body.dark .styled-table th {
+            background: #1f2937;
+        }
+
+        body.dark .styled-table td {
+            border-bottom: 1px solid #333;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
 
 
-.back-circle:hover {
-    background: #2b2b2b;
-}
 
-.back-circle:active {
-    transform: scale(0.92);
-}
+        .logout-btn {
+            top: 15px;
+            /* place near top */
+            right: 20px;
+            /* place at right */
+            background: #ff4d4f;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 9999;
+            /* ensure stays above content */
+        }
 
-.home-btn {
-    padding: 8px 20px;
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 25px;
-    box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
-    transition: 0.3s;
-}
+        .back-circle {
+            background: #3a3a3a;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            margin-top: 10px;
 
-.home-btn:hover {
-    transform: scale(1.08);
-}
+            margin-left: 16px;
+        }
 
-</style>
-<link rel="stylesheet" href="Assets/css/pics_theme.css">
-<style>
-/* ===== PICS blue theme - page specific (visual only) ===== */
-body { background: var(--pics-page-bg); font-family: var(--pics-font); color: var(--pics-ink); min-height: 100vh; }
-.topbar { background: linear-gradient(120deg, var(--pics-navy) 0%, var(--pics-blue-900) 45%, var(--pics-blue-600) 100%); padding: 18px 28px; gap: 14px; flex-wrap: wrap; box-shadow: 0 8px 24px rgba(10, 31, 68, .30); position: relative; }
-.topbar::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, var(--pics-cyan), var(--pics-blue-400), transparent); }
-.topbar h1 { font-size: 24px; font-weight: 700; letter-spacing: .2px; }
-.topbar .home-btn { background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .3); box-shadow: none; }
-.topbar .home-btn:hover { background: rgba(255, 255, 255, .24); }
-.topbar .logout-btn { background: rgba(255, 255, 255, .12); color: #fff; border-color: rgba(255, 255, 255, .35); box-shadow: none; }
-.topbar .logout-btn:hover { background: #ef4444; border-color: #ef4444; }
-.top-actions button { padding: 8px 16px; border-radius: 999px; font-family: var(--pics-font); font-weight: 600; font-size: 13px; transition: background .2s, transform .2s; }
-.top-actions button:hover { transform: translateY(-1px); }
-.export-btn { background: #fff; color: var(--pics-blue-700); box-shadow: 0 6px 14px rgba(10, 31, 68, .2); }
-.dark-toggle { background: rgba(255, 255, 255, .12); color: #fff; border: 1px solid rgba(255, 255, 255, .35) !important; }
-.kpi-grid { padding: 24px 20px 4px; }
-.kpi { border-radius: 18px; padding: 20px 22px; position: relative; overflow: hidden; box-shadow: 0 14px 30px rgba(15, 45, 110, .22); transition: transform .25s, box-shadow .25s; }
-.kpi:hover { transform: translateY(-4px); box-shadow: 0 20px 38px rgba(15, 45, 110, .30); }
-.kpi::after { content: ""; position: absolute; width: 130px; height: 130px; right: -40px; top: -50px; border-radius: 50%; background: rgba(255, 255, 255, .10); }
-.kpi:nth-child(1) { background: linear-gradient(135deg, #1e3a8a, #2563eb); }
-.kpi:nth-child(2) { background: linear-gradient(135deg, #1d4ed8, #3b82f6); }
-.kpi:nth-child(3) { background: linear-gradient(135deg, #0369a1, #0ea5e9); }
-.kpi:nth-child(4) { background: linear-gradient(135deg, #0a1f44, #1e40af); }
-.kpi h4 { margin: 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; opacity: .85; }
-.kpi h2 { font-size: 30px; font-weight: 700; margin: 8px 0 0; }
-.card { background: #fff; border: 1px solid var(--pics-line); border-radius: 18px; box-shadow: var(--pics-shadow); position: relative; overflow: hidden; }
-.card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--pics-blue-700), var(--pics-sky), transparent); }
-.card h3 { margin-top: 0; color: var(--pics-ink); font-size: 16px; font-weight: 600; }
-#todayActivity p { margin: 0 0 8px; padding: 8px 12px; background: var(--pics-blue-50); border: 1px solid var(--pics-blue-100); border-radius: 10px; color: var(--pics-blue-900); font-size: 13.5px; }
-.filter-item label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--pics-muted); }
-.filter-item input, .filter-item select, .styled-table select { padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--pics-line); background: #f7faff; font-family: var(--pics-font); font-size: 13.5px; color: var(--pics-ink); outline: none; transition: border-color .2s, box-shadow .2s; }
-.filter-item input:focus, .filter-item select:focus, .styled-table select:focus { border-color: var(--pics-blue-500); background: #fff; box-shadow: 0 0 0 4px rgba(59, 130, 246, .15); }
-.styled-table { font-size: 13.5px; }
-.styled-table th { background: var(--pics-blue-50); color: var(--pics-blue-900); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; border-bottom: 2px solid var(--pics-blue-100); }
-.styled-table td { border-bottom-color: #eef3fb; }
-.styled-table tbody tr:hover { background-color: #f2f7ff; }
-.badge { font-weight: 600; padding: 4px 12px; }
-.badge-green { background: #e7f8ef; color: #15803d; }
-.badge-orange { background: #fff5e0; color: #b45309; }
-.badge-red { background: #fdecec; color: #b91c1c; }
-/* dark mode, blue-tinted */
-body.dark { background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, .18), transparent 45%), #0a1428; color: #e6eefc; }
-body.dark .card { background: rgba(16, 32, 66, .85); border-color: rgba(96, 165, 250, .18); }
-body.dark .card h3 { color: #e6eefc; }
-body.dark .styled-table th { background: #13284f; color: #bfdbfe; border-bottom-color: #1e3a6b; }
-body.dark .styled-table td { border-bottom-color: #1e3a6b; }
-body.dark .styled-table tbody tr:hover { background-color: rgba(59, 130, 246, .10); }
-body.dark #todayActivity p { background: #13284f; border-color: #1e3a6b; color: #dbeafe; }
-body.dark .filter-item input, body.dark .filter-item select, body.dark .styled-table select { background: #0f1f3d; border-color: #1e3a6b; color: #e6eefc; }
-@media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } .grid-2 { grid-template-columns: 1fr; } }
-</style>
+
+        .back-circle:hover {
+            background: #2b2b2b;
+        }
+
+        .back-circle:active {
+            transform: scale(0.92);
+        }
+
+        .home-btn {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+            transition: 0.3s;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.08);
+        }
+    </style>
+    <link rel="stylesheet" href="Assets/css/pics_theme.css">
+    <style>
+        /* ===== PICS blue theme - page specific (visual only) ===== */
+        body {
+            background: var(--pics-page-bg);
+            font-family: var(--pics-font);
+            color: var(--pics-ink);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: linear-gradient(120deg, var(--pics-navy) 0%, var(--pics-blue-900) 45%, var(--pics-blue-600) 100%);
+            padding: 18px 28px;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 24px rgba(10, 31, 68, .30);
+            position: relative;
+        }
+
+        .topbar::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--pics-cyan), var(--pics-blue-400), transparent);
+        }
+
+        .topbar h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: .2px;
+        }
+
+        .topbar .home-btn {
+            background: rgba(255, 255, 255, .14);
+            border: 1px solid rgba(255, 255, 255, .3);
+            box-shadow: none;
+        }
+
+        .topbar .home-btn:hover {
+            background: rgba(255, 255, 255, .24);
+        }
+
+        .topbar .logout-btn {
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+            border-color: rgba(255, 255, 255, .35);
+            box-shadow: none;
+        }
+
+        .topbar .logout-btn:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .top-actions button {
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-family: var(--pics-font);
+            font-weight: 600;
+            font-size: 13px;
+            transition: background .2s, transform .2s;
+        }
+
+        .top-actions button:hover {
+            transform: translateY(-1px);
+        }
+
+        .export-btn {
+            background: #fff;
+            color: var(--pics-blue-700);
+            box-shadow: 0 6px 14px rgba(10, 31, 68, .2);
+        }
+
+        .dark-toggle {
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, .35) !important;
+        }
+
+        .kpi-grid {
+            padding: 24px 20px 4px;
+        }
+
+        .kpi {
+            border-radius: 18px;
+            padding: 20px 22px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 14px 30px rgba(15, 45, 110, .22);
+            transition: transform .25s, box-shadow .25s;
+        }
+
+        .kpi:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 38px rgba(15, 45, 110, .30);
+        }
+
+        .kpi::after {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            right: -40px;
+            top: -50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .10);
+        }
+
+        .kpi:nth-child(1) {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        }
+
+        .kpi:nth-child(2) {
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+        }
+
+        .kpi:nth-child(3) {
+            background: linear-gradient(135deg, #0369a1, #0ea5e9);
+        }
+
+        .kpi:nth-child(4) {
+            background: linear-gradient(135deg, #0a1f44, #1e40af);
+        }
+
+        .kpi h4 {
+            margin: 0;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            opacity: .85;
+        }
+
+        .kpi h2 {
+            font-size: 30px;
+            font-weight: 700;
+            margin: 8px 0 0;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--pics-line);
+            border-radius: 18px;
+            box-shadow: var(--pics-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--pics-blue-700), var(--pics-sky), transparent);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--pics-ink);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        #todayActivity p {
+            margin: 0 0 8px;
+            padding: 8px 12px;
+            background: var(--pics-blue-50);
+            border: 1px solid var(--pics-blue-100);
+            border-radius: 10px;
+            color: var(--pics-blue-900);
+            font-size: 13.5px;
+        }
+
+        .filter-item label {
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: var(--pics-muted);
+        }
+
+        .filter-item input,
+        .filter-item select,
+        .styled-table select {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1.5px solid var(--pics-line);
+            background: #f7faff;
+            font-family: var(--pics-font);
+            font-size: 13.5px;
+            color: var(--pics-ink);
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .filter-item input:focus,
+        .filter-item select:focus,
+        .styled-table select:focus {
+            border-color: var(--pics-blue-500);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, .15);
+        }
+
+        .styled-table {
+            font-size: 13.5px;
+        }
+
+        .styled-table th {
+            background: var(--pics-blue-50);
+            color: var(--pics-blue-900);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            border-bottom: 2px solid var(--pics-blue-100);
+        }
+
+        .styled-table td {
+            border-bottom-color: #eef3fb;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #f2f7ff;
+        }
+
+        .badge {
+            font-weight: 600;
+            padding: 4px 12px;
+        }
+
+        .badge-green {
+            background: #e7f8ef;
+            color: #15803d;
+        }
+
+        .badge-orange {
+            background: #fff5e0;
+            color: #b45309;
+        }
+
+        .badge-red {
+            background: #fdecec;
+            color: #b91c1c;
+        }
+
+        /* dark mode, blue-tinted */
+        body.dark {
+            background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, .18), transparent 45%), #0a1428;
+            color: #e6eefc;
+        }
+
+        body.dark .card {
+            background: rgba(16, 32, 66, .85);
+            border-color: rgba(96, 165, 250, .18);
+        }
+
+        body.dark .card h3 {
+            color: #e6eefc;
+        }
+
+        body.dark .styled-table th {
+            background: #13284f;
+            color: #bfdbfe;
+            border-bottom-color: #1e3a6b;
+        }
+
+        body.dark .styled-table td {
+            border-bottom-color: #1e3a6b;
+        }
+
+        body.dark .styled-table tbody tr:hover {
+            background-color: rgba(59, 130, 246, .10);
+        }
+
+        body.dark #todayActivity p {
+            background: #13284f;
+            border-color: #1e3a6b;
+            color: #dbeafe;
+        }
+
+        body.dark .filter-item input,
+        body.dark .filter-item select,
+        body.dark .styled-table select {
+            background: #0f1f3d;
+            border-color: #1e3a6b;
+            color: #e6eefc;
+        }
+
+        @media (max-width: 900px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="topbar">
-    <h1>Enquiry Dashboard</h1>
-         <a href="Home.html" class="home-btn" id="home-btn">
-    🏠 Home
-</a>
-      <button class="logout-btn" id="logoutBtn">Logout</button>
+    <div class="topbar">
+        <h1>Enquiry Dashboard</h1>
+        <a href="Home.html" class="home-btn" id="home-btn">
+            🏠 Home
+        </a>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
 
-    <div class="top-actions">
-        <button class="export-btn" onclick="exportToCSV()">Export</button>
-        <button class="dark-toggle" onclick="toggleDark()">Dark Mode</button>
+        <div class="top-actions">
+            <button class="export-btn" onclick="exportToCSV()">Export</button>
+            <button class="dark-toggle" onclick="toggleDark()">Dark Mode</button>
+        </div>
     </div>
-</div>
 
-<!-- KPI -->
-<div class="kpi-grid">
-    <div class="kpi">
-        <h4>Total</h4>
-        <h2 id="totalEnquiries">0</h2>
+    <!-- KPI -->
+    <div class="kpi-grid">
+        <div class="kpi">
+            <h4>Total</h4>
+            <h2 id="totalEnquiries">0</h2>
+        </div>
+        <div class="kpi">
+            <h4>Pending</h4>
+            <h2 id="pendingCount">0</h2>
+        </div>
+        <div class="kpi">
+            <h4>Converted</h4>
+            <h2 id="convertedCount">0</h2>
+        </div>
+        <div class="kpi">
+            <h4>Rejected</h4>
+            <h2 id="rejectedCount">0</h2>
+        </div>
     </div>
-    <div class="kpi">
-        <h4>Pending</h4>
-        <h2 id="pendingCount">0</h2>
-    </div>
-    <div class="kpi">
-        <h4>Converted</h4>
-        <h2 id="convertedCount">0</h2>
-    </div>
-    <div class="kpi">
-        <h4>Rejected</h4>
-        <h2 id="rejectedCount">0</h2>
-    </div>
-</div>
 
-<!-- Chart + Activity -->
-<div class="grid-2">
+    <!-- Chart + Activity -->
+    <div class="grid-2">
+        <div class="card">
+            <h3>Daily Enquiry Trend</h3>
+            <canvas id="enquiryChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h3>Today Activity</h3>
+            <div id="todayActivity"></div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Table -->
     <div class="card">
-        <h3>Daily Enquiry Trend</h3>
-        <canvas id="enquiryChart"></canvas>
+        <h3>All Enquiries</h3>
+        <div class="filter-container">
+
+            <div class="filter-item">
+                <label>From Date</label>
+                <input type="date" id="fromDate">
+            </div>
+
+            <div class="filter-item">
+                <label>To Date</label>
+                <input type="date" id="toDate">
+            </div>
+
+            <div class="filter-item">
+                <label>Status</label>
+                <select id="statusFilter">
+                    <option value="">All</option>
+                    <option value="New">New</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Converted">Converted</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label>Country</label>
+                <select id="countryFilter">
+                    <option value="">All</option>
+                </select>
+            </div>
+
+        </div>
+
+        <table id="enquiryTable" class="styled-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Country</th>
+                    <th>Status</th>
+                    <th style="text-align:center;">Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+
     </div>
+    <!-- Supabase client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Your global config -->
+    <script src="Assets/js/supabaseConfig.js"></script>
+    <script src="Assets/js/Logout.js"></script>
 
-    <div class="card">
-        <h3>Today Activity</h3>
-        <div id="todayActivity"></div>
-    </div>
-</div>
+    <script>
 
-
-
-
-<!-- Table -->
-<div class="card">
-    <h3>All Enquiries</h3>
-<div class="filter-container">
-
-    <div class="filter-item">
-        <label>From Date</label>
-        <input type="date" id="fromDate">
-    </div>
-
-    <div class="filter-item">
-        <label>To Date</label>
-        <input type="date" id="toDate">
-    </div>
-
-    <div class="filter-item">
-        <label>Status</label>
-        <select id="statusFilter">
-            <option value="">All</option>
-            <option value="New">New</option>
-            <option value="Pending">Pending</option>
-            <option value="Converted">Converted</option>
-            <option value="Rejected">Rejected</option>
-        </select>
-    </div>
-
-    <div class="filter-item">
-        <label>Country</label>
-        <select id="countryFilter">
-            <option value="">All</option>
-        </select>
-    </div>
-
-</div>
-
-   <table id="enquiryTable" class="styled-table">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Country</th>
-            <th>Status</th>
-            <th style="text-align:center;">Action</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+        window.supabaseClient.auth
+            .getSession()
+            .then(({ data }) => {
+                if (!data.session) {
+                    window.location.href = "Login_Admin.html";
+                    return;
+                }
 
 
-</div>
-<!-- Supabase client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Your global config -->
-  <script src="Assets/js/supabaseConfig.js"></script>
-  <script src="Assets/js/Logout.js"></script>
+                // ROLE-BASED BACK BUTTON CONTROL
+                const role = data.session.user.user_metadata?.role;
 
-<script>
+                if (role === "staff") {
+                    // staff
+                    //const backBtn = document.getElementById("backBtn");
+                    //   if (backBtn) backBtn.style.display = "inline-block";
 
-window.supabaseClient.auth
-  .getSession()
-  .then(({ data }) => {
-    if (!data.session) {
-      window.location.href = "Login_Admin.html";
-      return;
-    }
+                } else {
+                    // show back button for admin
+                    //const backBtn = document.getElementById("backBtn");
 
+                    //if (backBtn) backBtn.style.display = "inline-block";
 
-    // ROLE-BASED BACK BUTTON CONTROL
-    const role = data.session.user.user_metadata?.role;
+                    const homebtn = document.getElementById("home-btn");
+                    homebtn.style.display = "none";
 
-    if (role === "staff") {
-        // staff
-        //const backBtn = document.getElementById("backBtn");
-             //   if (backBtn) backBtn.style.display = "inline-block";
-
-    }  else {
-        // show back button for admin
-        //const backBtn = document.getElementById("backBtn");
-
-        //if (backBtn) backBtn.style.display = "inline-block";
-
-          const homebtn = document.getElementById("home-btn");
-        homebtn.style.display = "none";
-
-    }
-
-   
-    });
+                }
 
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyTDdxYHScaKcbqwwHmzBc5KQwql9fZFCqTzxzkSlaA0vf21hWF-YB-GVpEvOIvNbyx/exec";  // 🔥 Replace with your Apps Script URL
+            });
 
-let enquiryData = [];
-let chartInstance;
 
-/* Animated Counter */
-function animateCounter(id, value) {
-    let el = document.getElementById(id);
-    let count = 0;
-    let step = Math.ceil(value / 30);
-    let interval = setInterval(() => {
-        count += step;
-        if (count >= value) {
-            count = value;
-            clearInterval(interval);
+        const API_URL = "https://script.google.com/macros/s/AKfycbyTDdxYHScaKcbqwwHmzBc5KQwql9fZFCqTzxzkSlaA0vf21hWF-YB-GVpEvOIvNbyx/exec";  // 🔥 Replace with your Apps Script URL
+
+        let enquiryData = [];
+        let chartInstance;
+
+        /* Animated Counter */
+        function animateCounter(id, value) {
+            let el = document.getElementById(id);
+            let count = 0;
+            let step = Math.ceil(value / 30);
+            let interval = setInterval(() => {
+                count += step;
+                if (count >= value) {
+                    count = value;
+                    clearInterval(interval);
+                }
+                el.innerText = count;
+            }, 20);
         }
-        el.innerText = count;
-    }, 20);
-}
 
-async function loadEnquiries() {
-    const res = await fetch(API_URL);
-    const result = await res.json();
-    enquiryData = result.data || [];
-    renderDashboard();
-}
+        async function loadEnquiries() {
+            const res = await fetch(API_URL);
+            const result = await res.json();
+            enquiryData = result.data || [];
+            renderDashboard();
+        }
 
-function renderDashboard() {
-    renderStats();
-    renderTable();
-    renderChart();
-    renderToday();
-}
+        function renderDashboard() {
+            renderStats();
+            renderTable();
+            renderChart();
+            renderToday();
+        }
 
-function renderStats() {
-    const total = enquiryData.length;
-    const pending = enquiryData.filter(x=>x.status==="Pending").length;
-    const converted = enquiryData.filter(x=>x.status==="Converted").length;
-    const rejected = enquiryData.filter(x=>x.status==="Rejected").length;
+        function renderStats() {
+            const total = enquiryData.length;
+            const pending = enquiryData.filter(x => x.status === "Pending").length;
+            const converted = enquiryData.filter(x => x.status === "Converted").length;
+            const rejected = enquiryData.filter(x => x.status === "Rejected").length;
 
-    animateCounter("totalEnquiries", total);
-    animateCounter("pendingCount", pending);
-    animateCounter("convertedCount", converted);
-    animateCounter("rejectedCount", rejected);
-}
+            animateCounter("totalEnquiries", total);
+            animateCounter("pendingCount", pending);
+            animateCounter("convertedCount", converted);
+            animateCounter("rejectedCount", rejected);
+        }
 
-function renderTable(data = enquiryData) {
+        function renderTable(data = enquiryData) {
 
-    const tbody = document.querySelector("#enquiryTable tbody");
-    tbody.innerHTML = "";
+            const tbody = document.querySelector("#enquiryTable tbody");
+            tbody.innerHTML = "";
 
-    data.forEach((row, index) => {
+            data.forEach((row, index) => {
 
-        tbody.innerHTML += `
+                tbody.innerHTML += `
         <tr>
             <td>${row.timestamp}</td>
             <td>${row.name}</td>
@@ -521,139 +797,140 @@ function renderTable(data = enquiryData) {
             </td>
             <td>
                 <select onchange="updateStatus(${index}, this.value)">
-                    <option ${row.status==='New'?'selected':''}>New</option>
-                    <option ${row.status==='Pending'?'selected':''}>Pending</option>
-                    <option ${row.status==='Converted'?'selected':''}>Converted</option>
-                    <option ${row.status==='Rejected'?'selected':''}>Rejected</option>
+                    <option ${row.status === 'New' ? 'selected' : ''}>New</option>
+                    <option ${row.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option ${row.status === 'Converted' ? 'selected' : ''}>Converted</option>
+                    <option ${row.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
                 </select>
             </td>
         </tr>
         `;
-    });
+            });
 
-    populateCountryFilter();
-}
-
-async function updateStatus(index, newStatus) {
-
-    const enquiry = enquiryData[index];
-
-    await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({
-            action: "updateStatus",
-            timestamp: enquiry.timestamp,
-            status: newStatus
-        })
-    });
-
-    enquiryData[index].status = newStatus;
-    renderDashboard();
-}
-
-function populateCountryFilter() {
-    const countries = [...new Set(enquiryData.map(x => x.country))];
-    const select = document.getElementById("countryFilter");
-
-    select.innerHTML = '<option value="">All Country</option>';
-
-    countries.forEach(c => {
-        select.innerHTML += `<option value="${c}">${c}</option>`;
-    });
-}
-
-
-function getStatusClass(status){
-    if(status==="Converted") return "badge-green";
-    if(status==="Rejected") return "badge-red";
-    return "badge-orange";
-}
-
-function renderChart(){
-    const counts={};
-    enquiryData.forEach(row=>{
-        const d=row.timestamp.split(" ")[0];
-        counts[d]=(counts[d]||0)+1;
-    });
-
-    if(chartInstance) chartInstance.destroy();
-
-    chartInstance=new Chart(document.getElementById("enquiryChart"),{
-        type:"line",
-        data:{
-            labels:Object.keys(counts),
-            datasets:[{
-                label:"Enquiries",
-                data:Object.values(counts),
-                borderColor:"#4f46e5",
-                fill:false
-            }]
+            populateCountryFilter();
         }
-    });
-}
 
-function renderToday(){
-    const today=new Date().toLocaleDateString('en-GB');
-    const container=document.getElementById("todayActivity");
-    container.innerHTML="";
-    enquiryData.filter(x=>x.timestamp.includes(today))
-        .forEach(x=>{
-            container.innerHTML+=`<p>• ${x.name}</p>`;
-        });
-}
+        async function updateStatus(index, newStatus) {
 
-function toggleDark(){
-    document.body.classList.toggle("dark");
-}
+            const enquiry = enquiryData[index];
 
-function exportToCSV(){
-    let csv="Date,Name,Phone,Country,Status\n";
-    enquiryData.forEach(r=>{
-        csv+=`${r.timestamp},${r.name},${r.phone},${r.country},${r.status}\n`;
-    });
-    const blob=new Blob([csv],{type:"text/csv"});
-    const a=document.createElement("a");
-    a.href=URL.createObjectURL(blob);
-    a.download="enquiries.csv";
-    a.click();
-}
+            await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({
+                    action: "updateStatus",
+                    timestamp: enquiry.timestamp,
+                    status: newStatus
+                })
+            });
 
-loadEnquiries();
+            enquiryData[index].status = newStatus;
+            renderDashboard();
+        }
 
-document.getElementById("statusFilter").addEventListener("change", applyFilters);
-document.getElementById("countryFilter").addEventListener("change", applyFilters);
-document.getElementById("fromDate").addEventListener("change", applyFilters);
-document.getElementById("toDate").addEventListener("change", applyFilters);
+        function populateCountryFilter() {
+            const countries = [...new Set(enquiryData.map(x => x.country))];
+            const select = document.getElementById("countryFilter");
 
-function applyFilters() {
+            select.innerHTML = '<option value="">All Country</option>';
 
-    const status = document.getElementById("statusFilter").value;
-    const country = document.getElementById("countryFilter").value;
-    const from = document.getElementById("fromDate").value;
-    const to = document.getElementById("toDate").value;
+            countries.forEach(c => {
+                select.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+        }
 
-    let filtered = enquiryData.filter(row => {
 
-        let match = true;
+        function getStatusClass(status) {
+            if (status === "Converted") return "badge-green";
+            if (status === "Rejected") return "badge-red";
+            return "badge-orange";
+        }
 
-        if (status && row.status !== status) match = false;
-        if (country && row.country !== country) match = false;
+        function renderChart() {
+            const counts = {};
+            enquiryData.forEach(row => {
+                const d = row.timestamp.split(" ")[0];
+                counts[d] = (counts[d] || 0) + 1;
+            });
 
-        const rowDate = row.timestamp.split(" ")[0].split("/").reverse().join("-");
-        if (from && rowDate < from) match = false;
-        if (to && rowDate > to) match = false;
+            if (chartInstance) chartInstance.destroy();
 
-        return match;
-    });
+            chartInstance = new Chart(document.getElementById("enquiryChart"), {
+                type: "line",
+                data: {
+                    labels: Object.keys(counts),
+                    datasets: [{
+                        label: "Enquiries",
+                        data: Object.values(counts),
+                        borderColor: "#4f46e5",
+                        fill: false
+                    }]
+                }
+            });
+        }
 
-    renderTable(filtered);
-}
+        function renderToday() {
+            const today = new Date().toLocaleDateString('en-GB');
+            const container = document.getElementById("todayActivity");
+            container.innerHTML = "";
+            enquiryData.filter(x => x.timestamp.includes(today))
+                .forEach(x => {
+                    container.innerHTML += `<p>• ${x.name}</p>`;
+                });
+        }
 
-document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
+        function toggleDark() {
+            document.body.classList.toggle("dark");
+        }
 
-function goBack(){ window.location.href = 'Dashboard_Admin.html'; }
-</script>
+        function exportToCSV() {
+            let csv = "Date,Name,Phone,Country,Status\n";
+            enquiryData.forEach(r => {
+                csv += `${r.timestamp},${r.name},${r.phone},${r.country},${r.status}\n`;
+            });
+            const blob = new Blob([csv], { type: "text/csv" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "enquiries.csv";
+            a.click();
+        }
+
+        loadEnquiries();
+
+        document.getElementById("statusFilter").addEventListener("change", applyFilters);
+        document.getElementById("countryFilter").addEventListener("change", applyFilters);
+        document.getElementById("fromDate").addEventListener("change", applyFilters);
+        document.getElementById("toDate").addEventListener("change", applyFilters);
+
+        function applyFilters() {
+
+            const status = document.getElementById("statusFilter").value;
+            const country = document.getElementById("countryFilter").value;
+            const from = document.getElementById("fromDate").value;
+            const to = document.getElementById("toDate").value;
+
+            let filtered = enquiryData.filter(row => {
+
+                let match = true;
+
+                if (status && row.status !== status) match = false;
+                if (country && row.country !== country) match = false;
+
+                const rowDate = row.timestamp.split(" ")[0].split("/").reverse().join("-");
+                if (from && rowDate < from) match = false;
+                if (to && rowDate > to) match = false;
+
+                return match;
+            });
+
+            renderTable(filtered);
+        }
+
+        document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
+
+        function goBack() { window.location.href = 'Dashboard_Admin.html'; }
+    </script>
 
 </body>
+
 </html>
