@@ -13,6 +13,7 @@ body { background:#eef1f6; font-family:system-ui; }
 .content-area { margin-left:260px; padding:40px 50px; }
 .card-box { background:#fff; border-radius:14px; padding:25px 30px; box-shadow:0 6px 20px rgba(0,0,0,0.08);} 
 .submit-btn { background:#2563eb; color:#fff; padding:10px; width:160px; border-radius:8px; border:none; font-weight:600; }
+.submit-btn:disabled { opacity:.6; cursor:not-allowed; }
  .logo {
       width: 80px;
       margin-bottom: 15px;
@@ -471,7 +472,7 @@ body { background: var(--pics-page-bg); font-family: var(--pics-font); color: va
 
 
       <div class="col-12 mt-4">
-        <button class="submit-btn" onclick="submitData()">Submit</button>
+        <button id="submitBtn" class="submit-btn" type="button" onclick="submitData()">Submit</button>
       </div>
 
 
@@ -534,7 +535,35 @@ document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
 <script>
   
 
+// ---- Double-submit protection ----------------------------------------------
+// isSubmitting blocks a second send while one is in progress (double click, key
+// repeat, double tap). The "last sent" note, kept on this device, warns before the
+// same Tracking Number is sent again after a slow or dropped connection.
+let isSubmitting = false;
+const LAST_SENT_KEY = "picsInsertLastSent";
+const DUP_WINDOW_MS = 30 * 60 * 1000;   // 30 minutes
+const SEND_TIMEOUT_MS = 60 * 1000;      // stop waiting after 60 seconds
+
+function setSubmitting(on) {
+  isSubmitting = on;
+  const btn = document.getElementById("submitBtn");
+  if (btn) {
+    btn.disabled = on;
+    btn.textContent = on ? "Submitting..." : "Submit";
+  }
+}
+function readLastSent() {
+  try { return JSON.parse(localStorage.getItem(LAST_SENT_KEY) || "null"); }
+  catch (e) { return null; }
+}
+function rememberSent(key, confirmed) {
+  try { localStorage.setItem(LAST_SENT_KEY, JSON.stringify({ key: key, at: Date.now(), ok: confirmed })); }
+  catch (e) { /* private mode: the lock above still works */ }
+}
+
 function submitData() {
+  if (isSubmitting) return;   // a send is already running
+
   
   const requiredFields = [
     "TrackingNumber",
@@ -619,7 +648,32 @@ firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
     TYPE:"none"
   };
 
+  const key = String(data.TrackingNumber).trim().toLowerCase();
+  const last = readLastSent();
+  if (last && last.key === key && Date.now() - last.at < DUP_WINDOW_MS) {
+    showMessage({
+      type: "info",
+      title: "Already sent?",
+      text: 'Tracking number "' + data.TrackingNumber.trim() + '" was sent a few minutes ago from this device' +
+        (last.ok ? "." : ", but the connection dropped, so we are not sure it was saved.") +
+        " Sending it again can create a duplicate. Please check View Data first, or send it again if you are sure.",
+      buttonText: "Send again",
+      closeOnBackdrop: false,
+      onClose: function (reason) { if (reason === "action") sendData(apiUrl, data, key); }
+    });
+    return;
+  }
+  sendData(apiUrl, data, key);
+}
+
+function sendData(apiUrl, data, key) {
+  if (isSubmitting) return;
+  setSubmitting(true);
   showLoadersubmit();
+  rememberSent(key, false);   // noted before sending, so a dropped connection is still remembered
+
+  const ctrl = window.AbortController ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(function () { ctrl.abort(); }, SEND_TIMEOUT_MS) : null;
 
   fetch(apiUrl, {
     method: "POST",
@@ -627,22 +681,26 @@ firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
     body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json"
-    }
+    },
+    signal: ctrl ? ctrl.signal : undefined
   })
   .then(() => {
-  //alert("Data submitted successfully!");
-  hideLoadersubmit();
-showSuccess('Saved!', 'Data submitted successfully!');
-
-  clearForm();
-})
-.catch(err => {
+    rememberSent(key, true);
     hideLoadersubmit();
-
-  //alert("Request failed: " + err);
-  showError('Failed!', 'Request failed:', { autoCloseMs: 5000 });
-
-});
+    showSuccess('Saved!', 'Data submitted successfully!');
+    clearForm();
+  })
+  .catch(err => {
+    hideLoadersubmit();
+    showError('Not confirmed',
+      'The connection was interrupted, so we cannot tell if this entry was saved. ' +
+      'Please check View Data before submitting again. Your form has been kept.',
+      { buttonText: 'OK', closeOnBackdrop: false });
+  })
+  .finally(() => {
+    if (timer) clearTimeout(timer);
+    setSubmitting(false);
+  });
 }
 
 function clearForm() {
