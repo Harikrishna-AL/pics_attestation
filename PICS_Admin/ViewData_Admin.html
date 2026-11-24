@@ -456,6 +456,7 @@ body { background: var(--pics-page-bg); font-family: var(--pics-font); color: va
 </div>
 
 <button id="btnDownloadPDF" class="pdf-btn-fixed">Download PDF</button>
+<button id="btnAmountPDF" class="pdf-btn-fixed" style="right: 160px;">Amount PDF</button>
 
 </div>
  <!-- Supabase client -->
@@ -974,47 +975,62 @@ async function downloadGridPDF(exportAll = true) {
     }
 
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF("p", "mm", "a4");
+    const doc = new jsPDF("l", "mm", "a4"); // landscape for 6 columns
 
     // Optional header image (safe try/catch)
     try {
         const headerImg = new Image();
         headerImg.src = "images/header.jpg";
-        // If you want to ensure load before addImage, you'd need onload - but most small images work directly.
-        doc.addImage(headerImg, "PNG", 10, 10, 190, 35);
+        doc.addImage(headerImg, "PNG", 10, 10, 277, 35);
     } catch (e) { /* ignore missing header */ }
 
     // Title
-doc.setFont("helvetica", "bold");
-doc.setFontSize(14);
-doc.text("Document Status PICS", 105, 55, { align: "center" });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Document Status PICS", 148, 55, { align: "center" });
 
+    // Column x-positions (landscape A4: 10mm left margin, 287mm right edge)
+    // Dividers at: 58, 98, 160, 205, 240
+    const COL_X = { track: 12, date: 60, name: 100, country: 162, type: 207, deliver: 242 };
+    const DIV_X = [58, 98, 160, 205, 240];
+    const TABLE_W = 277; // 287 - 10
 
+    // truncate text to fit maxWidth (mm), appending "..." if cut
+    function fitText(text, maxWidth) {
+        const s = String(text);
+        if (doc.getTextWidth(s) <= maxWidth) return s;
+        let t = s;
+        while (t.length > 0 && doc.getTextWidth(t + "...") > maxWidth) {
+            t = t.slice(0, -1);
+        }
+        return t + "...";
+    }
 
-
-    // function to draw table header (so we can reuse on each new PDF page)
+    // function to draw table header (reused on each new PDF page)
     function drawTableHeader(yStart) {
         doc.setFillColor(238, 242, 255);
         doc.setDrawColor(180, 180, 180);
         doc.setLineWidth(0.3);
-        doc.rect(10, yStart, 190, 12, "F");
-        doc.line(80, yStart, 80, yStart + 12);
-        doc.line(150, yStart, 150, yStart + 12);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(12);
+        doc.rect(10, yStart, TABLE_W, 12, "F");
+        DIV_X.forEach(x => doc.line(x, yStart, x, yStart + 12));
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
         doc.setTextColor(99, 102, 241);
-        doc.text("Date of Submission", 15, yStart + 8);
-        doc.text("Customer Name", 90, yStart + 8);
-        doc.text("Delivered", 158, yStart + 8);
+        doc.text("Tracking No.", COL_X.track, yStart + 8);
+        doc.text("Date of Submission", COL_X.date, yStart + 8);
+        doc.text("Customer Name", COL_X.name, yStart + 8);
+        doc.text("Country", COL_X.country, yStart + 8);
+        doc.text("Type", COL_X.type, yStart + 8);
+        doc.text("Delivered", COL_X.deliver, yStart + 8);
         doc.setTextColor(0, 0, 0);
         return yStart + 16;
     }
 
     // start position for rows (below title & header)
-let y = 85;   // was 70
-y = drawTableHeader(y - 16);
+    let y = 85;
+    y = drawTableHeader(y - 16);
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setLineWidth(0.4);
     doc.setDrawColor(60, 60, 60);
 
@@ -1033,25 +1049,27 @@ y = drawTableHeader(y - 16);
         }
 
         const nameText = (row.CustomerName ?? "").toString();
-        const nameLines = doc.splitTextToSize(nameText, 60);
+        const nameLines = doc.splitTextToSize(nameText, 58);
         const rowHeight = Math.max(10, nameLines.length * 6);
 
-        // page break check (A4 usable height ~ 277mm considering margins)
-        if (y + rowHeight + 20 > 287) { // leave bottom margin
+        // page break check (landscape A4 usable height ~190mm)
+        if (y + rowHeight + 10 > 200) {
             doc.addPage();
             y = 20;
             y = drawTableHeader(y);
         }
 
         // draw box and vertical separators for this row
-        doc.rect(10, y, 190, rowHeight);
-        doc.line(80, y, 80, y + rowHeight);
-        doc.line(150, y, 150, y + rowHeight);
+        doc.rect(10, y, TABLE_W, rowHeight);
+        DIV_X.forEach(x => doc.line(x, y, x, y + rowHeight));
 
-        // text content inside columns
-        doc.text(d, 15, y + 7);
-        doc.text(nameLines, 90, y + 7);
-        doc.text((row.Delivered ?? "").toString(), 165, y + 7, { align: "right" });
+        // text content inside columns (fitText prevents overflow into adjacent columns)
+        doc.text(fitText(row.TrackingNumber ?? "", 44), COL_X.track, y + 7);
+        doc.text(fitText(d, 36), COL_X.date, y + 7);
+        doc.text(nameLines, COL_X.name, y + 7);
+        doc.text(fitText(row.COUNTRY ?? "", 41), COL_X.country, y + 7);
+        doc.text(fitText(row.Type ?? "", 30), COL_X.type, y + 7);
+        doc.text(fitText(row.Delivered ?? "", 43), COL_X.deliver, y + 7);
 
         y += rowHeight + 2;
     }
@@ -1076,6 +1094,137 @@ y = drawTableHeader(y - 16);
 
 document.getElementById("btnDownloadPDF")
         .addEventListener("click", downloadGridPDF);
+
+async function downloadAmountPDF(exportAll = true) {
+    if (!filteredData || filteredData.length === 0) {
+        showError('Failed!', 'No rows to export. Apply filters or wait until data loads.', { autoCloseMs: 5000 });
+        return;
+    }
+
+    let rowsToExport;
+    if (exportAll) {
+        rowsToExport = filteredData.slice();
+    } else {
+        const ps = parseInt(document.getElementById('pageSize').value || '10');
+        const total = filteredData.length;
+        const pages = Math.max(1, Math.ceil(total / ps));
+        const curPage = Math.min(Math.max(1, currentPage), pages);
+        const start = (curPage - 1) * ps;
+        const end = start + ps;
+        rowsToExport = filteredData.slice(start, end);
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF("l", "mm", "a4");
+
+    try {
+        const headerImg = new Image();
+        headerImg.src = "images/header.jpg";
+        doc.addImage(headerImg, "PNG", 10, 10, 277, 35);
+    } catch (e) { /* ignore missing header */ }
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Document Status PICS", 148, 55, { align: "center" });
+
+    // 9-column layout (landscape A4, x=10..287, usable 277mm)
+    // Dividers at: 45, 77, 122, 150, 175, 200, 222, 252
+    const AMT_COL_X = { track:12, date:47, name:79, country:124, type:152, total:177, balance:202, phone:224, deliver:254 };
+    const AMT_DIV_X = [45, 77, 122, 150, 175, 200, 222, 252];
+    const AMT_TABLE_W = 277;
+
+    function fitTextAmt(text, maxWidth) {
+        const s = String(text);
+        if (doc.getTextWidth(s) <= maxWidth) return s;
+        let t = s;
+        while (t.length > 0 && doc.getTextWidth(t + "...") > maxWidth) t = t.slice(0, -1);
+        return t + "...";
+    }
+
+    function drawAmtHeader(yStart) {
+        doc.setFillColor(238, 242, 255);
+        doc.setDrawColor(180, 180, 180);
+        doc.setLineWidth(0.3);
+        doc.rect(10, yStart, AMT_TABLE_W, 12, "F");
+        AMT_DIV_X.forEach(x => doc.line(x, yStart, x, yStart + 12));
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(99, 102, 241);
+        doc.text("Tracking No.", AMT_COL_X.track, yStart + 8);
+        doc.text("Date of Sub.", AMT_COL_X.date, yStart + 8);
+        doc.text("Customer Name", AMT_COL_X.name, yStart + 8);
+        doc.text("Country", AMT_COL_X.country, yStart + 8);
+        doc.text("Type", AMT_COL_X.type, yStart + 8);
+        doc.text("Total Amt", AMT_COL_X.total, yStart + 8);
+        doc.text("Balance", AMT_COL_X.balance, yStart + 8);
+        doc.text("Phone No.", AMT_COL_X.phone, yStart + 8);
+        doc.text("Delivered", AMT_COL_X.deliver, yStart + 8);
+        doc.setTextColor(0, 0, 0);
+        return yStart + 16;
+    }
+
+    let y = 85;
+    y = drawAmtHeader(y - 16);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setLineWidth(0.4);
+    doc.setDrawColor(60, 60, 60);
+
+    for (let i = 0; i < rowsToExport.length; i++) {
+        const row = rowsToExport[i];
+
+        let d = (row.DateofSubmission ?? "").toString();
+        if (d && d.includes("T")) {
+            const dt = new Date(d);
+            const dd = String(dt.getDate()).padStart(2, "0");
+            const mm = String(dt.getMonth() + 1).padStart(2, "0");
+            const yyyy = dt.getFullYear();
+            d = `${dd}/${mm}/${yyyy}`;
+        }
+
+        const nameLines = doc.splitTextToSize((row.CustomerName ?? "").toString(), 41);
+        const rowHeight = Math.max(10, nameLines.length * 5.5);
+
+        if (y + rowHeight + 10 > 200) {
+            doc.addPage();
+            y = 20;
+            y = drawAmtHeader(y);
+        }
+
+        doc.rect(10, y, AMT_TABLE_W, rowHeight);
+        AMT_DIV_X.forEach(x => doc.line(x, y, x, y + rowHeight));
+
+        doc.text(fitTextAmt(row.TrackingNumber ?? "", 31), AMT_COL_X.track, y + 7);
+        doc.text(fitTextAmt(d, 28), AMT_COL_X.date, y + 7);
+        doc.text(nameLines, AMT_COL_X.name, y + 7);
+        doc.text(fitTextAmt(row.COUNTRY ?? "", 24), AMT_COL_X.country, y + 7);
+        doc.text(fitTextAmt(row.Type ?? "", 21), AMT_COL_X.type, y + 7);
+        doc.text(fitTextAmt(row.TotalAmount ?? "", 21), AMT_COL_X.total, y + 7);
+        doc.text(fitTextAmt(row.Balance ?? "", 18), AMT_COL_X.balance, y + 7);
+        doc.text(fitTextAmt(row.phoneno ?? "", 26), AMT_COL_X.phone, y + 7);
+        doc.text(fitTextAmt(row.Delivered ?? "", 31), AMT_COL_X.deliver, y + 7);
+
+        y += rowHeight + 2;
+    }
+
+    const pageCount = doc.getNumberOfPages();
+    for (let p = 1; p <= pageCount; p++) {
+        doc.setPage(p);
+        doc.setFontSize(9);
+        doc.text(`Page ${p} of ${pageCount}`, 148, 205, { align: "center" });
+    }
+
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yyyy = now.getFullYear();
+    const today = `${dd}-${mm}-${yyyy}`;
+
+    doc.save(`AmountStatusPICS_${today}.pdf`);
+}
+
+document.getElementById("btnAmountPDF")
+        .addEventListener("click", downloadAmountPDF);
 
 
 
